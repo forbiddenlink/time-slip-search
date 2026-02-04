@@ -10,11 +10,8 @@
  * Usage: npm run ingest:billboard
  */
 
-import { config } from 'dotenv'
+import 'dotenv/config'
 import { algoliasearch } from 'algoliasearch'
-
-// Load .env.local
-config({ path: '.env.local' })
 
 const BILLBOARD_JSON_URL =
   'https://raw.githubusercontent.com/mhollingshead/billboard-hot-100/main/all.json'

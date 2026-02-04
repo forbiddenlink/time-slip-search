@@ -10,11 +10,8 @@
  * Usage: npm run ingest:fred
  */
 
-import { config } from 'dotenv'
+import 'dotenv/config'
 import { algoliasearch } from 'algoliasearch'
-
-// Load .env.local
-config({ path: '.env.local' })
 
 const FRED_BASE_URL = 'https://api.stlouisfed.org/fred/series/observations'
 

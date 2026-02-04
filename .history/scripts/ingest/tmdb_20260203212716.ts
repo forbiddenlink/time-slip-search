@@ -10,11 +10,8 @@
  * Usage: npm run ingest:tmdb
  */
 
-import { config } from 'dotenv'
+import 'dotenv/config'
 import { algoliasearch } from 'algoliasearch'
-
-// Load .env.local
-config({ path: '.env.local' })
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3'
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500'

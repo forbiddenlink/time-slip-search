@@ -10,11 +10,8 @@
  * Usage: npm run ingest:wikimedia
  */
 
-import { config } from 'dotenv'
+import 'dotenv/config'
 import { algoliasearch } from 'algoliasearch'
-
-// Load .env.local
-config({ path: '.env.local' })
 
 const WIKIMEDIA_BASE_URL = 'https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday'
 
