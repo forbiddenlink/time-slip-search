@@ -14,9 +14,12 @@ interface TimeCapsuleProps {
   results: SearchResults
   dateDisplay: string
   year: number
+  insights?: string[]
+  onCompare?: (year: number) => void
+  onRandom?: () => void
 }
 
-export function TimeCapsule({ results, dateDisplay, year }: TimeCapsuleProps) {
+export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, onRandom }: TimeCapsuleProps) {
   const hasData =
     results.songs.length > 0 ||
     results.movies.length > 0 ||
@@ -95,14 +98,83 @@ export function TimeCapsule({ results, dateDisplay, year }: TimeCapsuleProps) {
         </div>
       </div>
 
-      {/* === SHARE CTA === */}
-      <div className="bg-crt-dark border border-crt-light/30 rounded p-4 text-center">
-        <p className="text-sm text-aged-cream/60 mb-3 font-body">
-          Want to know what was #1 on someone else&apos;s birthday?
-        </p>
-        <button className="retro-btn px-6 py-2 text-phosphor-teal text-sm">
-          SHARE THIS TIME CAPSULE
-        </button>
+      {/* === AI INSIGHTS === */}
+      {insights && insights.length > 0 && (
+        <div className="glass-card border border-phosphor-teal/30 rounded p-4 animate-fade-in">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="led-text text-phosphor-teal text-xs tracking-widest">💡 AI INSIGHTS</span>
+          </div>
+          <div className="space-y-2">
+            {insights.map((insight, i) => (
+              <div
+                key={i}
+                className="text-aged-cream/90 text-sm flex items-start gap-2 animate-slide-in-right"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <span className="text-phosphor-teal shrink-0">•</span>
+                <span>{insight}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* === QUICK ACTIONS === */}
+      <div className="space-y-3">
+        <div className="text-aged-cream/60 text-xs led-text tracking-widest">💡 TRY THESE:</div>
+        <div className="flex gap-2 flex-wrap">
+          {year < 2020 && onCompare && (
+            <>
+              <button
+                onClick={() => onCompare(year + 10)}
+                className="px-4 py-2 bg-crt-dark border border-phosphor-teal/30 
+                         rounded hover:border-phosphor-teal hover:shadow-glow-teal
+                         text-aged-cream text-sm transition-all hover-lift led-text"
+              >
+                🔄 Compare with {year + 10}
+              </button>
+              <button
+                onClick={() => onCompare(year - 10)}
+                className="px-4 py-2 bg-crt-dark border border-phosphor-amber/30 
+                         rounded hover:border-phosphor-amber hover:shadow-glow-amber
+                         text-aged-cream text-sm transition-all hover-lift led-text"
+              >
+                ⏮️ See {year - 10}
+              </button>
+            </>
+          )}
+          
+          {onRandom && (
+            <button
+              onClick={onRandom}
+              className="px-4 py-2 bg-crt-dark border border-phosphor-green/30 
+                       rounded hover:border-phosphor-green hover:shadow-glow-green
+                       text-aged-cream text-sm transition-all hover-lift led-text"
+            >
+              🎲 Random Date
+            </button>
+          )}
+
+          {results.songs.length > 0 && (
+            <button
+              onClick={() => {
+                const topSong = results.songs[0]
+                const text = `🎵 On ${dateDisplay}, the #1 song was "${topSong.song_title}" by ${topSong.artist}! What was #1 on YOUR birthday? Find out at TimeSlipSearch.com`
+                if (navigator.share) {
+                  navigator.share({ text })
+                } else {
+                  navigator.clipboard.writeText(text)
+                  alert('Copied to clipboard! 📋')
+                }
+              }}
+              className="px-4 py-2 bg-crt-dark border border-vinyl-label/50 
+                       rounded hover:border-vinyl-label hover:shadow-glow-amber
+                       text-aged-cream text-sm transition-all hover-lift led-text"
+            >
+              📸 Share
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )

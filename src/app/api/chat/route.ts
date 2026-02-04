@@ -8,6 +8,9 @@ export interface ChatResponse {
     dateDisplay: string
     year: number
     results: SearchResults
+    suggestions?: string[]
+    insights?: string[]
+    comparisonMode?: boolean
   }
   error?: string
 }
@@ -35,6 +38,10 @@ export async function POST(request: NextRequest) {
     // Search all indices for the date
     const results = await searchAllIndices(dateInfo.start, dateInfo.end)
 
+    // Generate AI agent suggestions and insights
+    const suggestions = generateSuggestions(dateInfo, results)
+    const insights = generateInsights(dateInfo, results)
+
     // Format the text response
     const response = formatResponse(dateInfo, results)
 
@@ -45,6 +52,8 @@ export async function POST(request: NextRequest) {
         dateDisplay: dateInfo.display,
         year: dateInfo.year,
         results,
+        suggestions,
+        insights,
       },
     })
   } catch (error) {
@@ -124,4 +133,94 @@ function formatResponse(
   parts.push(`Want to know what was #1 on someone else's birthday? Just ask!`)
 
   return parts.join('\n')
+}
+
+function generateSuggestions(
+  dateInfo: { display: string; year: number; start: Date; end: Date },
+  results: SearchResults
+): string[] {
+  const suggestions: string[] = []
+  
+  // Comparison suggestions
+  if (dateInfo.year < 2020) {
+    suggestions.push(
+      `Compare with ${dateInfo.year + 10}`,
+      `See ${dateInfo.year - 10}`
+    )
+  }
+  
+  // Decade exploration
+  const decade = Math.floor(dateInfo.year / 10) * 10
+  suggestions.push(`Explore the entire ${decade}s`)
+  
+  // Top songs of the year
+  if (results.songs.length > 0) {
+    suggestions.push(`Top songs of ${dateInfo.year}`)
+    const topSong = results.songs[0]
+    if (topSong.artist) {
+      suggestions.push(`More by ${topSong.artist}`)
+    }
+  }
+  
+  // Random suggestion
+  suggestions.push('🎲 Random date')
+  
+  return suggestions.slice(0, 5)
+}
+
+function generateInsights(
+  dateInfo: { display: string; year: number },
+  results: SearchResults
+): string[] {
+  const insights: string[] = []
+  const year = dateInfo.year
+  
+  // Historical context
+  if (year === 1969) {
+    insights.push('🌙 The year of the Moon Landing!')
+  } else if (year === 1989) {
+    insights.push('🧱 The year the Berlin Wall fell')
+  } else if (year >= 1980 && year <= 1989) {
+    insights.push('📼 The golden age of MTV and cassette tapes')
+  } else if (year >= 1990 && year <= 1999) {
+    insights.push('💿 The CD era and grunge revolution')
+  } else if (year >= 1960 && year <= 1969) {
+    insights.push('✌️ The decade of peace, love, and revolution')
+  } else if (year >= 1950 && year <= 1959) {
+    insights.push('🎸 Rock & Roll was born')
+  }
+  
+  // Music insights
+  if (results.songs.length > 0) {
+    const topSong = results.songs[0]
+    if (topSong.weeks_on_chart && topSong.weeks_on_chart > 15) {
+      insights.push(`💿 #1 song stayed on charts for ${topSong.weeks_on_chart} weeks!`)
+    }
+    
+    // Genre insights (simple detection from artist names)
+    const hasMultipleSongs = results.songs.length >= 3
+    if (hasMultipleSongs) {
+      insights.push(`🎵 ${results.songs.length} songs were charting this week`)
+    }
+  }
+  
+  // Price insights
+  if (results.prices.length > 0) {
+    const price = results.prices[0]
+    if (price.gas_price_gallon && price.gas_price_gallon < 2) {
+      const gasNow = 3.5 // approximate current price
+      const increase = Math.round(((gasNow - price.gas_price_gallon) / price.gas_price_gallon) * 100)
+      insights.push(`⛽ Gas has increased ${increase}% since then`)
+    }
+    if (price.minimum_wage && price.minimum_wage < 7) {
+      insights.push(`💵 Minimum wage was just $${price.minimum_wage.toFixed(2)}/hour`)
+    }
+  }
+  
+  // Decade milestones
+  if (year % 10 === 0) {
+    insights.push(`🎊 Start of a new decade!`)
+  }
+  
+  return insights.slice(0, 3)
 }

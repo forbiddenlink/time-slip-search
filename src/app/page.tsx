@@ -12,6 +12,8 @@ interface Message {
     dateDisplay: string
     year: number
     results: SearchResults
+    suggestions?: string[]
+    insights?: string[]
   }
 }
 
@@ -88,8 +90,8 @@ export default function Home() {
         setQuery('')
       }
     }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    globalThis.addEventListener('keydown', handleKeyDown)
+    return () => globalThis.removeEventListener('keydown', handleKeyDown)
   }, [isLoading])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,6 +117,7 @@ export default function Home() {
         structured: data.structured,
       }])
     } catch (error) {
+      console.error('Chat error:', error)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: 'Sorry, I had trouble processing that. Please try again.'
@@ -126,6 +129,70 @@ export default function Home() {
 
   const handleExampleClick = (example: string) => {
     setQuery(example)
+  }
+
+  const handleCompare = async (targetYear: number) => {
+    // Generate a query for the comparison year
+    const comparisonQuery = `Year ${targetYear}`
+    setMessages(prev => [...prev, { role: 'user', content: comparisonQuery }])
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: comparisonQuery }),
+      })
+
+      const data = await response.json()
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: data.response,
+        structured: data.structured,
+      }])
+    } catch (error) {
+      console.error('Comparison error:', error)
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Sorry, I had trouble processing that comparison.'
+      }])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleRandom = async () => {
+    // Generate a random date between 1958 and 2020
+    const randomYear = Math.floor(Math.random() * (2020 - 1958 + 1)) + 1958
+    const randomMonth = Math.floor(Math.random() * 12) + 1
+    const randomDay = Math.floor(Math.random() * 28) + 1 // Keep it simple, avoid edge cases
+    const randomDate = `${randomMonth}/${randomDay}/${randomYear}`
+    
+    setMessages(prev => [...prev, { role: 'user', content: `🎲 Random: ${randomDate}` }])
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: randomDate }),
+      })
+
+      const data = await response.json()
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: data.response,
+        structured: data.structured,
+      }])
+    } catch (error) {
+      console.error('Random date error:', error)
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Sorry, I had trouble with that random date.'
+      }])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -217,7 +284,7 @@ export default function Home() {
           </div>
 
           {/* Messages Area */}
-          <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">
+          <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">\n
             {messages.length === 0 ? (
               <div className="text-center">
                 <p className="text-aged-cream/80 mb-2 text-xl font-body italic">
@@ -255,6 +322,18 @@ export default function Home() {
                 <p className="mt-8 text-sm text-aged-cream/40 led-text tracking-wide">
                   ALSO TRY: &quot;SUMMER OF 69&quot; &bull; &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot;
                 </p>
+
+                {/* Random Date Quick Action */}
+                <div className="mt-6">
+                  <button
+                    onClick={handleRandom}
+                    className="px-6 py-3 bg-crt-dark border border-phosphor-green/30 
+                             rounded hover:border-phosphor-green hover:shadow-glow-green
+                             text-aged-cream transition-all hover-lift led-text"
+                  >
+                    🎲 SURPRISE ME WITH A RANDOM DATE
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="space-y-6">
@@ -277,6 +356,9 @@ export default function Home() {
                               results={message.structured.results}
                               dateDisplay={message.structured.dateDisplay}
                               year={message.structured.year}
+                              insights={message.structured.insights}
+                              onCompare={handleCompare}
+                              onRandom={handleRandom}
                             />
                           ) : (
                             <div className="bg-crt-dark border border-crt-light/30 rounded px-4 py-3">
