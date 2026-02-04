@@ -18,10 +18,10 @@ interface Message {
 // Hoisted outside component to prevent recreation on each render (rerender-memo-with-default-value)
 // Copy optimized for emotional connection and specificity
 const exampleQueries = [
-  { text: "What was #1 the day I was born?", icon: "01", hint: "March 15, 1987" },
-  { text: "Take me back to Summer of '69", icon: "02", hint: "Relive the hits" },
-  { text: "Christmas 1985", icon: "03", hint: "What gifts cost" },
-  { text: "The day the Berlin Wall fell", icon: "04", hint: "Nov 9, 1989" },
+  { text: "What was #1 the day I was born?", query: "March 15, 1987" },
+  { text: "Take me back to Summer of '69", query: "Summer of 69" },
+  { text: "What did things cost at Christmas?", query: "December 1985" },
+  { text: "The day the Berlin Wall fell", query: "November 9, 1989" },
 ] as const
 
 const featureCards = [
@@ -215,19 +215,19 @@ export default function Home() {
                   {exampleQueries.map((example, index) => (
                     <button
                       key={index}
-                      onClick={() => handleExampleClick(example.hint)}
+                      onClick={() => handleExampleClick(example.query)}
                       className="group text-left p-4 bg-crt-dark border border-crt-light/30 rounded hover:border-phosphor-teal/50 transition-all duration-300 hover:shadow-glow-teal"
                     >
                       <div className="flex items-start gap-3">
                         <span className="led-text text-phosphor-amber text-lg shrink-0">
-                          {example.icon}
+                          {String(index + 1).padStart(2, '0')}
                         </span>
                         <div className="flex flex-col">
                           <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors">
                             {example.text}
                           </span>
                           <span className="text-aged-cream/40 text-xs mt-1 led-text">
-                            {example.hint}
+                            {example.query}
                           </span>
                         </div>
                       </div>
@@ -316,7 +316,7 @@ export default function Home() {
                     <span className="inline-block w-2 h-2 bg-vhs-red rounded-full animate-pulse" />
                   </span>
                 ) : (
-                  'GO BACK'
+                  'PLAY ▶'
                 )}
               </button>
 

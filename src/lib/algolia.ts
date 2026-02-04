@@ -91,8 +91,11 @@ export async function searchAllIndices(
 ): Promise<SearchResults> {
   const filters = `date >= ${startTimestamp} AND date <= ${endTimestamp}`
 
+  console.log('[Algolia] Searching with filters:', filters)
+
   try {
     const client = getClient()
+    console.log('[Algolia] Client initialized')
     const [songsResponse, moviesResponse, pricesResponse, eventsResponse] = await Promise.all([
       client.searchSingleIndex({
         indexName: 'timeslip_songs',
@@ -128,6 +131,11 @@ export async function searchAllIndices(
       }),
     ])
 
+    console.log('[Algolia] Songs found:', songsResponse.nbHits)
+    console.log('[Algolia] Movies found:', moviesResponse.nbHits)
+    console.log('[Algolia] Prices found:', pricesResponse.nbHits)
+    console.log('[Algolia] Events found:', eventsResponse.nbHits)
+
     return {
       songs: (songsResponse.hits as unknown as Song[]).sort(
         (a, b) => a.chart_position - b.chart_position
@@ -139,7 +147,7 @@ export async function searchAllIndices(
       events: eventsResponse.hits as unknown as HistoricalEvent[],
     }
   } catch (error) {
-    console.error('Algolia search error:', error)
+    console.error('[Algolia] Search error:', error)
     return {
       songs: [],
       movies: [],
