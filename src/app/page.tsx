@@ -6,6 +6,7 @@ import { TimeCapsule } from '@/components/results/TimeCapsule'
 import { MessageSkeleton } from '@/components/chat/LoadingSkeleton'
 import { AgentMemoryPanel } from '@/components/memory/AgentMemoryPanel'
 import { SearchAutocomplete } from '@/components/search/SearchAutocomplete'
+import { VoiceInput } from '@/components/input/VoiceInput'
 import { SearchHistory } from '@/lib/agent-memory'
 
 interface Message {
@@ -111,6 +112,16 @@ export default function Home() {
       const form = document.querySelector('form')
       if (form) form.requestSubmit()
     }, 100)
+  }
+
+  const handleVoiceTranscript = (transcript: string) => {
+    setQuery(transcript)
+    setShowAutocomplete(false)
+    // Auto-submit voice queries
+    setTimeout(() => {
+      const form = document.querySelector('form')
+      if (form) form.requestSubmit()
+    }, 300)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -461,6 +472,11 @@ export default function Home() {
                   onClose={() => setShowAutocomplete(false)}
                 />
               </div>
+
+              <VoiceInput
+                onTranscript={handleVoiceTranscript}
+                isDisabled={isLoading}
+              />
 
               <button
                 type="submit"
