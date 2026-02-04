@@ -1,0 +1,6 @@
+# TimeSlipSearch robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://timeslipsearch.vercel.app/sitemap.xml

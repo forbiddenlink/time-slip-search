@@ -1,0 +1,86 @@
+import type { Metadata } from 'next'
+import { Playfair_Display, Source_Serif_4, VT323, Special_Elite } from 'next/font/google'
+import './globals.css'
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+})
+
+const sourceSerif = Source_Serif_4({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+})
+
+const vt323 = VT323({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-led',
+  display: 'swap',
+})
+
+const specialElite = Special_Elite({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-typewriter',
+  display: 'swap',
+})
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://timeslipsearch.vercel.app'
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'TimeSlipSearch - Cultural Time Machine',
+    template: '%s | TimeSlipSearch',
+  },
+  description: 'Explore any moment in history through conversation. Discover what songs, movies, prices, and events defined any date.',
+  keywords: ['nostalgia', 'history', 'time machine', 'birthday', 'cultural history', 'music charts', 'movies', 'Billboard Hot 100', '80s', '90s'],
+  authors: [{ name: 'TimeSlipSearch' }],
+  creator: 'TimeSlipSearch',
+  openGraph: {
+    title: 'TimeSlipSearch - Cultural Time Machine',
+    description: 'What was the world like on your birthday? Find out with TimeSlipSearch.',
+    url: siteUrl,
+    siteName: 'TimeSlipSearch',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TimeSlipSearch - Cultural Time Machine',
+    description: 'What was the world like on your birthday? Find out with TimeSlipSearch.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: siteUrl,
+  },
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" className={`${playfair.variable} ${sourceSerif.variable} ${vt323.variable} ${specialElite.variable}`}>
+      <body className="font-body antialiased">
+        {/* Global grain overlay for that analog feel */}
+        <div className="grain-overlay" aria-hidden="true" />
+        {children}
+      </body>
+    </html>
+  )
+}

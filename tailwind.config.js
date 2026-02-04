@@ -1,0 +1,106 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Retro-Analog palette
+        'crt': {
+          black: '#0a0908',
+          dark: '#1a1815',
+          medium: '#2d2a26',
+          light: '#3d3a35',
+        },
+        'phosphor': {
+          teal: '#40e0d0',
+          green: '#39ff14',
+          amber: '#ffbf00',
+        },
+        'vhs': {
+          red: '#ff3131',
+          blue: '#4169e1',
+          cream: '#faf5eb',
+          tan: '#d4a574',
+        },
+        'vinyl': {
+          black: '#1a1a1a',
+          groove: '#2a2a2a',
+          label: '#c73e3a',
+        },
+        'aged': {
+          paper: '#f4e4bc',
+          cream: '#e8e0d5',
+          sepia: '#d4a574',
+        },
+      },
+      fontFamily: {
+        'display': ['Playfair Display', 'Georgia', 'serif'],
+        'mono': ['VT323', 'Courier New', 'monospace'],
+        'body': ['Source Serif 4', 'Georgia', 'serif'],
+      },
+      animation: {
+        'flicker': 'flicker 0.15s infinite',
+        'scanline': 'scanline 8s linear infinite',
+        'tracking': 'tracking 3s ease-in-out infinite',
+        'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+        'vinyl-spin': 'vinyl-spin 4s linear infinite',
+        'static': 'static 0.5s steps(10) infinite',
+        'tape-roll': 'tape-roll 2s linear infinite',
+      },
+      keyframes: {
+        flicker: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.97' },
+        },
+        scanline: {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100vh)' },
+        },
+        tracking: {
+          '0%, 100%': { transform: 'translateX(0) skewX(0deg)' },
+          '25%': { transform: 'translateX(-2px) skewX(-0.5deg)' },
+          '75%': { transform: 'translateX(2px) skewX(0.5deg)' },
+        },
+        'glow-pulse': {
+          '0%, 100%': {
+            textShadow: '0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor',
+            filter: 'brightness(1)',
+          },
+          '50%': {
+            textShadow: '0 0 5px currentColor, 0 0 10px currentColor',
+            filter: 'brightness(0.9)',
+          },
+        },
+        'vinyl-spin': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        static: {
+          '0%': { backgroundPosition: '0 0' },
+          '100%': { backgroundPosition: '100% 100%' },
+        },
+        'tape-roll': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
+      boxShadow: {
+        'crt': '0 0 60px rgba(64, 224, 208, 0.15), inset 0 0 120px rgba(0, 0, 0, 0.5)',
+        'glow-teal': '0 0 20px rgba(64, 224, 208, 0.4), 0 0 40px rgba(64, 224, 208, 0.2)',
+        'glow-amber': '0 0 20px rgba(255, 191, 0, 0.4), 0 0 40px rgba(255, 191, 0, 0.2)',
+        'inner-screen': 'inset 0 0 100px rgba(0, 0, 0, 0.8)',
+        'vhs-case': '4px 4px 0 rgba(0, 0, 0, 0.3)',
+      },
+      backgroundImage: {
+        'noise': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E\")",
+        'scanlines': 'repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0, 0, 0, 0.1) 1px, rgba(0, 0, 0, 0.1) 2px)',
+        'vinyl-grooves': 'repeating-radial-gradient(circle at center, transparent 0px, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 3px)',
+      },
+    },
+  },
+  plugins: [],
+}
