@@ -15,8 +15,22 @@ import { algoliasearch } from 'algoliasearch'
 const BILLBOARD_JSON_URL =
   'https://raw.githubusercontent.com/mhollingshead/billboard-hot-100/main/all.json'
 
-interface BillboardEntry {
+interface BillboardSong {
+  song: string
+  artist: string
+  this_week: number
+  last_week: number | null
+  peak_position: number
+  weeks_on_chart: number
+}
+
+interface BillboardWeek {
   date: string // "YYYY-MM-DD"
+  data: BillboardSong[]
+}
+
+interface FlatEntry {
+  date: string
   song: string
   artist: string
   this_week: number
@@ -64,7 +78,7 @@ function getMonthName(month: number): string {
   return months[month - 1]
 }
 
-function transformEntry(entry: BillboardEntry): AlgoliaSong {
+function transformEntry(entry: FlatEntry): AlgoliaSong {
   const [year, month, day] = entry.date.split('-').map(Number)
   const timestamp = Math.floor(new Date(year, month - 1, day).getTime() / 1000)
 
@@ -108,12 +122,27 @@ async function main() {
     process.exit(1)
   }
 
-  const data: BillboardEntry[] = await response.json()
-  console.log(`Fetched ${data.length.toLocaleString()} chart entries\n`)
+  const weeks: BillboardWeek[] = await response.json()
+  console.log(`Fetched ${weeks.length.toLocaleString()} chart weeks\n`)
+
+  // Flatten weeks into individual song entries
+  console.log('Flattening data...')
+  const flatEntries: FlatEntry[] = weeks.flatMap((week) =>
+    week.data.map((song) => ({
+      date: week.date,
+      song: song.song,
+      artist: song.artist,
+      this_week: song.this_week,
+      last_week: song.last_week,
+      peak_position: song.peak_position,
+      weeks_on_chart: song.weeks_on_chart,
+    }))
+  )
+  console.log(`Flattened to ${flatEntries.length.toLocaleString()} song entries\n`)
 
   // Transform all entries
   console.log('Transforming data...')
-  const records = data.map(transformEntry)
+  const records = flatEntries.map(transformEntry)
 
   // Get date range
   const years = Array.from(new Set(records.map((r) => r.year))).sort((a, b) => a - b)

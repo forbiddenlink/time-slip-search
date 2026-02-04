@@ -1,10 +1,14 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { SearchResults } from '@/lib/algolia'
-import { SongList } from './SongCard'
-import { MovieList } from './MovieCard'
-import { PriceCard, PriceComparison } from './PriceCard'
-import { EventList } from './EventCard'
+
+// Dynamic imports - these components only render after API response (bundle-dynamic-imports)
+const SongList = dynamic(() => import('./SongCard').then(m => ({ default: m.SongList })))
+const MovieList = dynamic(() => import('./MovieCard').then(m => ({ default: m.MovieList })))
+const PriceCard = dynamic(() => import('./PriceCard').then(m => ({ default: m.PriceCard })))
+const PriceComparison = dynamic(() => import('./PriceCard').then(m => ({ default: m.PriceComparison })))
+const EventList = dynamic(() => import('./EventCard').then(m => ({ default: m.EventList })))
 
 interface TimeCapsuleProps {
   results: SearchResults

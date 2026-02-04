@@ -38,12 +38,14 @@ const jsonLd = {
   name: 'TimeSlipSearch',
   description: 'Explore any moment in history through conversation. Discover what songs, movies, prices, and events defined any date.',
   url: 'https://timeslipsearch.vercel.app',
-  applicationCategory: 'Entertainment',
-  operatingSystem: 'Web Browser',
+  applicationCategory: 'EntertainmentApplication',
+  operatingSystem: 'All',
+  browserRequirements: 'Requires JavaScript',
   offers: {
     '@type': 'Offer',
     price: '0',
     priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
   },
   featureList: [
     'Billboard Hot 100 chart history (1958-present)',
@@ -51,6 +53,10 @@ const jsonLd = {
     'Historical prices and wages',
     'Historical events from Wikimedia',
   ],
+  author: {
+    '@type': 'Organization',
+    name: 'TimeSlipSearch',
+  },
 }
 
 export default function Home() {
@@ -276,6 +282,7 @@ export default function Home() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Try your birthday, a year, or any date..."
+                  aria-label="Enter a date to search, like your birthday or a year"
                   className="w-full bg-crt-black text-aged-cream placeholder-aged-cream/30 border-2 border-crt-light/40 rounded px-4 py-3 focus:outline-none focus:border-phosphor-teal focus:shadow-glow-teal transition-all led-text text-lg tracking-wide"
                   disabled={isLoading}
                 />

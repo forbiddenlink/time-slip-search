@@ -33,16 +33,16 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://timeslipsearch.verc
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'TimeSlipSearch - Cultural Time Machine',
+    default: 'TimeSlipSearch - What Was #1 On Your Birthday?',
     template: '%s | TimeSlipSearch',
   },
-  description: 'Explore any moment in history through conversation. Discover what songs, movies, prices, and events defined any date.',
-  keywords: ['nostalgia', 'history', 'time machine', 'birthday', 'cultural history', 'music charts', 'movies', 'Billboard Hot 100', '80s', '90s'],
+  description: 'Discover the #1 song, top movies, prices, and events from any date 1958-2020. What was #1 on your birthday?',
+  keywords: ['birthday song', 'what was number 1', 'nostalgia', 'history', 'time machine', 'birthday lookup', 'Billboard Hot 100', '80s music', '90s movies', 'historical prices'],
   authors: [{ name: 'TimeSlipSearch' }],
   creator: 'TimeSlipSearch',
   openGraph: {
-    title: 'TimeSlipSearch - Cultural Time Machine',
-    description: 'What was the world like on your birthday? Find out with TimeSlipSearch.',
+    title: 'What Was #1 The Day You Were Born?',
+    description: 'Look up any date from 1958-2020. Get the #1 song, top movies, prices, and events instantly.',
     url: siteUrl,
     siteName: 'TimeSlipSearch',
     locale: 'en_US',
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TimeSlipSearch - Cultural Time Machine',
-    description: 'What was the world like on your birthday? Find out with TimeSlipSearch.',
+    title: 'What Was #1 The Day You Were Born?',
+    description: 'Look up any date from 1958-2020. Get the #1 song, top movies, prices, and events instantly.',
   },
   robots: {
     index: true,
