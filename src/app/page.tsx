@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { SearchResults } from '@/lib/algolia'
 import { TimeCapsule } from '@/components/results/TimeCapsule'
 import { MessageSkeleton } from '@/components/chat/LoadingSkeleton'
-import Script from 'next/script'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -17,18 +16,19 @@ interface Message {
 }
 
 // Hoisted outside component to prevent recreation on each render (rerender-memo-with-default-value)
+// Copy optimized for emotional connection and specificity
 const exampleQueries = [
-  { text: "What was #1 on March 15, 1987?", icon: "01" },
-  { text: "Summer of '69", icon: "02" },
-  { text: "December 1985", icon: "03" },
-  { text: "How much did things cost in 1990?", icon: "04" },
+  { text: "What was #1 the day I was born?", icon: "01", hint: "March 15, 1987" },
+  { text: "Take me back to Summer of '69", icon: "02", hint: "Relive the hits" },
+  { text: "Christmas 1985", icon: "03", hint: "What gifts cost" },
+  { text: "The day the Berlin Wall fell", icon: "04", hint: "Nov 9, 1989" },
 ] as const
 
 const featureCards = [
-  { icon: '\u266B', label: 'Billboard Charts', period: '1958\u2013Present', color: 'text-vinyl-label' },
-  { icon: '\u25B6', label: 'Movies', period: 'Popular Films', color: 'text-phosphor-amber' },
-  { icon: '$', label: 'Prices', period: 'Gas \u00B7 Wages', color: 'text-phosphor-green' },
-  { icon: '\u25C6', label: 'Events', period: 'History', color: 'text-phosphor-teal' },
+  { icon: '\u266B', label: '#1 Songs', period: '350K+ charts', color: 'text-vinyl-label' },
+  { icon: '\u25B6', label: 'Movies', period: '50K+ films', color: 'text-phosphor-amber' },
+  { icon: '$', label: 'Prices', period: 'Real costs', color: 'text-phosphor-green' },
+  { icon: '\u25C6', label: 'Events', period: '20K+ moments', color: 'text-phosphor-teal' },
 ] as const
 
 // JSON-LD structured data for SEO
@@ -135,7 +135,7 @@ export default function Home() {
               <div className="h-px flex-1 max-w-[100px] bg-gradient-to-l from-transparent via-crt-light to-transparent" />
             </div>
             <p className="text-aged-cream/60 text-lg italic font-body">
-              Your cultural time machine
+              Discover what was playing, showing, and happening on any date
             </p>
           </div>
         </header>
@@ -162,7 +162,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-        )}
+        ) : null}
 
         {/* === MAIN CONSOLE: CRT Screen === */}
         <div className="crt-screen shadow-crt border-4 border-crt-medium">
@@ -186,8 +186,11 @@ export default function Home() {
           <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">
             {messages.length === 0 ? (
               <div className="text-center">
-                <p className="text-aged-cream/80 mb-8 text-xl font-body italic">
-                  Ask me about any date in history...
+                <p className="text-aged-cream/80 mb-2 text-xl font-body italic">
+                  What was the world like on your birthday?
+                </p>
+                <p className="text-aged-cream/50 mb-8 text-sm font-body">
+                  Enter any date from 1958 to 2020
                 </p>
 
                 {/* Example queries as tape labels */}
@@ -195,23 +198,28 @@ export default function Home() {
                   {exampleQueries.map((example, index) => (
                     <button
                       key={index}
-                      onClick={() => handleExampleClick(example.text)}
+                      onClick={() => handleExampleClick(example.hint)}
                       className="group text-left p-4 bg-crt-dark border border-crt-light/30 rounded hover:border-phosphor-teal/50 transition-all duration-300 hover:shadow-glow-teal"
                     >
                       <div className="flex items-start gap-3">
                         <span className="led-text text-phosphor-amber text-lg shrink-0">
                           {example.icon}
                         </span>
-                        <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors">
-                          {example.text}
-                        </span>
+                        <div className="flex flex-col">
+                          <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors">
+                            {example.text}
+                          </span>
+                          <span className="text-aged-cream/40 text-xs mt-1 led-text">
+                            {example.hint}
+                          </span>
+                        </div>
                       </div>
                     </button>
                   ))}
                 </div>
 
                 <p className="mt-8 text-sm text-aged-cream/40 led-text tracking-wide">
-                  TRY: &quot;MY BIRTHDAY MARCH 15, 1987&quot; OR &quot;THE 80S&quot;
+                  ALSO TRY: &quot;SUMMER OF 69&quot; &bull; &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot;
                 </p>
               </div>
             ) : (
@@ -267,7 +275,7 @@ export default function Home() {
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Enter a date or moment in time..."
+                  placeholder="Try your birthday, a year, or any date..."
                   className="w-full bg-crt-black text-aged-cream placeholder-aged-cream/30 border-2 border-crt-light/40 rounded px-4 py-3 focus:outline-none focus:border-phosphor-teal focus:shadow-glow-teal transition-all led-text text-lg tracking-wide"
                   disabled={isLoading}
                 />
@@ -290,7 +298,7 @@ export default function Home() {
                     <span className="inline-block w-2 h-2 bg-vhs-red rounded-full animate-pulse" />
                   </span>
                 ) : (
-                  'PLAY'
+                  'GO BACK'
                 )}
               </button>
 
