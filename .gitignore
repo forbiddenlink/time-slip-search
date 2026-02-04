@@ -57,3 +57,4 @@ thoughts/
 *.tmp
 *.temp
 scratchpad/
+.history/

@@ -10,6 +10,7 @@ const MovieList = dynamic(() => import('./MovieCard').then(m => ({ default: m.Mo
 const PriceCard = dynamic(() => import('./PriceCard').then(m => ({ default: m.PriceCard })))
 const PriceComparison = dynamic(() => import('./PriceCard').then(m => ({ default: m.PriceComparison })))
 const EventList = dynamic(() => import('./EventCard').then(m => ({ default: m.EventList })))
+const ChartInsights = dynamic(() => import('../visualizations/ChartInsights').then(m => ({ default: m.ChartInsights })))
 
 interface TimeCapsuleProps {
   results: SearchResults
@@ -186,6 +187,9 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
           )}
         </div>
       </div>
+
+      {/* Data Visualizations */}
+      <ChartInsights results={results} year={year} />
     </div>
   )
 }
