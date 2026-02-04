@@ -5,6 +5,7 @@ import { SearchResults } from '@/lib/algolia'
 import { TimeCapsule } from '@/components/results/TimeCapsule'
 import { MessageSkeleton } from '@/components/chat/LoadingSkeleton'
 import { AgentMemoryPanel } from '@/components/memory/AgentMemoryPanel'
+import { SearchAutocomplete } from '@/components/search/SearchAutocomplete'
 import { SearchHistory } from '@/lib/agent-memory'
 
 interface Message {
@@ -68,6 +69,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentTime, setCurrentTime] = useState('--:--')
+  const [showAutocomplete, setShowAutocomplete] = useState(false)
 
   // Update clock client-side only to avoid hydration mismatch
   useEffect(() => {
@@ -96,14 +98,27 @@ export default function Home() {
     return () => globalThis.removeEventListener('keydown', handleKeyDown)
   }, [isLoading])
 
+  const handleQueryChange = (value: string) => {
+    setQuery(value)
+    setShowAutocomplete(value.length > 0)
+  }
+
+  const handleSuggestionSelect = (suggestion: string) => {
+    setQuery(suggestion)
+    setShowAutocomplete(false)
+    // Auto-submit after a brief delay
+    setTimeout(() => {
+      const form = document.querySelector('form')
+      if (form) form.requestSubmit()
+    }, 100)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!query.trim() || isLoading) return
 
-    const userMessage = query.t
-          message: userMessage,
-          filters: activeFilters,
-       
+    setShowAutocomplete(false)
+    const userMessage = query.trim()
     setQuery('')
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
@@ -425,7 +440,8 @@ export default function Home() {
                 <input
                   type="text"
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => handleQueryChange(e.target.value)}
+                  onFocus={() => query.length > 0 && setShowAutocomplete(true)}
                   placeholder="Try your birthday, a year, or any date..."
                   aria-label="Enter a date to search, like your birthday or a year"
                   className="w-full bg-crt-black text-aged-cream placeholder-aged-cream/30 border-2 border-crt-light/40 rounded px-4 py-3 focus:outline-none focus:border-phosphor-teal focus:shadow-glow-teal transition-all led-text text-lg tracking-wide"
@@ -438,6 +454,12 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+                <SearchAutocomplete
+                  query={query}
+                  onSelect={handleSuggestionSelect}
+                  isVisible={showAutocomplete}
+                  onClose={() => setShowAutocomplete(false)}
+                />
               </div>
 
               <button
