@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { SearchResults } from '@/lib/algolia'
 import { TimeCapsule } from '@/components/results/TimeCapsule'
 import { MessageSkeleton } from '@/components/chat/LoadingSkeleton'
+import { AgentMemoryPanel } from '@/components/memory/AgentMemoryPanel'
+import { SearchHistory } from '@/lib/agent-memory'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -98,7 +100,10 @@ export default function Home() {
     e.preventDefault()
     if (!query.trim() || isLoading) return
 
-    const userMessage = query.trim()
+    const userMessage = query.t
+          message: userMessage,
+          filters: activeFilters,
+       
     setQuery('')
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
@@ -111,6 +116,21 @@ export default function Home() {
       })
 
       const data = await response.json()
+      
+      // Track search in agent memory
+      if (data.structured) {
+        SearchHistory.add({
+          query: userMessage,
+          dateDisplay: data.structured.dateDisplay,
+          year: data.structured.year,
+          resultCount: (
+            data.structured.results.songs.length +
+            data.structured.results.movies.length +
+            data.structured.results.events.length
+          ),
+        })
+      }
+      
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: data.response,
@@ -129,6 +149,15 @@ export default function Home() {
 
   const handleExampleClick = (example: string) => {
     setQuery(example)
+  }
+
+  const handleMemorySelect = (query: string) => {
+    setQuery(query)
+    // Auto-submit
+    setTimeout(() => {
+      const form = document.querySelector('form')
+      if (form) form.requestSubmit()
+    }, 100)
   }
 
   const handleCompare = async (targetYear: number) => {
@@ -240,6 +269,11 @@ export default function Home() {
             </p>
           </div>
         </header>
+
+        {/* === AGENT MEMORY: Recent Searches & Favorites === */}
+        {messages.length === 0 && (
+          <AgentMemoryPanel onSelectSearch={handleMemorySelect} />
+        )}
 
         {/* === FEATURE CARDS: Cassette Tape Style === */}
         {messages.length === 0 ? (
@@ -359,6 +393,7 @@ export default function Home() {
                               insights={message.structured.insights}
                               onCompare={handleCompare}
                               onRandom={handleRandom}
+                              query={message.content}
                             />
                           ) : (
                             <div className="bg-crt-dark border border-crt-light/30 rounded px-4 py-3">

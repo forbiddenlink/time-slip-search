@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { parseDate } from '@/lib/date-parser'
-import { searchAllIndices, SearchResults } from '@/lib/algolia'
+import { searchAllIndices, SearchResults, AdvancedSearchOptions } from '@/lib/algolia'
 
 export interface ChatResponse {
   response: string
@@ -17,7 +17,7 @@ export interface ChatResponse {
 
 export async function POST(request: NextRequest) {
   try {
-    const { message } = await request.json()
+    const { message, filters } = await request.json()
 
     if (!message) {
       return NextResponse.json<ChatResponse>({
@@ -35,8 +35,14 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Search all indices for the date
-    const results = await searchAllIndices(dateInfo.start, dateInfo.end)
+    // Search all indices for the date with optional filters
+    const searchOptions: AdvancedSearchOptions | undefined = filters ? {
+      decades: filters.decades,
+      chartPositions: filters.chartPositions,
+      showOnlyNumber1: filters.showOnlyNumber1
+    } : undefined
+    
+    const results = await searchAllIndices(dateInfo.start, dateInfo.end, searchOptions)
 
     // Generate AI agent suggestions and insights
     const suggestions = generateSuggestions(dateInfo, results)

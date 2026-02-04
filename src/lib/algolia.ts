@@ -82,14 +82,38 @@ export interface SearchResults {
   events: HistoricalEvent[]
 }
 
+export interface AdvancedSearchOptions {
+  decades?: string[]
+  chartPositions?: string[]
+  showOnlyNumber1?: boolean
+}
+
 /**
- * Search all TimeSlipSearch indices for a date range
+ * Search all TimeSlipSearch indices for a date range with advanced filters
  */
 export async function searchAllIndices(
   startTimestamp: number,
-  endTimestamp: number
+  endTimestamp: number,
+  options?: AdvancedSearchOptions
 ): Promise<SearchResults> {
-  const filters = `date >= ${startTimestamp} AND date <= ${endTimestamp}`
+  let filters = `date >= ${startTimestamp} AND date <= ${endTimestamp}`
+
+  // Add decade filters if specified
+  if (options?.decades && options.decades.length > 0) {
+    const decadeFilters = options.decades.map(d => `decade:"${d}"`).join(' OR ')
+    filters += ` AND (${decadeFilters})`
+  }
+
+  // Add chart position filters
+  if (options?.showOnlyNumber1) {
+    filters += ' AND chart_position:1'
+  } else if (options?.chartPositions && options.chartPositions.length > 0) {
+    if (options.chartPositions.includes('top10')) {
+      filters += ' AND chart_position <= 10'
+    } else if (options.chartPositions.includes('top40')) {
+      filters += ' AND chart_position <= 40'
+    }
+  }
 
   console.log('[Algolia] Searching with filters:', filters)
 

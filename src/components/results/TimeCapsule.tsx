@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { SearchResults } from '@/lib/algolia'
+import { FavoriteButton } from '@/components/memory/FavoriteButton'
 
 // Dynamic imports - these components only render after API response (bundle-dynamic-imports)
 const SongList = dynamic(() => import('./SongCard').then(m => ({ default: m.SongList })))
@@ -17,9 +18,10 @@ interface TimeCapsuleProps {
   insights?: string[]
   onCompare?: (year: number) => void
   onRandom?: () => void
+  query?: string
 }
 
-export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, onRandom }: TimeCapsuleProps) {
+export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, onRandom, query = '' }: TimeCapsuleProps) {
   const hasData =
     results.songs.length > 0 ||
     results.movies.length > 0 ||
@@ -154,6 +156,14 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
               🎲 Random Date
             </button>
           )}
+
+          {/* Favorite Button */}
+          <FavoriteButton
+            dateDisplay={dateDisplay}
+            year={year}
+            results={results}
+            query={query}
+          />
 
           {results.songs.length > 0 && (
             <button
