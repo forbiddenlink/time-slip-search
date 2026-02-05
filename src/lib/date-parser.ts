@@ -16,6 +16,11 @@ export function parseDate(input: string): DateRange | null {
   // Handle special cases first
   const lowerInput = input.toLowerCase()
 
+  // Strip out command words like "show me", "what was", etc.
+  const cleanedInput = lowerInput
+    .replace(/^(show me|tell me about|what was|give me)/i, '')
+    .trim()
+
   // Date range patterns: "from X to Y", "between X and Y", "X to Y", "X - Y"
   const rangePatterns = [
     /from\s+(.+?)\s+to\s+(.+)/,
@@ -25,7 +30,7 @@ export function parseDate(input: string): DateRange | null {
   ]
 
   for (const pattern of rangePatterns) {
-    const match = lowerInput.match(pattern)
+    const match = cleanedInput.match(pattern)
     if (match && match[1] && match[2]) {
       const start = parseDate(match[1])
       const end = parseDate(match[2])
@@ -43,7 +48,7 @@ export function parseDate(input: string): DateRange | null {
   }
 
   // Summer of 'XX patterns
-  const summerMatch = lowerInput.match(/summer\s+(?:of\s+)?['']?(\d{2,4})/)
+  const summerMatch = cleanedInput.match(/summer\s+(?:of\s+)?['']?(\d{2,4})/)
   if (summerMatch && summerMatch[1]) {
     const year = normalizeYear(summerMatch[1])
     return {
@@ -55,7 +60,7 @@ export function parseDate(input: string): DateRange | null {
   }
 
   // Winter of 'XX patterns
-  const winterMatch = lowerInput.match(/winter\s+(?:of\s+)?['']?(\d{2,4})/)
+  const winterMatch = cleanedInput.match(/winter\s+(?:of\s+)?['']?(\d{2,4})/)
   if (winterMatch && winterMatch[1]) {
     const year = normalizeYear(winterMatch[1])
     return {
@@ -67,7 +72,7 @@ export function parseDate(input: string): DateRange | null {
   }
 
   // The 80s, 90s, etc.
-  const decadeMatch = lowerInput.match(/(?:the\s+)?['']?(\d{2})s/)
+  const decadeMatch = cleanedInput.match(/(?:the\s+)?['']?(\d{2})s/)
   if (decadeMatch && decadeMatch[1]) {
     const decade = parseInt(decadeMatch[1])
     const year = decade < 30 ? 2000 + decade : 1900 + decade
@@ -80,21 +85,20 @@ export function parseDate(input: string): DateRange | null {
   }
 
   // Plain year like "1980"
-  const yearMatch = input.trim().match(/^(\d{4})$/)
+  const yearMatch = cleanedInput.match(/^(\d{4})$/)
   if (yearMatch && yearMatch[1]) {
     const year = parseInt(yearMatch[1])
-    if (year >= 1958 && year <= 2020) {
-      return {
-        start: getTimestamp(year, 1, 1),
-        end: getTimestamp(year, 12, 31),
-        display: year.toString(),
-        year,
-      }
+    // Return result for ANY year, let the API handle out-of-range messaging
+    return {
+      start: getTimestamp(year, 1, 1),
+      end: getTimestamp(year, 12, 31),
+      display: year.toString(),
+      year,
     }
   }
 
   // Try chrono-node for everything else
-  const parsed = chrono.parse(input)
+  const parsed = chrono.parse(cleanedInput || input)
 
   if (parsed.length > 0 && parsed[0]) {
     const result = parsed[0]
