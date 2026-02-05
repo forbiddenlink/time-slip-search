@@ -75,7 +75,7 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
       {/* === TIME CAPSULE HEADER === */}
       <div className="relative">
         {/* VHS label style header */}
-        <div className="bg-gradient-to-r from-crt-medium via-crt-dark to-crt-medium border border-crt-light/40 rounded p-4">
+        <div className="bg-gradient-to-r from-crt-medium via-crt-dark to-crt-medium border border-crt-light/40 rounded p-4 cascade-in">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
@@ -109,7 +109,7 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
       {/* === CONTENT GRID === */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Left Column - Music & Prices */}
-        <div className="space-y-6">
+        <div className="space-y-6 section-reveal" style={{ animationDelay: '0.1s' }}>
           <SongList songs={results.songs} />
           {results.prices.length > 0 && results.prices[0] && (
             <>
@@ -120,7 +120,7 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
         </div>
 
         {/* Right Column - Movies & Events */}
-        <div className="space-y-6">
+        <div className="space-y-6 section-reveal" style={{ animationDelay: '0.3s' }}>
           <MovieList movies={results.movies} />
           <EventList events={results.events} />
         </div>
@@ -128,7 +128,7 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
 
       {/* === AI INSIGHTS === */}
       {insights && insights.length > 0 && (
-        <div className="glass-card border border-phosphor-teal/30 rounded p-4 animate-fade-in">
+        <div className="glass-card border border-phosphor-teal/30 rounded p-4 cascade-in stagger-5">
           <div className="flex items-center gap-2 mb-3">
             <span className="led-text text-phosphor-teal text-xs tracking-widest">💡 AI INSIGHTS</span>
           </div>
@@ -210,7 +210,9 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
       </div>
 
       {/* Data Visualizations */}
-      <ChartInsights results={results} year={year} />
+      <div className="cascade-in stagger-6">
+        <ChartInsights results={results} year={year} />
+      </div>
     </div>
   )
 }

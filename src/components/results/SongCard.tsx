@@ -53,7 +53,7 @@ export function SongList({ songs, title = 'Top Music' }: SongListProps) {
     <div className="space-y-3">
       {/* Section header - vinyl/jukebox style */}
       <div className="flex items-center gap-3 pb-2 border-b border-crt-light/20">
-        <div className="w-8 h-8 vinyl-record flex-shrink-0" />
+        <div className="w-10 h-10 vinyl-record flex-shrink-0 animate-vinyl-spin" style={{ animationDuration: '8s' }} />
         <div>
           <h3 className="font-display text-xl text-aged-cream">
             {title}
@@ -67,7 +67,13 @@ export function SongList({ songs, title = 'Top Music' }: SongListProps) {
       {/* Song list */}
       <div className="space-y-2">
         {songs.slice(0, 5).map((song, index) => (
-          <SongCard key={song.objectID} song={song} rank={index + 1} />
+          <div
+            key={song.objectID}
+            className={`cascade-in ${index === 0 ? 'number-one-song rounded' : ''}`}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <SongCard song={song} rank={index + 1} />
+          </div>
         ))}
       </div>
     </div>

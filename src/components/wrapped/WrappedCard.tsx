@@ -27,12 +27,21 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Main Card */}
-        <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-3xl shadow-2xl p-8 text-white">
+        <div className="retro-wrapped-bg rounded-2xl shadow-2xl p-8 text-aged-cream border border-crt-light/40 overflow-hidden">
+          {/* VHS Label Strip */}
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-crt-light/20">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
+              <span className="led-text text-vhs-red text-xs tracking-widest">PLAYBACK SUMMARY</span>
+            </div>
+            <span className="led-text text-aged-cream/40 text-xs">TIMESLIP v1.0</span>
+          </div>
+
           {/* Close Button */}
           {onClose && (
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
+              className="absolute top-4 right-4 text-aged-cream/50 hover:text-phosphor-teal transition-colors p-2 hover:bg-crt-light/20 rounded-full"
               aria-label="Close"
             >
               <XIcon size={20} />
@@ -46,8 +55,11 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
             transition={{ delay: 0.2 }}
             className="text-center mb-8"
           >
-            <h1 className="text-5xl font-bold mb-2">Your Time Capsule</h1>
-            <p className="text-xl text-white/80">A Journey Through Time</p>
+            <h1 className="font-display text-5xl md:text-6xl mb-3">
+              <span className="title-glow-teal">Your Time</span>{' '}
+              <span className="title-glow-amber">Capsule</span>
+            </h1>
+            <p className="text-lg text-aged-cream/60 italic font-body">A Journey Through Time</p>
           </motion.div>
 
           {/* Stats Grid */}
@@ -56,40 +68,40 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center"
+              className="bg-crt-dark border border-crt-light/40 rounded-lg p-6 text-center"
             >
-              <div className="text-4xl font-bold mb-1">{stats.totalSearches}</div>
-              <div className="text-sm text-white/70">Time Travels</div>
+              <div className="text-4xl font-bold mb-1 led-text text-phosphor-teal">{stats.totalSearches}</div>
+              <div className="text-sm text-aged-cream/50 led-text tracking-wider">Time Travels</div>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center"
+              className="bg-crt-dark border border-crt-light/40 rounded-lg p-6 text-center"
             >
-              <div className="text-4xl font-bold mb-1">{stats.yearsExplored.length}</div>
-              <div className="text-sm text-white/70">Years Explored</div>
+              <div className="text-4xl font-bold mb-1 led-text text-phosphor-teal">{stats.yearsExplored.length}</div>
+              <div className="text-sm text-aged-cream/50 led-text tracking-wider">Years Explored</div>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center"
+              className="bg-crt-dark border border-crt-light/40 rounded-lg p-6 text-center"
             >
-              <div className="text-4xl font-bold mb-1">{stats.discoveries.totalSongs}</div>
-              <div className="text-sm text-white/70">Songs Discovered</div>
+              <div className="text-4xl font-bold mb-1 led-text text-phosphor-teal">{stats.discoveries.totalSongs}</div>
+              <div className="text-sm text-aged-cream/50 led-text tracking-wider">Songs Discovered</div>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center"
+              className="bg-crt-dark border border-crt-light/40 rounded-lg p-6 text-center"
             >
-              <div className="text-4xl font-bold mb-1">{stats.discoveries.totalMovies}</div>
-              <div className="text-sm text-white/70">Movies Found</div>
+              <div className="text-4xl font-bold mb-1 led-text text-phosphor-teal">{stats.discoveries.totalMovies}</div>
+              <div className="text-sm text-aged-cream/50 led-text tracking-wider">Movies Found</div>
             </motion.div>
           </div>
 
@@ -98,13 +110,13 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6"
+            className="bg-crt-dark border border-crt-light/40 rounded-lg p-6 mb-6"
           >
             <div className="text-center">
-              <div className="text-lg text-white/70 mb-2">Your Favorite Era</div>
-              <div className="text-5xl font-bold mb-2">{stats.topDecade}</div>
+              <div className="text-lg text-aged-cream/60 led-text tracking-widest mb-2">Your Favorite Era</div>
+              <div className="text-5xl font-bold mb-2 led-text text-phosphor-amber">{stats.topDecade}</div>
               {stats.discoveries.rarestYear && (
-                <div className="text-sm text-white/60">
+                <div className="text-sm text-aged-cream/40 led-text">
                   Rarest Find: {stats.discoveries.rarestYear}
                 </div>
               )}
@@ -116,11 +128,11 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm rounded-2xl p-8 mb-6 text-center"
+            className="bg-crt-dark border border-phosphor-teal/30 rounded-lg p-8 mb-6 text-center"
           >
             <div className="text-6xl mb-4">{personality.emoji}</div>
-            <h3 className="text-2xl font-bold mb-2">{personality.title}</h3>
-            <p className="text-white/80 leading-relaxed">{personality.description}</p>
+            <h3 className="text-2xl font-bold mb-2 font-display text-phosphor-teal">{personality.title}</h3>
+            <p className="text-aged-cream/70 leading-relaxed font-body italic">{personality.description}</p>
           </motion.div>
 
           {/* Favorite Items */}
@@ -132,18 +144,18 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
               className="space-y-4 mb-6"
             >
               {stats.discoveries.favoriteSong && (
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-                  <div className="text-sm text-white/70 mb-1">Top Song</div>
-                  <div className="font-semibold">{stats.discoveries.favoriteSong.song_title}</div>
-                  <div className="text-sm text-white/60">{stats.discoveries.favoriteSong.artist}</div>
+                <div className="bg-crt-dark border border-crt-light/40 rounded-lg p-4">
+                  <div className="text-sm text-phosphor-amber led-text tracking-widest mb-1">Top Song</div>
+                  <div className="font-display text-lg text-aged-cream">{stats.discoveries.favoriteSong.song_title}</div>
+                  <div className="text-sm text-aged-cream/50 font-body italic">{stats.discoveries.favoriteSong.artist}</div>
                 </div>
               )}
 
               {stats.discoveries.favoriteMovie && (
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-                  <div className="text-sm text-white/70 mb-1">Top Movie</div>
-                  <div className="font-semibold">{stats.discoveries.favoriteMovie.title}</div>
-                  <div className="text-sm text-white/60">
+                <div className="bg-crt-dark border border-crt-light/40 rounded-lg p-4">
+                  <div className="text-sm text-phosphor-amber led-text tracking-widest mb-1">Top Movie</div>
+                  <div className="font-display text-lg text-aged-cream">{stats.discoveries.favoriteMovie.title}</div>
+                  <div className="text-sm text-aged-cream/50 font-body italic">
                     {stats.discoveries.favoriteMovie.year}
                   </div>
                 </div>
@@ -172,7 +184,7 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
                   alert('Copied to clipboard!')
                 }
               }}
-              className="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-xl font-semibold transition-all flex items-center gap-2 hover:scale-105"
+              className="px-6 py-3 bg-crt-dark border border-phosphor-teal/40 rounded-lg led-text tracking-wider transition-all flex items-center gap-2 hover:border-phosphor-teal hover:shadow-glow-teal hover:scale-105 text-phosphor-teal"
             >
               <ShareIcon size={18} />
               Share
@@ -184,7 +196,7 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
                 navigator.clipboard.writeText(text)
                 alert('Stats copied to clipboard!')
               }}
-              className="px-6 py-3 bg-white/20 hover:bg-white/30 rounded-xl font-semibold transition-all flex items-center gap-2 hover:scale-105"
+              className="px-6 py-3 bg-crt-dark border border-phosphor-teal/40 rounded-lg led-text tracking-wider transition-all flex items-center gap-2 hover:border-phosphor-teal hover:shadow-glow-teal hover:scale-105 text-phosphor-teal"
             >
               <CopyIcon size={18} />
               Copy Stats

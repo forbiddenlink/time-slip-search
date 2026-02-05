@@ -93,10 +93,10 @@ export function EventList({ events, title = 'What Happened' }: EventListProps) {
         {sortedEvents.slice(0, 4).map((event, index) => (
           <div
             key={event.objectID}
-            className="transform transition-transform hover:-translate-y-0.5"
+            className="transform transition-transform hover:-translate-y-0.5 cascade-in"
             style={{
+              animationDelay: `${0.4 + index * 0.1}s`,
               marginLeft: `${index * 2}px`,
-              opacity: 1 - index * 0.05,
             }}
           >
             <EventCard event={event} />

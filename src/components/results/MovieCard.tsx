@@ -83,8 +83,10 @@ export function MovieList({ movies, title = 'At the Movies' }: MovieListProps) {
 
       {/* Movie list */}
       <div className="space-y-2">
-        {movies.slice(0, 3).map((movie) => (
-          <MovieCard key={movie.objectID} movie={movie} />
+        {movies.slice(0, 3).map((movie, index) => (
+          <div key={movie.objectID} className="cascade-in" style={{ animationDelay: `${0.2 + index * 0.1}s` }}>
+            <MovieCard movie={movie} />
+          </div>
         ))}
       </div>
     </div>

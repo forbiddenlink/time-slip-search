@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals'
-import { parseDate, DateRange } from '../src/lib/date-parser'
+import { parseDate } from '../src/lib/date-parser'
 
 describe('Date Parser', () => {
   describe('Single date parsing', () => {

@@ -50,10 +50,11 @@ export function PriceCard({ price }: PriceCardProps) {
 
       {/* Price grid - LED display style like old gas station signs */}
       <div className="grid grid-cols-3 gap-3">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <div
             key={item.label}
-            className="bg-crt-black border-2 border-crt-light/40 rounded p-3 text-center hover:border-phosphor-green/50 transition-colors group"
+            className="bg-crt-black border-2 border-crt-light/40 rounded p-3 text-center hover:border-phosphor-green/50 transition-colors group cascade-in"
+            style={{ animationDelay: `${0.3 + index * 0.15}s` }}
           >
             {/* Icon */}
             <div className="text-2xl mb-2 text-phosphor-amber group-hover:animate-pulse">

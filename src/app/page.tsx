@@ -98,6 +98,13 @@ function HomeContent() {
   const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear())
   const [showRewind, setShowRewind] = useState(false)
   const [sessionYears, setSessionYears] = useState<number[]>([])
+  const [isBooted, setIsBooted] = useState(false)
+
+  // CRT boot-up sequence
+  useEffect(() => {
+    const timer = setTimeout(() => setIsBooted(true), 1400)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Update streak on mount
   useEffect(() => {
@@ -381,7 +388,8 @@ function HomeContent() {
   }
 
   return (
-    <main className="min-h-screen bg-crt-black">
+    <main className={`min-h-screen bg-crt-black ${!isBooted ? 'crt-boot' : ''}`}>
+      {!isBooted && <div className="boot-flash" aria-hidden="true" />}
       {/* JSON-LD Structured Data for SEO - static content, safe to use */}
       <script
         type="application/ld+json"
@@ -408,20 +416,20 @@ function HomeContent() {
           </div>
 
           {/* Main title */}
-          <div className="text-center space-y-4">
-            <h1 className="font-display text-5xl md:text-7xl tracking-tight">
-              <span className="text-aged-cream chromatic-hover">Time</span>
-              <span className="text-phosphor-teal glow-text-subtle">Slip</span>
+          <div className="text-center space-y-5">
+            <h1 className="font-display text-6xl md:text-8xl lg:text-9xl tracking-tight leading-none">
+              <span className="title-glow-teal phosphor-breathe inline-block">Time</span>
+              <span className="title-glow-amber inline-block ml-1">Slip</span>
             </h1>
             <div className="flex items-center justify-center gap-4">
-              <div className="h-px flex-1 max-w-[100px] bg-gradient-to-r from-transparent via-crt-light to-transparent" />
-              <p className="led-text text-phosphor-amber text-xl tracking-[0.3em] uppercase">
+              <div className="h-px flex-1 max-w-[120px] bg-gradient-to-r from-transparent via-phosphor-teal/40 to-transparent" />
+              <p className="led-text text-phosphor-amber text-2xl tracking-[0.4em] uppercase">
                 Search
               </p>
-              <div className="h-px flex-1 max-w-[100px] bg-gradient-to-l from-transparent via-crt-light to-transparent" />
+              <div className="h-px flex-1 max-w-[120px] bg-gradient-to-l from-transparent via-phosphor-teal/40 to-transparent" />
             </div>
-            <p className="text-aged-cream/60 text-lg italic font-body">
-              Discover what was playing, showing, and happening on any date
+            <p className="text-aged-cream/50 text-lg italic font-body max-w-md mx-auto">
+              Your cultural time machine — discover what was playing, showing, and happening on any date
             </p>
           </div>
         </header>
@@ -453,22 +461,22 @@ function HomeContent() {
 
         {/* === FEATURE CARDS: Cassette Tape Style === */}
         {messages.length === 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            {featureCardsData.map((feature) => {
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
+            {featureCardsData.map((feature, index) => {
               const IconComponent = feature.IconComponent
               return (
                 <div
                   key={feature.label}
-                  className="vhs-card p-4 group hover:border-crt-light transition-colors cursor-pointer hover:scale-105"
+                  className={`feature-card-enhanced p-5 group cursor-pointer cascade-in stagger-${index + 1}`}
                 >
-                  <div className="relative z-10 pt-12 text-center">
-                    <div className={`mb-3 flex justify-center ${feature.color} glow-text-subtle`}>
-                      <IconComponent size={32} />
+                  <div className="relative z-10 pt-14 text-center">
+                    <div className={`mb-4 flex justify-center ${feature.color} glow-text-subtle`}>
+                      <IconComponent size={36} />
                     </div>
-                    <div className="text-sm font-medium text-aged-cream tracking-wide">
+                    <div className="text-base font-medium text-aged-cream tracking-wide">
                       {feature.label}
                     </div>
-                    <div className="text-xs text-aged-cream/40 mt-1 led-text">
+                    <div className="text-xs text-aged-cream/40 mt-2 led-text tracking-wider">
                       {feature.period}
                     </div>
                   </div>
@@ -479,7 +487,7 @@ function HomeContent() {
         ) : null}
 
         {/* === MAIN CONSOLE: CRT Screen === */}
-        <div className="crt-screen shadow-crt border-4 border-crt-medium relative">
+        <div className="crt-screen-enhanced screen-depth border-4 border-crt-medium relative phosphor-grid">
           {/* VHS Effect Overlay */}
           <VHSEffect isActive={showVHSEffect} intensity="low">
             {/* Particle Effect */}
@@ -501,7 +509,7 @@ function HomeContent() {
                     setWrappedStats(getWrappedStats())
                     setShowWrapped(true)
                   }}
-                  className="px-3 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-xs font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-1.5"
+                  className="px-3 py-2 bg-crt-dark border border-phosphor-teal/40 text-phosphor-teal rounded text-xs led-text tracking-wider hover:border-phosphor-teal hover:shadow-glow-teal hover:scale-105 transition-all flex items-center gap-1.5"
                   title="View Your Time Capsule"
                   aria-label="View Your Time Capsule"
                 >
@@ -512,7 +520,7 @@ function HomeContent() {
                 {/* Achievements Button */}
                 <button
                   onClick={() => setShowAchievements(true)}
-                  className="px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg text-xs font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-1.5"
+                  className="px-3 py-2 bg-crt-dark border border-phosphor-amber/40 text-phosphor-amber rounded text-xs led-text tracking-wider hover:border-phosphor-amber hover:shadow-glow-amber hover:scale-105 transition-all flex items-center gap-1.5"
                   title="View Achievements"
                   aria-label="View Achievements"
                 >
@@ -540,7 +548,7 @@ function HomeContent() {
                   onClick={() => setShowParticles(!showParticles)}
                   className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${
                     showParticles
-                      ? 'bg-purple-600 text-white shadow-lg'
+                      ? 'bg-crt-dark border border-phosphor-teal text-phosphor-teal shadow-glow-teal'
                       : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
                   }`}
                   title="Toggle Era Particles"
@@ -568,17 +576,17 @@ function HomeContent() {
                     <button
                       key={index}
                       onClick={() => handleExampleClick(example.query)}
-                      className="group text-left p-4 bg-crt-dark border border-crt-light/30 rounded hover:border-phosphor-teal/50 transition-all duration-300 hover:shadow-glow-teal"
+                      className={`example-card group text-left p-5 bg-crt-dark border border-crt-light/30 rounded hover:border-phosphor-teal/50 transition-all duration-300 hover:shadow-glow-teal cascade-in stagger-${index + 3}`}
                     >
                       <div className="flex items-start gap-3">
                         <span className="led-text text-phosphor-amber text-lg shrink-0">
                           {String(index + 1).padStart(2, '0')}
                         </span>
                         <div className="flex flex-col">
-                          <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors">
+                          <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors text-base">
                             {example.text}
                           </span>
-                          <span className="text-aged-cream/40 text-xs mt-1 led-text">
+                          <span className="text-aged-cream/40 text-xs mt-1.5 led-text tracking-wider">
                             {example.query}
                           </span>
                         </div>
@@ -587,12 +595,12 @@ function HomeContent() {
                   ))}
                 </div>
 
-                <p className="mt-8 text-sm text-aged-cream/40 led-text tracking-wide">
+                <p className="mt-8 text-sm text-aged-cream/40 led-text tracking-wide cascade-in stagger-7">
                   ALSO TRY: &quot;SUMMER OF 69&quot; &bull; &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot;
                 </p>
 
                 {/* Random Date Quick Action */}
-                <div className="mt-6">
+                <div className="mt-6 cascade-in stagger-8">
                   <button
                     onClick={handleRandom}
                     className="px-6 py-3 bg-crt-dark border border-phosphor-green/30 
@@ -665,7 +673,7 @@ function HomeContent() {
                   onFocus={() => query.length > 0 && setShowAutocomplete(true)}
                   placeholder="Try your birthday, a year, or any date..."
                   aria-label="Enter a date to search, like your birthday or a year"
-                  className="w-full bg-crt-black text-aged-cream placeholder-aged-cream/30 border-2 border-crt-light/40 rounded px-4 py-3 focus:outline-none focus:border-phosphor-teal focus:shadow-glow-teal transition-all led-text text-lg tracking-wide"
+                  className="w-full bg-crt-black text-aged-cream placeholder-aged-cream/30 border-2 border-crt-light/40 rounded px-4 py-3 focus:outline-none input-glow transition-all led-text text-lg tracking-wide"
                   disabled={isLoading}
                 />
                 {isLoading && (
