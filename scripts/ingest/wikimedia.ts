@@ -78,7 +78,10 @@ function getMonthName(month: number): string {
 }
 
 async function fetchOnThisDay(month: number, day: number): Promise<WikimediaResponse | null> {
-  const url = `${WIKIMEDIA_BASE_URL}/all/${month}/${day}`
+  // Format month and day with leading zeros
+  const monthStr = String(month).padStart(2, '0')
+  const dayStr = String(day).padStart(2, '0')
+  const url = `${WIKIMEDIA_BASE_URL}/events/${monthStr}/${dayStr}`
 
   try {
     const response = await fetch(url, {
