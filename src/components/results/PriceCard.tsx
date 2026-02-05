@@ -1,4 +1,5 @@
 import { Price } from '@/lib/algolia'
+import { AnimatedNumber } from '@/components/animations/AnimatedNumber'
 
 interface PriceCardProps {
   price: Price
@@ -9,21 +10,18 @@ export function PriceCard({ price }: PriceCardProps) {
     {
       label: 'GAS',
       value: price.gas_price_gallon,
-      format: (v: number) => v.toFixed(2),
       unit: '/gal',
       icon: '⛽',
     },
     {
       label: 'WAGE',
       value: price.minimum_wage,
-      format: (v: number) => v.toFixed(2),
       unit: '/hr',
       icon: '◐',
     },
     {
       label: 'MOVIE',
       value: price.movie_ticket_price,
-      format: (v: number) => v.toFixed(2),
       unit: '',
       icon: '▶',
     },
@@ -63,14 +61,13 @@ export function PriceCard({ price }: PriceCardProps) {
 
             {/* Price - LED segment display style */}
             <div className="led-display inline-block px-3 py-2 mb-2">
-              <span className="led-text text-phosphor-green text-xl">
-                ${item.format(item.value!)}
-              </span>
-              {item.unit && (
-                <span className="led-text text-phosphor-green/60 text-xs ml-1">
-                  {item.unit}
-                </span>
-              )}
+              <AnimatedNumber
+                value={item.value!}
+                prefix="$"
+                suffix={item.unit}
+                decimals={2}
+                className="led-text text-phosphor-green text-xl"
+              />
             </div>
 
             {/* Label */}
@@ -108,8 +105,8 @@ export function PriceComparison({ oldPrice, currentYear = 2024 }: PriceCompariso
             INFLATION ADJUSTMENT
           </p>
           <p className="text-aged-cream/80 text-sm font-body">
-            Gas at <span className="text-phosphor-amber font-bold">${oldPrice.gas_price_gallon.toFixed(2)}</span> in {oldPrice.year} would be about{' '}
-            <span className="text-phosphor-green font-bold">${adjustedGas.toFixed(2)}</span> today
+            Gas at <AnimatedNumber value={oldPrice.gas_price_gallon} prefix="$" decimals={2} className="text-phosphor-amber font-bold" /> in {oldPrice.year} would be about{' '}
+            <AnimatedNumber value={adjustedGas} prefix="$" decimals={2} className="text-phosphor-green font-bold" /> today
           </p>
         </div>
       </div>

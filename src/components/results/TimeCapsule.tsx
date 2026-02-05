@@ -1,11 +1,14 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SearchResults } from '@/lib/algolia'
 import { FavoriteButton } from '@/components/memory/FavoriteButton'
 import { extractShareData, copyShareLink, shareNative } from '@/lib/share'
 import { createShareableURL } from '@/lib/url-state'
+import { getFamousDate } from '@/lib/famous-dates'
+import { FamousDateBanner } from './FamousDateBanner'
+import { Confetti } from '@/components/animations/Confetti'
 
 // Dynamic imports - these components only render after API response (bundle-dynamic-imports)
 const SongList = dynamic(() => import('./SongCard').then(m => ({ default: m.SongList })))
@@ -19,15 +22,24 @@ interface TimeCapsuleProps {
   results: SearchResults
   dateDisplay: string
   year: number
+  month?: number
+  day?: number
   insights?: string[]
   onCompare?: (year: number) => void
   onRandom?: () => void
   query?: string
 }
 
-export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, onRandom, query = '' }: TimeCapsuleProps) {
+export function TimeCapsule({ results, dateDisplay, year, month, day, insights, onCompare, onRandom, query = '' }: TimeCapsuleProps) {
   const [shareMessage, setShareMessage] = useState('')
-  
+  const [showConfetti, setShowConfetti] = useState(true)
+  const famousDate = (month && day) ? getFamousDate(month, day, year) : null
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowConfetti(false), 3000)
+    return () => clearTimeout(timer)
+  }, [])
+
   const hasData =
     results.songs.length > 0 ||
     results.movies.length > 0 ||
@@ -37,18 +49,18 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
   const handleShare = async () => {
     const shareData = extractShareData(dateDisplay, year, results)
     const shareUrl = createShareableURL(query, { start: 0, end: 0, display: dateDisplay, year })
-    
+
     // Try native share first
     const sharedNatively = await shareNative(shareData, shareUrl)
-    
+
     if (!sharedNatively) {
       // Fallback to clipboard
       const copied = await copyShareLink(shareUrl)
       if (copied) {
-        setShareMessage('✓ Link copied!')
+        setShareMessage('\u2713 Link copied!')
         setTimeout(() => setShareMessage(''), 3000)
       } else {
-        setShareMessage('✗ Failed to copy')
+        setShareMessage('\u2717 Failed to copy')
         setTimeout(() => setShareMessage(''), 3000)
       }
     }
@@ -104,7 +116,13 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
             ))}
           </div>
         </div>
+
+        {/* CRT phosphor confetti celebration */}
+        <Confetti isActive={showConfetti} variant="celebration" />
       </div>
+
+      {/* === FAMOUS DATE EASTER EGG === */}
+      {famousDate && <FamousDateBanner famousDate={famousDate} />}
 
       {/* === CONTENT GRID === */}
       <div className="grid gap-6 md:grid-cols-2">
@@ -130,7 +148,7 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
       {insights && insights.length > 0 && (
         <div className="glass-card border border-phosphor-teal/30 rounded p-4 cascade-in stagger-5">
           <div className="flex items-center gap-2 mb-3">
-            <span className="led-text text-phosphor-teal text-xs tracking-widest">💡 AI INSIGHTS</span>
+            <span className="led-text text-phosphor-teal text-xs tracking-widest">AI INSIGHTS</span>
           </div>
           <div className="space-y-2">
             {insights.map((insight, i) => (
@@ -139,7 +157,7 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
                 className="text-aged-cream/90 text-sm flex items-start gap-2 animate-slide-in-right"
                 style={{ animationDelay: `${i * 100}ms` }}
               >
-                <span className="text-phosphor-teal shrink-0">•</span>
+                <span className="text-phosphor-teal shrink-0">&bull;</span>
                 <span>{insight}</span>
               </div>
             ))}
@@ -149,37 +167,37 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
 
       {/* === QUICK ACTIONS === */}
       <div className="space-y-3">
-        <div className="text-aged-cream/60 text-xs led-text tracking-widest">💡 TRY THESE:</div>
+        <div className="text-aged-cream/60 text-xs led-text tracking-widest">TRY THESE:</div>
         <div className="flex gap-2 flex-wrap">
           {year < 2020 && onCompare && (
             <>
               <button
                 onClick={() => onCompare(year + 10)}
-                className="px-4 py-2 bg-crt-dark border border-phosphor-teal/30 
+                className="px-4 py-2 bg-crt-dark border border-phosphor-teal/30
                          rounded hover:border-phosphor-teal hover:shadow-glow-teal
                          text-aged-cream text-sm transition-all hover-lift led-text"
               >
-                🔄 Compare with {year + 10}
+                Compare with {year + 10}
               </button>
               <button
                 onClick={() => onCompare(year - 10)}
-                className="px-4 py-2 bg-crt-dark border border-phosphor-amber/30 
+                className="px-4 py-2 bg-crt-dark border border-phosphor-amber/30
                          rounded hover:border-phosphor-amber hover:shadow-glow-amber
                          text-aged-cream text-sm transition-all hover-lift led-text"
               >
-                ⏮️ See {year - 10}
+                See {year - 10}
               </button>
             </>
           )}
-          
+
           {onRandom && (
             <button
               onClick={onRandom}
-              className="px-4 py-2 bg-crt-dark border border-phosphor-green/30 
+              className="px-4 py-2 bg-crt-dark border border-phosphor-green/30
                        rounded hover:border-phosphor-green hover:shadow-glow-green
                        text-aged-cream text-sm transition-all hover-lift led-text"
             >
-              🎲 Random Date
+              Random Date
             </button>
           )}
 
@@ -194,11 +212,11 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
           {/* Enhanced Share Button */}
           <button
             onClick={handleShare}
-            className="px-4 py-2 bg-crt-dark border border-vinyl-label/50 
+            className="px-4 py-2 bg-crt-dark border border-vinyl-label/50
                      rounded hover:border-vinyl-label hover:shadow-glow-amber
                      text-aged-cream text-sm transition-all hover-lift led-text relative"
           >
-            📸 Share
+            Share
             {shareMessage && (
               <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
                              bg-crt-dark border border-phosphor-teal px-2 py-1 rounded text-xs">

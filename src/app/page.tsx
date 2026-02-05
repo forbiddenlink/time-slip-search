@@ -17,6 +17,7 @@ import { AchievementsPanel } from '@/components/achievements/AchievementsPanel'
 import { AchievementToast } from '@/components/achievements/AchievementToast'
 import { VHSEffect, VHSRewindEffect } from '@/components/animations/VHSEffect'
 import { ParticleEffect } from '@/components/animations/ParticleEffect'
+import { KeyboardShortcutsModal } from '@/components/KeyboardShortcutsModal'
 import { trackSearch, getWrappedStats, type WrappedStats } from '@/lib/wrapped'
 import { checkAchievements, updateStreak, type Achievement } from '@/lib/achievements'
 import { GiftIcon, TrophyIcon, FilmIcon, SparklesIcon, MusicIcon, DollarIcon, CalendarIcon } from '@/components/icons/Icons'
@@ -27,6 +28,8 @@ interface Message {
   structured?: {
     dateDisplay: string
     year: number
+    month?: number
+    day?: number
     results: SearchResults
     suggestions?: string[]
     insights?: string[]
@@ -99,6 +102,7 @@ function HomeContent() {
   const [showRewind, setShowRewind] = useState(false)
   const [sessionYears, setSessionYears] = useState<number[]>([])
   const [isBooted, setIsBooted] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
 
   // CRT boot-up sequence
   useEffect(() => {
@@ -182,16 +186,7 @@ function HomeContent() {
       // Ctrl/Cmd + / for help
       if ((e.ctrlKey || e.metaKey) && e.key === '/') {
         e.preventDefault()
-        alert('⌨️ Keyboard Shortcuts:\n\n' +
-          '⌘K - Focus search\n' +
-          '⌘T - Toggle timeline\n' +
-          '⌘W - View Time Capsule (Wrapped)\n' +
-          '⌘B - View Achievements (Badges)\n' +
-          '⌘E - Toggle VHS effect\n' +
-          '⌘P - Toggle particles\n' +
-          '⌘/ - Show this help\n' +
-          'Esc - Clear search / Close modals\n' +
-          '↑↓ - Navigate suggestions')
+        setShowShortcuts(true)
       }
     }
     globalThis.addEventListener('keydown', handleKeyDown)
@@ -633,6 +628,8 @@ function HomeContent() {
                                 results={message.structured.results}
                                 dateDisplay={message.structured.dateDisplay}
                                 year={message.structured.year}
+                                month={message.structured.month}
+                                day={message.structured.day}
                                 insights={message.structured.insights}
                                 onCompare={handleCompare}
                                 onRandom={handleRandom}
@@ -753,6 +750,8 @@ function HomeContent() {
       {showRewind && (
         <VHSRewindEffect onComplete={() => setShowRewind(false)} />
       )}
+
+      <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </main>
   )
 }

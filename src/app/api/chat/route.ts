@@ -8,6 +8,8 @@ export interface ChatResponse {
   structured?: {
     dateDisplay: string
     year: number
+    month?: number
+    day?: number
     results: SearchResults
     suggestions?: string[]
     insights?: string[]
@@ -70,12 +72,19 @@ export async function POST(request: NextRequest) {
     // Format the text response
     const response = formatResponse(dateInfo, results)
 
+    // Extract month and day from the start timestamp for famous date matching
+    const startDate = new Date(dateInfo.start * 1000)
+    const month = startDate.getMonth() + 1
+    const day = startDate.getDate()
+
     // Return both text and structured data with rate limit headers
     return NextResponse.json<ChatResponse>({
       response,
       structured: {
         dateDisplay: dateInfo.display,
         year: dateInfo.year,
+        month,
+        day,
         results,
         suggestions,
         insights,
