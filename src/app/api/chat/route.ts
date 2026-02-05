@@ -169,7 +169,13 @@ function formatResponse(
   }
 
   if (parts.length === 1) {
-    return `I found the date ${dateInfo.display}, but I don't have much data for that period yet. Try a date between 1958 and 2020 for the best results!`
+    // Check if date is out of supported range
+    if (dateInfo.year < 1958 || dateInfo.year > 2020) {
+      return `I found the date ${dateInfo.display}, but my data coverage is best between 1958 and 2020. Try a date in that range for better results!`
+    }
+    
+    // Date is in range but no data found
+    return `I found the date ${dateInfo.display}, but I don't have any data indexed for that period yet. The database may need to be populated with historical data. For the best experience, make sure to run the data ingestion scripts (see SETUP.md).`
   }
 
   parts.push(`Want to know what was #1 on someone else's birthday? Just ask!`)

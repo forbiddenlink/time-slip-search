@@ -67,16 +67,24 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
   }
 
   if (!hasData) {
+    const isOutOfRange = year < 1958 || year > 2020
+    
     return (
       <div className="bg-crt-dark border border-crt-light/30 rounded p-6 text-center">
         <div className="led-text text-vhs-red text-sm tracking-widest mb-3">
           NO SIGNAL
         </div>
         <p className="text-aged-cream/80">
-          I don&apos;t have much data for {dateDisplay} yet.
+          {isOutOfRange 
+            ? `${dateDisplay} is outside my coverage period.`
+            : `I don&apos;t have data indexed for ${dateDisplay} yet.`
+          }
         </p>
         <p className="text-sm text-aged-cream/40 mt-2 led-text">
-          TRY A DATE BETWEEN 1958 AND 2020
+          {isOutOfRange 
+            ? 'TRY A DATE BETWEEN 1958 AND 2020'
+            : 'DATABASE MAY NEED POPULATION - SEE SETUP.MD'
+          }
         </p>
       </div>
     )

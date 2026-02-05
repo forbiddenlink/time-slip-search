@@ -114,9 +114,12 @@ export function parseDate(input: string): DateRange | null {
     }
 
     // Specific date: expand to +/- 3 days for better results
+    // IMPORTANT: Set to start of day (midnight) to avoid timezone issues
     const start = new Date(startDate)
+    start.setHours(0, 0, 0, 0)
     start.setDate(start.getDate() - 3)
     const end = new Date(startDate)
+    end.setHours(23, 59, 59, 999)
     end.setDate(end.getDate() + 3)
 
     return {
