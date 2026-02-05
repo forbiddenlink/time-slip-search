@@ -37,9 +37,9 @@ interface Message {
 // Copy optimized for emotional connection and specificity
 const exampleQueries = [
   { text: "What was #1 the day I was born?", query: "March 15, 1987" },
-  { text: "Take me back to Summer of '69", query: "Summer of 69" },
-  { text: "What did things cost at Christmas?", query: "December 1985" },
-  { text: "The day the Berlin Wall fell", query: "November 9, 1989" },
+  { text: "Take me back to the Summer of '69", query: "Summer of 69" },
+  { text: "How much did a gallon of gas cost?", query: "December 1985" },
+  { text: "The night the Berlin Wall fell", query: "November 9, 1989" },
 ] as const
 
 // Feature cards with professional components
@@ -55,7 +55,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'TimeSlipSearch',
-  description: 'Explore any moment in history through conversation. Discover what songs, movies, prices, and events defined any date.',
+  description: 'Type any date from 1958 to 2020 and instantly see the #1 song, the movies in theaters, what things cost, and the events that shaped the world.',
   url: 'https://timeslipsearch.vercel.app',
   applicationCategory: 'EntertainmentApplication',
   operatingSystem: 'All',
@@ -428,8 +428,8 @@ function HomeContent() {
               </p>
               <div className="h-px flex-1 max-w-[120px] bg-gradient-to-l from-transparent via-phosphor-teal/40 to-transparent" />
             </div>
-            <p className="text-aged-cream/50 text-lg italic font-body max-w-md mx-auto">
-              Your cultural time machine — discover what was playing, showing, and happening on any date
+            <p className="text-aged-cream/70 text-lg italic font-body max-w-md mx-auto">
+              Your cultural time machine — see the #1 song, the movies, the prices, and the headlines from any date
             </p>
           </div>
         </header>
@@ -511,7 +511,7 @@ function HomeContent() {
                   }}
                   className="px-3 py-2 bg-crt-dark border border-phosphor-teal/40 text-phosphor-teal rounded text-xs led-text tracking-wider hover:border-phosphor-teal hover:shadow-glow-teal hover:scale-105 transition-all flex items-center gap-1.5"
                   title="View Your Time Capsule"
-                  aria-label="View Your Time Capsule"
+                  aria-label="Wrapped"
                 >
                   <GiftIcon size={16} />
                   <span>Wrapped</span>
@@ -522,7 +522,7 @@ function HomeContent() {
                   onClick={() => setShowAchievements(true)}
                   className="px-3 py-2 bg-crt-dark border border-phosphor-amber/40 text-phosphor-amber rounded text-xs led-text tracking-wider hover:border-phosphor-amber hover:shadow-glow-amber hover:scale-105 transition-all flex items-center gap-1.5"
                   title="View Achievements"
-                  aria-label="View Achievements"
+                  aria-label="Badges"
                 >
                   <TrophyIcon size={16} />
                   <span>Badges</span>
@@ -560,14 +560,14 @@ function HomeContent() {
             </div>
 
           {/* Messages Area */}
-          <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">\n
+          <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">
             {messages.length === 0 ? (
               <div className="text-center">
                 <p className="text-aged-cream/80 mb-2 text-xl font-body italic">
-                  What was the world like on your birthday?
+                  What was the world like the day you were born?
                 </p>
                 <p className="text-aged-cream/50 mb-8 text-sm font-body">
-                  Enter any date from 1958 to 2020
+                  Type any date, year, or era from 1958 to 2020
                 </p>
 
                 {/* Example queries as tape labels */}
@@ -596,7 +596,7 @@ function HomeContent() {
                 </div>
 
                 <p className="mt-8 text-sm text-aged-cream/40 led-text tracking-wide cascade-in stagger-7">
-                  ALSO TRY: &quot;SUMMER OF 69&quot; &bull; &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot;
+                  ALSO TRY: &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot; &bull; &quot;MY 21ST BIRTHDAY&quot;
                 </p>
 
                 {/* Random Date Quick Action */}
@@ -723,12 +723,12 @@ function HomeContent() {
         <footer className="text-center mt-10 space-y-3">
           <div className="flex items-center justify-center gap-4">
             <div className="h-px w-16 bg-crt-light/30" />
-            <p className="led-text text-aged-cream/50 text-sm tracking-widest">
+            <p className="led-text text-aged-cream/70 text-sm tracking-widest">
               POWERED BY ALGOLIA
             </p>
             <div className="h-px w-16 bg-crt-light/30" />
           </div>
-          <p className="text-aged-cream/30 text-xs led-text tracking-wider">
+          <p className="text-aged-cream/50 text-xs led-text tracking-wider">
             ALGOLIA AGENT STUDIO CHALLENGE 2026
           </p>
         </footer>

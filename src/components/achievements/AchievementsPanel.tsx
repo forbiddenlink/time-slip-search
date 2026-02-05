@@ -47,55 +47,69 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
-            className="relative max-w-6xl w-full max-h-[90vh] overflow-hidden bg-gray-900 rounded-3xl shadow-2xl"
+            className="relative max-w-6xl w-full max-h-[90vh] overflow-hidden bg-crt-black rounded-2xl shadow-crt border border-crt-light/30"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+            <div className="bg-crt-dark border-b border-crt-light/20 p-6">
+              {/* VHS Label Strip */}
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-crt-light/10">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
+                  <span className="led-text text-vhs-red text-xs tracking-widest">REC ACHIEVEMENTS</span>
+                </div>
+                <span className="led-text text-aged-cream/40 text-xs">TIMESLIP v1.0</span>
+              </div>
+
               <button
+                type="button"
                 onClick={onClose}
-                className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
+                className="absolute top-4 right-4 text-aged-cream/50 hover:text-phosphor-teal transition-colors p-2 hover:bg-crt-light/20 rounded-full"
                 aria-label="Close"
               >
                 <XIcon size={20} />
               </button>
 
-              <h2 className="text-3xl font-bold text-white mb-4">Achievements</h2>
+              <h2 className="font-display text-3xl mb-4 cascade-in">
+                <span className="title-glow-teal">Achieve</span>
+                <span className="title-glow-amber">ments</span>
+              </h2>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-white">
+              <div className="grid grid-cols-3 gap-4 cascade-in stagger-2">
+                <div className="bg-crt-dark border border-crt-light/40 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold led-text text-phosphor-teal">
                     {achievements.unlockedCount}/{achievements.achievements.length}
                   </div>
-                  <div className="text-sm text-white/70">Unlocked</div>
+                  <div className="text-sm text-aged-cream/50 led-text tracking-wider">Unlocked</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-amber-400">
+                <div className="bg-crt-dark border border-crt-light/40 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold led-text text-phosphor-amber">
                     {achievements.totalPoints}
                   </div>
-                  <div className="text-sm text-white/70">Total Points</div>
+                  <div className="text-sm text-aged-cream/50 led-text tracking-wider">Total Points</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-orange-400">
-                    {achievements.streak.current}🔥
+                <div className="bg-crt-dark border border-crt-light/40 rounded-lg p-3 text-center">
+                  <div className="text-2xl font-bold led-text text-vhs-red">
+                    {achievements.streak.current}
                   </div>
-                  <div className="text-sm text-white/70">Day Streak</div>
+                  <div className="text-sm text-aged-cream/50 led-text tracking-wider">Day Streak</div>
                 </div>
               </div>
 
               {/* Filters */}
-              <div className="flex gap-2 mt-4">
+              <div className="flex gap-2 mt-4 cascade-in stagger-3">
                 {(['all', 'unlocked', 'locked'] as const).map((filterOption) => (
                   <button
+                    type="button"
                     key={filterOption}
                     onClick={() => setFilter(filterOption)}
                     className={`
-                      px-4 py-2 rounded-lg text-sm font-semibold capitalize transition-all
+                      px-4 py-2 rounded-lg text-sm font-semibold capitalize transition-all led-text tracking-wider
                       ${
                         filter === filterOption
-                          ? 'bg-white text-indigo-600'
-                          : 'bg-white/10 text-white hover:bg-white/20'
+                          ? 'bg-phosphor-teal text-crt-black shadow-glow-teal'
+                          : 'bg-crt-dark border border-crt-light/30 text-aged-cream/60 hover:border-phosphor-teal/40 hover:text-phosphor-teal'
                       }
                     `}
                   >
@@ -106,8 +120,8 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
             </div>
 
             {/* Achievement Grid */}
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-280px)]">
-              {categories.map((category) => {
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-280px)] retro-scroll">
+              {categories.map((category, categoryIndex) => {
                 const categoryAchievements = filteredAchievements.filter(
                   (a) => a.category === category
                 )
@@ -115,9 +129,9 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
                 if (categoryAchievements.length === 0) return null
 
                 return (
-                  <div key={category} className="mb-8">
-                    <h3 className="text-xl font-bold text-white mb-4 capitalize flex items-center gap-2">
-                      <span className="bg-gradient-to-r from-indigo-500 to-purple-500 w-1 h-6 rounded-full" />
+                  <div key={category} className={`mb-8 cascade-in stagger-${Math.min(categoryIndex + 4, 8)}`}>
+                    <h3 className="text-xl font-display text-aged-cream mb-4 capitalize flex items-center gap-2">
+                      <span className="w-1 h-6 rounded-full bg-phosphor-teal shadow-glow-teal" />
                       {category}
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -135,8 +149,8 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
 
               {filteredAchievements.length === 0 && (
                 <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🔒</div>
-                  <p className="text-gray-400">
+                  <div className="text-6xl mb-4">&#x1F512;</div>
+                  <p className="text-aged-cream/40 led-text tracking-wider">
                     No {filter === 'all' ? '' : filter} achievements yet
                   </p>
                 </div>

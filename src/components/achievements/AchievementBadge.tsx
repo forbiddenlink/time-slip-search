@@ -43,11 +43,11 @@ export function AchievementBadge({ achievement, size = 'medium' }: AchievementBa
       {/* Badge Container */}
       <div
         className={`
-          relative h-full rounded-2xl p-3 flex flex-col items-center justify-between
+          relative h-full rounded-lg p-3 flex flex-col items-center justify-between
           ${
             achievement.unlocked
-              ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-2 border-amber-500/50'
-              : 'bg-gray-900/50 border-2 border-gray-700'
+              ? 'bg-crt-dark border border-phosphor-teal/40 shadow-glow-teal'
+              : 'bg-crt-dark/50 border border-crt-light/20'
           }
           transition-all duration-300
         `}
@@ -55,7 +55,7 @@ export function AchievementBadge({ achievement, size = 'medium' }: AchievementBa
         {/* Icon */}
         <div
           className={`
-            ${sizeClasses.icon} 
+            ${sizeClasses.icon}
             ${achievement.unlocked ? 'opacity-100' : 'opacity-30 grayscale'}
             transition-all duration-300
           `}
@@ -67,8 +67,8 @@ export function AchievementBadge({ achievement, size = 'medium' }: AchievementBa
         <div className="text-center">
           <div
             className={`
-              ${sizeClasses.title} font-semibold line-clamp-2
-              ${achievement.unlocked ? 'text-white' : 'text-gray-500'}
+              ${sizeClasses.title} font-semibold line-clamp-2 led-text
+              ${achievement.unlocked ? 'text-aged-cream' : 'text-aged-cream/30'}
             `}
           >
             {achievement.title}
@@ -77,9 +77,9 @@ export function AchievementBadge({ achievement, size = 'medium' }: AchievementBa
 
         {/* Progress Bar (for locked achievements) */}
         {!achievement.unlocked && (
-          <div className={`w-full bg-gray-800 rounded-full ${sizeClasses.progress} mt-2`}>
+          <div className={`w-full bg-crt-medium rounded-full ${sizeClasses.progress} mt-2`}>
             <motion.div
-              className="bg-blue-500 h-full rounded-full"
+              className="bg-phosphor-teal h-full rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(progressPercent, 100)}%` }}
               transition={{ duration: 0.5 }}
@@ -89,34 +89,34 @@ export function AchievementBadge({ achievement, size = 'medium' }: AchievementBa
 
         {/* Locked/Unlocked Indicator */}
         {achievement.unlocked ? (
-          <div className="absolute -top-2 -right-2 bg-amber-500 rounded-full p-1 shadow-lg">
-            <CheckCircleIcon size={16} className="text-white" />
+          <div className="absolute -top-2 -right-2 bg-phosphor-amber rounded-full p-1 shadow-glow-amber">
+            <CheckCircleIcon size={16} className="text-crt-black" />
           </div>
         ) : (
-          <div className="absolute -top-2 -right-2 bg-gray-700 rounded-full p-1">
-            <LockIcon size={16} className="text-gray-400" />
+          <div className="absolute -top-2 -right-2 bg-crt-medium rounded-full p-1 border border-crt-light/30">
+            <LockIcon size={16} className="text-aged-cream/40" />
           </div>
         )}
       </div>
 
       {/* Tooltip */}
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-        <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-xl max-w-xs whitespace-normal">
-          <div className="text-sm font-semibold text-white mb-1">{achievement.title}</div>
-          <div className="text-xs text-gray-300 mb-2">{achievement.description}</div>
+        <div className="bg-crt-black border border-crt-light/40 rounded-lg p-3 shadow-crt max-w-xs whitespace-normal">
+          <div className="text-sm font-semibold text-aged-cream mb-1">{achievement.title}</div>
+          <div className="text-xs text-aged-cream/60 mb-2">{achievement.description}</div>
           <div className="flex items-center justify-between text-xs">
-            <span className={`font-semibold ${getRarityColor(achievement.rarity)}`}>
+            <span className={`font-semibold led-text ${getRarityColor(achievement.rarity)}`}>
               {achievement.rarity.toUpperCase()}
             </span>
-            <span className="text-amber-400">{achievement.points} pts</span>
+            <span className="text-phosphor-amber led-text">{achievement.points} pts</span>
           </div>
           {!achievement.unlocked && (
-            <div className="mt-2 text-xs text-gray-400">
+            <div className="mt-2 text-xs text-aged-cream/40 led-text">
               Progress: {achievement.progress}/{achievement.requirement}
             </div>
           )}
           {achievement.unlockedAt && (
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs text-aged-cream/30 led-text">
               Unlocked: {new Date(achievement.unlockedAt).toLocaleDateString()}
             </div>
           )}
