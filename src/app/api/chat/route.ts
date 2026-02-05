@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { parseDate } from '@/lib/date-parser'
+import { parseDate, DateRange } from '@/lib/date-parser'
 import { searchAllIndices, SearchResults, AdvancedSearchOptions } from '@/lib/algolia'
+import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
 
 export interface ChatResponse {
   response: string
@@ -17,6 +18,24 @@ export interface ChatResponse {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const clientId = getClientIdentifier(request)
+    const rateLimit = checkRateLimit(clientId, 30, 60 * 1000) // 30 req/min
+    
+    if (!rateLimit.allowed) {
+      return NextResponse.json<ChatResponse>({
+        response: '',
+        error: 'Too many requests. Please try again in a minute.'
+      }, { 
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': '30',
+          'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+          'X-RateLimit-Reset': new Date(rateLimit.resetAt).toISOString(),
+        }
+      })
+    }
+
     const { message, filters } = await request.json()
 
     if (!message) {
@@ -51,7 +70,7 @@ export async function POST(request: NextRequest) {
     // Format the text response
     const response = formatResponse(dateInfo, results)
 
-    // Return both text and structured data
+    // Return both text and structured data with rate limit headers
     return NextResponse.json<ChatResponse>({
       response,
       structured: {
@@ -61,6 +80,12 @@ export async function POST(request: NextRequest) {
         suggestions,
         insights,
       },
+    }, {
+      headers: {
+        'X-RateLimit-Limit': '30',
+        'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+        'X-RateLimit-Reset': new Date(rateLimit.resetAt).toISOString(),
+      }
     })
   } catch (error) {
     console.error('Chat API error:', error)
@@ -110,17 +135,19 @@ function formatResponse(
   // Prices
   if (results.prices.length > 0) {
     const price = results.prices[0]
-    parts.push('**Price Check:**')
-    if (price.gas_price_gallon) {
-      parts.push(`- Gas: $${price.gas_price_gallon.toFixed(2)}/gallon`)
+    if (price) {
+      parts.push('**Price Check:**')
+      if (price.gas_price_gallon) {
+        parts.push(`- Gas: $${price.gas_price_gallon.toFixed(2)}/gallon`)
+      }
+      if (price.minimum_wage) {
+        parts.push(`- Minimum wage: $${price.minimum_wage.toFixed(2)}/hour`)
+      }
+      if (price.movie_ticket_price) {
+        parts.push(`- Movie ticket: $${price.movie_ticket_price.toFixed(2)}`)
+      }
+      parts.push('')
     }
-    if (price.minimum_wage) {
-      parts.push(`- Minimum wage: $${price.minimum_wage.toFixed(2)}/hour`)
-    }
-    if (price.movie_ticket_price) {
-      parts.push(`- Movie ticket: $${price.movie_ticket_price.toFixed(2)}`)
-    }
-    parts.push('')
   }
 
   // Events
@@ -142,7 +169,7 @@ function formatResponse(
 }
 
 function generateSuggestions(
-  dateInfo: { display: string; year: number; start: Date; end: Date },
+  dateInfo: DateRange,
   results: SearchResults
 ): string[] {
   const suggestions: string[] = []
@@ -163,7 +190,7 @@ function generateSuggestions(
   if (results.songs.length > 0) {
     suggestions.push(`Top songs of ${dateInfo.year}`)
     const topSong = results.songs[0]
-    if (topSong.artist) {
+    if (topSong && topSong.artist) {
       suggestions.push(`More by ${topSong.artist}`)
     }
   }
@@ -175,7 +202,7 @@ function generateSuggestions(
 }
 
 function generateInsights(
-  dateInfo: { display: string; year: number },
+  dateInfo: DateRange,
   results: SearchResults
 ): string[] {
   const insights: string[] = []
@@ -199,7 +226,7 @@ function generateInsights(
   // Music insights
   if (results.songs.length > 0) {
     const topSong = results.songs[0]
-    if (topSong.weeks_on_chart && topSong.weeks_on_chart > 15) {
+    if (topSong && topSong.weeks_on_chart && topSong.weeks_on_chart > 15) {
       insights.push(`💿 #1 song stayed on charts for ${topSong.weeks_on_chart} weeks!`)
     }
     
@@ -213,12 +240,12 @@ function generateInsights(
   // Price insights
   if (results.prices.length > 0) {
     const price = results.prices[0]
-    if (price.gas_price_gallon && price.gas_price_gallon < 2) {
+    if (price && price.gas_price_gallon && price.gas_price_gallon < 2) {
       const gasNow = 3.5 // approximate current price
       const increase = Math.round(((gasNow - price.gas_price_gallon) / price.gas_price_gallon) * 100)
       insights.push(`⛽ Gas has increased ${increase}% since then`)
     }
-    if (price.minimum_wage && price.minimum_wage < 7) {
+    if (price && price.minimum_wage && price.minimum_wage < 7) {
       insights.push(`💵 Minimum wage was just $${price.minimum_wage.toFixed(2)}/hour`)
     }
   }

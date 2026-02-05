@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { SearchResults } from '@/lib/algolia'
 import { TimeCapsule } from '@/components/results/TimeCapsule'
 import { MessageSkeleton } from '@/components/chat/LoadingSkeleton'
@@ -8,6 +9,17 @@ import { AgentMemoryPanel } from '@/components/memory/AgentMemoryPanel'
 import { SearchAutocomplete } from '@/components/search/SearchAutocomplete'
 import { VoiceInput } from '@/components/input/VoiceInput'
 import { SearchHistory } from '@/lib/agent-memory'
+import { Timeline } from '@/components/Timeline'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { encodeSearchToURL, decodeURLToSearch } from '@/lib/url-state'
+import { WrappedCard } from '@/components/wrapped/WrappedCard'
+import { AchievementsPanel } from '@/components/achievements/AchievementsPanel'
+import { AchievementToast } from '@/components/achievements/AchievementToast'
+import { VHSEffect, VHSRewindEffect } from '@/components/animations/VHSEffect'
+import { ParticleEffect } from '@/components/animations/ParticleEffect'
+import { trackSearch, getWrappedStats, type WrappedStats } from '@/lib/wrapped'
+import { checkAchievements, updateStreak, type Achievement } from '@/lib/achievements'
+import { GiftIcon, TrophyIcon, FilmIcon, SparklesIcon, MusicIcon, DollarIcon, CalendarIcon } from '@/components/icons/Icons'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -30,11 +42,12 @@ const exampleQueries = [
   { text: "The day the Berlin Wall fell", query: "November 9, 1989" },
 ] as const
 
-const featureCards = [
-  { icon: '\u266B', label: '#1 Songs', period: '350K+ charts', color: 'text-vinyl-label' },
-  { icon: '\u25B6', label: 'Movies', period: '50K+ films', color: 'text-phosphor-amber' },
-  { icon: '$', label: 'Prices', period: 'Real costs', color: 'text-phosphor-green' },
-  { icon: '\u25C6', label: 'Events', period: '20K+ moments', color: 'text-phosphor-teal' },
+// Feature cards with professional components
+const featureCardsData = [
+  { IconComponent: MusicIcon, label: '#1 Songs', period: '350K+ charts', color: 'text-vinyl-label' },
+  { IconComponent: FilmIcon, label: 'Movies', period: '50K+ films', color: 'text-phosphor-amber' },
+  { IconComponent: DollarIcon, label: 'Prices', period: 'Real costs', color: 'text-phosphor-green' },
+  { IconComponent: CalendarIcon, label: 'Events', period: '20K+ moments', color: 'text-phosphor-teal' },
 ] as const
 
 // JSON-LD structured data for SEO
@@ -65,12 +78,44 @@ const jsonLd = {
   },
 }
 
-export default function Home() {
+function HomeContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [query, setQuery] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentTime, setCurrentTime] = useState('--:--')
   const [showAutocomplete, setShowAutocomplete] = useState(false)
+  const [showTimeline, setShowTimeline] = useState(false)
+  
+  // New state for viral features
+  const [showWrapped, setShowWrapped] = useState(false)
+  const [wrappedStats, setWrappedStats] = useState<WrappedStats | null>(null)
+  const [showAchievements, setShowAchievements] = useState(false)
+  const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null)
+  const [showVHSEffect, setShowVHSEffect] = useState(false)
+  const [showParticles, setShowParticles] = useState(true)
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear())
+  const [showRewind, setShowRewind] = useState(false)
+  const [sessionYears, setSessionYears] = useState<number[]>([])
+
+  // Update streak on mount
+  useEffect(() => {
+    updateStreak()
+  }, [])
+
+  // Load search from URL on mount
+  useEffect(() => {
+    const urlData = decodeURLToSearch(searchParams)
+    if (urlData.query && !isLoading) {
+      setQuery(urlData.query)
+      // Auto-execute search from URL
+      setTimeout(() => {
+        const form = document.querySelector('form')
+        if (form) form.requestSubmit()
+      }, 100)
+    }
+  }, []) // Run once on mount
 
   // Update clock client-side only to avoid hydration mismatch
   useEffect(() => {
@@ -90,14 +135,61 @@ export default function Home() {
         e.preventDefault()
         document.querySelector<HTMLInputElement>('input[type="text"]')?.focus()
       }
-      // Esc to clear input
-      if (e.key === 'Escape' && !isLoading) {
-        setQuery('')
+      // Esc to clear input or close modals
+      if (e.key === 'Escape') {
+        if (showWrapped) {
+          setShowWrapped(false)
+        } else if (showAchievements) {
+          setShowAchievements(false)
+        } else if (!isLoading) {
+          setQuery('')
+          setShowAutocomplete(false)
+        }
+      }
+      // Ctrl/Cmd + T for timeline
+      if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+        e.preventDefault()
+        setShowTimeline(prev => !prev)
+      }
+      // Ctrl/Cmd + W for Wrapped/Time Capsule
+      if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+        e.preventDefault()
+        setWrappedStats(getWrappedStats())
+        setShowWrapped(true)
+      }
+      // Ctrl/Cmd + B for Badges/Achievements
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault()
+        setShowAchievements(true)
+      }
+      // Ctrl/Cmd + E for VHS Effect
+      if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault()
+        setShowVHSEffect(prev => !prev)
+      }
+      // Ctrl/Cmd + P for Particles
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault()
+        setShowParticles(prev => !prev)
+      }
+      // Ctrl/Cmd + / for help
+      if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault()
+        alert('⌨️ Keyboard Shortcuts:\n\n' +
+          '⌘K - Focus search\n' +
+          '⌘T - Toggle timeline\n' +
+          '⌘W - View Time Capsule (Wrapped)\n' +
+          '⌘B - View Achievements (Badges)\n' +
+          '⌘E - Toggle VHS effect\n' +
+          '⌘P - Toggle particles\n' +
+          '⌘/ - Show this help\n' +
+          'Esc - Clear search / Close modals\n' +
+          '↑↓ - Navigate suggestions')
       }
     }
     globalThis.addEventListener('keydown', handleKeyDown)
     return () => globalThis.removeEventListener('keydown', handleKeyDown)
-  }, [isLoading])
+  }, [isLoading, showWrapped, showAchievements])
 
   const handleQueryChange = (value: string) => {
     setQuery(value)
@@ -143,8 +235,34 @@ export default function Home() {
 
       const data = await response.json()
       
-      // Track search in agent memory
+      // Track search in wrapped stats and check achievements
       if (data.structured) {
+        const year = data.structured.year
+        setCurrentYear(year)
+        setSessionYears(prev => [...prev, year])
+        
+        // Track in wrapped system
+        trackSearch(userMessage, year, data.structured.results)
+        
+        // Get all years explored for achievement checking
+        const wrappedData = getWrappedStats()
+        
+        // Check for new achievements
+        const newAchievements = checkAchievements({
+          yearsExplored: wrappedData.yearsExplored,
+          totalSongs: wrappedData.discoveries.totalSongs,
+          totalMovies: wrappedData.discoveries.totalMovies,
+          totalPrices: wrappedData.discoveries.totalPrices,
+          currentYear: year,
+          sessionYears: sessionYears,
+        })
+        
+        // Show achievement toast if any unlocked
+        if (newAchievements.length > 0) {
+          setCurrentAchievement(newAchievements[0] ?? null)
+        }
+        
+        // Track search in agent memory
         SearchHistory.add({
           query: userMessage,
           dateDisplay: data.structured.dateDisplay,
@@ -152,11 +270,23 @@ export default function Home() {
           resultCount: (
             data.structured.results.songs.length +
             data.structured.results.movies.length +
+            data.structured.results.prices.length +
             data.structured.results.events.length
           ),
         })
       }
       
+      // Track search in agent memory
+      if (data.structured) {
+        const urlParams = encodeSearchToURL(userMessage, {
+          start: 0,
+          end: 0,
+          display: data.structured.dateDisplay,
+          year: data.structured.year,
+        })
+        router.push(`/${urlParams}`, { scroll: false })
+      }
+
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: data.response,
@@ -301,47 +431,125 @@ export default function Home() {
           <AgentMemoryPanel onSelectSearch={handleMemorySelect} />
         )}
 
+        {/* === TIMELINE EXPLORER === */}
+        {showTimeline && (
+          <div className="mb-10 animate-fade-in">
+            <ErrorBoundary>
+              <Timeline
+                currentYear={messages.length > 0 && messages[messages.length - 1]?.structured?.year
+                  ? messages[messages.length - 1]!.structured!.year
+                  : new Date().getFullYear()}
+                onYearSelect={(year) => {
+                  setQuery(`January ${year}`)
+                  setTimeout(() => {
+                    const form = document.querySelector('form')
+                    if (form) form.requestSubmit()
+                  }, 100)
+                }}
+              />
+            </ErrorBoundary>
+          </div>
+        )}
+
         {/* === FEATURE CARDS: Cassette Tape Style === */}
         {messages.length === 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            {featureCards.map((feature) => (
-              <div
-                key={feature.label}
-                className="vhs-card p-4 group hover:border-crt-light transition-colors"
-              >
-                <div className="relative z-10 pt-12 text-center">
-                  <div className={`text-3xl mb-2 ${feature.color} glow-text-subtle font-mono`}>
-                    {feature.icon}
-                  </div>
-                  <div className="text-sm font-medium text-aged-cream tracking-wide">
-                    {feature.label}
-                  </div>
-                  <div className="text-xs text-aged-cream/40 mt-1 led-text">
-                    {feature.period}
+            {featureCardsData.map((feature) => {
+              const IconComponent = feature.IconComponent
+              return (
+                <div
+                  key={feature.label}
+                  className="vhs-card p-4 group hover:border-crt-light transition-colors cursor-pointer hover:scale-105"
+                >
+                  <div className="relative z-10 pt-12 text-center">
+                    <div className={`mb-3 flex justify-center ${feature.color} glow-text-subtle`}>
+                      <IconComponent size={32} />
+                    </div>
+                    <div className="text-sm font-medium text-aged-cream tracking-wide">
+                      {feature.label}
+                    </div>
+                    <div className="text-xs text-aged-cream/40 mt-1 led-text">
+                      {feature.period}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         ) : null}
 
         {/* === MAIN CONSOLE: CRT Screen === */}
-        <div className="crt-screen shadow-crt border-4 border-crt-medium">
-          {/* Screen bezel top */}
-          <div className="bg-crt-dark px-6 py-3 border-b border-crt-light/20 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="led-text text-phosphor-teal text-sm">CH</span>
-              <span className="led-text text-phosphor-amber">03</span>
+        <div className="crt-screen shadow-crt border-4 border-crt-medium relative">
+          {/* VHS Effect Overlay */}
+          <VHSEffect isActive={showVHSEffect} intensity="low">
+            {/* Particle Effect */}
+            <ParticleEffect year={currentYear} isActive={showParticles && messages.length > 0} />
+            
+            {/* Screen bezel top */}
+            <div className="bg-crt-dark px-6 py-3 border-b border-crt-light/20 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="led-text text-phosphor-teal text-sm">CH</span>
+                <span className="led-text text-phosphor-amber">03</span>
+              </div>
+              <div className="text-aged-cream/40 text-xs tracking-widest led-text">
+                TIMESLIP SEARCH v1.0
+              </div>
+              <div className="flex gap-2">
+                {/* Time Capsule Button */}
+                <button
+                  onClick={() => {
+                    setWrappedStats(getWrappedStats())
+                    setShowWrapped(true)
+                  }}
+                  className="px-3 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-xs font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-1.5"
+                  title="View Your Time Capsule"
+                  aria-label="View Your Time Capsule"
+                >
+                  <GiftIcon size={16} />
+                  <span>Wrapped</span>
+                </button>
+                
+                {/* Achievements Button */}
+                <button
+                  onClick={() => setShowAchievements(true)}
+                  className="px-3 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg text-xs font-semibold hover:shadow-lg hover:scale-105 transition-all flex items-center gap-1.5"
+                  title="View Achievements"
+                  aria-label="View Achievements"
+                >
+                  <TrophyIcon size={16} />
+                  <span>Badges</span>
+                </button>
+                
+                {/* VHS Effect Toggle */}
+                <button
+                  onClick={() => setShowVHSEffect(!showVHSEffect)}
+                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${
+                    showVHSEffect
+                      ? 'bg-vhs-red text-white shadow-lg'
+                      : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
+                  }`}
+                  title="Toggle VHS Effect"
+                  aria-label="Toggle VHS Effect"
+                >
+                  <FilmIcon size={16} />
+                  <span className="hidden sm:inline">VHS</span>
+                </button>
+                
+                {/* Particles Toggle */}
+                <button
+                  onClick={() => setShowParticles(!showParticles)}
+                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${
+                    showParticles
+                      ? 'bg-purple-600 text-white shadow-lg'
+                      : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
+                  }`}
+                  title="Toggle Era Particles"
+                  aria-label="Toggle Era Particles"
+                >
+                  <SparklesIcon size={16} />
+                </button>
+              </div>
             </div>
-            <div className="text-aged-cream/40 text-xs tracking-widest led-text">
-              TIMESLIP SEARCH v1.0
-            </div>
-            <div className="flex gap-1">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-2 h-4 bg-crt-light/30 rounded-sm" />
-              ))}
-            </div>
-          </div>
 
           {/* Messages Area */}
           <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">\n
@@ -412,15 +620,17 @@ export default function Home() {
                       <div className="flex justify-start">
                         <div className="max-w-full w-full">
                           {message.structured ? (
-                            <TimeCapsule
-                              results={message.structured.results}
-                              dateDisplay={message.structured.dateDisplay}
-                              year={message.structured.year}
-                              insights={message.structured.insights}
-                              onCompare={handleCompare}
-                              onRandom={handleRandom}
-                              query={message.content}
-                            />
+                            <ErrorBoundary>
+                              <TimeCapsule
+                                results={message.structured.results}
+                                dateDisplay={message.structured.dateDisplay}
+                                year={message.structured.year}
+                                insights={message.structured.insights}
+                                onCompare={handleCompare}
+                                onRandom={handleRandom}
+                                query={message.content}
+                              />
+                            </ErrorBoundary>
                           ) : (
                             <div className="bg-crt-dark border border-crt-light/30 rounded px-4 py-3">
                               <div className="flex items-center gap-2 mb-1">
@@ -498,6 +708,7 @@ export default function Home() {
               </div>
             </div>
           </form>
+          </VHSEffect>
         </div>
 
         {/* === FOOTER === */}
@@ -514,6 +725,34 @@ export default function Home() {
           </p>
         </footer>
       </div>
+      
+      {/* Modals and Overlays */}
+      {showWrapped && wrappedStats && (
+        <WrappedCard stats={wrappedStats} onClose={() => setShowWrapped(false)} />
+      )}
+      
+      {showAchievements && (
+        <AchievementsPanel isOpen={showAchievements} onClose={() => setShowAchievements(false)} />
+      )}
+      
+      {currentAchievement && (
+        <AchievementToast
+          achievement={currentAchievement}
+          onDismiss={() => setCurrentAchievement(null)}
+        />
+      )}
+      
+      {showRewind && (
+        <VHSRewindEffect onComplete={() => setShowRewind(false)} />
+      )}
     </main>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-retro-panel" />}>
+      <HomeContent />
+    </Suspense>
   )
 }

@@ -115,7 +115,7 @@ function getMonthName(month: number): string {
     'November',
     'December',
   ]
-  return months[month - 1]
+  return months[month - 1] || 'Unknown'
 }
 
 function getMinimumWage(year: number): number | null {
@@ -126,7 +126,7 @@ function getMinimumWage(year: number): number | null {
 
   for (const y of years) {
     if (y <= year) {
-      wage = MINIMUM_WAGE_HISTORY[y]
+      wage = MINIMUM_WAGE_HISTORY[y] ?? null
     } else {
       break
     }
@@ -141,7 +141,7 @@ function getMovieTicketPrice(year: number): number | null {
     .sort((a, b) => a - b)
 
   // Find closest year
-  let closestYear = years[0]
+  let closestYear = years[0] ?? 0
   for (const y of years) {
     if (Math.abs(y - year) < Math.abs(closestYear - year)) {
       closestYear = y
@@ -151,13 +151,14 @@ function getMovieTicketPrice(year: number): number | null {
   // Linear interpolation between known years
   const idx = years.indexOf(closestYear)
   if (year === closestYear) {
-    return MOVIE_TICKET_PRICES[closestYear]
+    return MOVIE_TICKET_PRICES[closestYear] ?? null
   }
 
   if (year < closestYear && idx > 0) {
     const prevYear = years[idx - 1]
-    const prevPrice = MOVIE_TICKET_PRICES[prevYear]
+    const prevPrice = MOVIE_TICKET_PRICES[prevYear ?? 0]
     const nextPrice = MOVIE_TICKET_PRICES[closestYear]
+    if (!prevPrice || !nextPrice || !prevYear) return null
     const ratio = (year - prevYear) / (closestYear - prevYear)
     return Math.round((prevPrice + ratio * (nextPrice - prevPrice)) * 100) / 100
   }
@@ -165,12 +166,13 @@ function getMovieTicketPrice(year: number): number | null {
   if (year > closestYear && idx < years.length - 1) {
     const nextYear = years[idx + 1]
     const prevPrice = MOVIE_TICKET_PRICES[closestYear]
-    const nextPrice = MOVIE_TICKET_PRICES[nextYear]
+    const nextPrice = MOVIE_TICKET_PRICES[nextYear ?? 0]
+    if (!prevPrice || !nextPrice || !nextYear) return null
     const ratio = (year - closestYear) / (nextYear - closestYear)
     return Math.round((prevPrice + ratio * (nextPrice - prevPrice)) * 100) / 100
   }
 
-  return MOVIE_TICKET_PRICES[closestYear]
+  return MOVIE_TICKET_PRICES[closestYear] ?? null
 }
 
 async function fetchFredSeries(

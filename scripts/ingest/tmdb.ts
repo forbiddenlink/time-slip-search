@@ -82,7 +82,7 @@ function getMonthName(month: number): string {
     'November',
     'December',
   ]
-  return months[month - 1]
+  return months[month - 1] || 'Unknown'
 }
 
 function sleep(ms: number): Promise<void> {

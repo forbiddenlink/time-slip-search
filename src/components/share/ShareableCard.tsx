@@ -6,10 +6,9 @@ import { SearchResults } from '@/lib/algolia'
 interface ShareableCardProps {
   results: SearchResults
   dateDisplay: string
-  year: number
 }
 
-export function ShareableCard({ results, dateDisplay, year }: ShareableCardProps) {
+export function ShareableCard({ results, dateDisplay }: ShareableCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   const topSong = results.songs[0]

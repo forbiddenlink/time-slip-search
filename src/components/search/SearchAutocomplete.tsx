@@ -47,7 +47,7 @@ export function SearchAutocomplete({ query, onSelect, isVisible, onClose }: Read
           setSelectedIndex(prev => (prev > 0 ? prev - 1 : -1))
           break
         case 'Enter':
-          if (selectedIndex >= 0) {
+          if (selectedIndex >= 0 && suggestions[selectedIndex]) {
             e.preventDefault()
             onSelect(suggestions[selectedIndex].text)
           }

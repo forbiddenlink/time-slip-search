@@ -1,0 +1,94 @@
+@media print {
+  /* Hide non-essential elements */
+  header,
+  nav,
+  .vhs-tracking,
+  .led-display,
+  button,
+  input,
+  form,
+  .animate-pulse,
+  .hover-lift,
+  [class*="hover:"] {
+    display: none !important;
+  }
+
+  /* Ensure good contrast for printing */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .bg-crt-dark,
+  .bg-crt-black,
+  .bg-crt-medium {
+    background: white !important;
+    border-color: black !important;
+  }
+
+  .text-aged-cream,
+  .text-phosphor-teal,
+  .text-phosphor-amber,
+  .text-phosphor-green {
+    color: black !important;
+  }
+
+  /* Optimize layout for printing */
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .grid {
+    display: block !important;
+  }
+
+  .space-y-6 > * {
+    page-break-inside: avoid;
+  }
+
+  /* Show URLs for links */
+  a[href]:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Optimize images */
+  img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  /* Page breaks */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  /* Result cards */
+  .glass-card,
+  .vhs-card,
+  .crt-screen {
+    border: 2px solid black !important;
+    background: white !important;
+    box-shadow: none !important;
+    margin-bottom: 1rem;
+    padding: 1rem;
+  }
+
+  /* Hide decorative elements */
+  .glow-text-subtle,
+  .shadow-glow-teal,
+  .shadow-glow-amber,
+  .chromatic-hover {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px solid black;
+  }
+}

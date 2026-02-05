@@ -74,7 +74,7 @@ function getMonthName(month: number): string {
     'November',
     'December',
   ]
-  return months[month - 1]
+  return months[month - 1] || 'Unknown'
 }
 
 async function fetchOnThisDay(month: number, day: number): Promise<WikimediaResponse | null> {
@@ -161,7 +161,7 @@ async function main() {
   console.log('This may take a few minutes due to rate limiting.\n')
 
   for (let month = 1; month <= 12; month++) {
-    const maxDay = month === 2 ? 29 : daysInMonth[month - 1] // Include Feb 29
+    const maxDay = month === 2 ? 29 : (daysInMonth[month - 1] ?? 30) // Include Feb 29
 
     for (let day = 1; day <= maxDay; day++) {
       process.stdout.write(`\rFetching ${getMonthName(month)} ${day}...`)

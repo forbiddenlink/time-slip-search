@@ -1,8 +1,11 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useState } from 'react'
 import { SearchResults } from '@/lib/algolia'
 import { FavoriteButton } from '@/components/memory/FavoriteButton'
+import { extractShareData, copyShareLink, shareNative } from '@/lib/share'
+import { createShareableURL } from '@/lib/url-state'
 
 // Dynamic imports - these components only render after API response (bundle-dynamic-imports)
 const SongList = dynamic(() => import('./SongCard').then(m => ({ default: m.SongList })))
@@ -23,11 +26,33 @@ interface TimeCapsuleProps {
 }
 
 export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, onRandom, query = '' }: TimeCapsuleProps) {
+  const [shareMessage, setShareMessage] = useState('')
+  
   const hasData =
     results.songs.length > 0 ||
     results.movies.length > 0 ||
     results.prices.length > 0 ||
     results.events.length > 0
+
+  const handleShare = async () => {
+    const shareData = extractShareData(dateDisplay, year, results)
+    const shareUrl = createShareableURL(query, { start: 0, end: 0, display: dateDisplay, year })
+    
+    // Try native share first
+    const sharedNatively = await shareNative(shareData, shareUrl)
+    
+    if (!sharedNatively) {
+      // Fallback to clipboard
+      const copied = await copyShareLink(shareUrl)
+      if (copied) {
+        setShareMessage('✓ Link copied!')
+        setTimeout(() => setShareMessage(''), 3000)
+      } else {
+        setShareMessage('✗ Failed to copy')
+        setTimeout(() => setShareMessage(''), 3000)
+      }
+    }
+  }
 
   if (!hasData) {
     return (
@@ -86,7 +111,7 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
         {/* Left Column - Music & Prices */}
         <div className="space-y-6">
           <SongList songs={results.songs} />
-          {results.prices.length > 0 && (
+          {results.prices.length > 0 && results.prices[0] && (
             <>
               <PriceCard price={results.prices[0]} />
               <PriceComparison oldPrice={results.prices[0]} />
@@ -166,25 +191,21 @@ export function TimeCapsule({ results, dateDisplay, year, insights, onCompare, o
             query={query}
           />
 
-          {results.songs.length > 0 && (
-            <button
-              onClick={() => {
-                const topSong = results.songs[0]
-                const text = `🎵 On ${dateDisplay}, the #1 song was "${topSong.song_title}" by ${topSong.artist}! What was #1 on YOUR birthday? Find out at TimeSlipSearch.com`
-                if (navigator.share) {
-                  navigator.share({ text })
-                } else {
-                  navigator.clipboard.writeText(text)
-                  alert('Copied to clipboard! 📋')
-                }
-              }}
-              className="px-4 py-2 bg-crt-dark border border-vinyl-label/50 
-                       rounded hover:border-vinyl-label hover:shadow-glow-amber
-                       text-aged-cream text-sm transition-all hover-lift led-text"
-            >
-              📸 Share
-            </button>
-          )}
+          {/* Enhanced Share Button */}
+          <button
+            onClick={handleShare}
+            className="px-4 py-2 bg-crt-dark border border-vinyl-label/50 
+                     rounded hover:border-vinyl-label hover:shadow-glow-amber
+                     text-aged-cream text-sm transition-all hover-lift led-text relative"
+          >
+            📸 Share
+            {shareMessage && (
+              <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
+                             bg-crt-dark border border-phosphor-teal px-2 py-1 rounded text-xs">
+                {shareMessage}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 

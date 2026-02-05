@@ -8,7 +8,7 @@ const envContent = readFileSync(envPath, 'utf-8')
 const envVars: Record<string, string> = {}
 envContent.split('\n').forEach(line => {
   const match = line.match(/^([^#=]+)=(.*)$/)
-  if (match) {
+  if (match && match[1] && match[2]) {
     envVars[match[1].trim()] = match[2].trim()
   }
 })

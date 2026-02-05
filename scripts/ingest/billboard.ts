@@ -79,11 +79,14 @@ function getMonthName(month: number): string {
     'November',
     'December',
   ]
-  return months[month - 1]
+  return months[month - 1] || 'Unknown'
 }
 
 function transformEntry(entry: FlatEntry): AlgoliaSong {
-  const [year, month, day] = entry.date.split('-').map(Number)
+  const parts = entry.date.split('-')
+  const year = parseInt(parts[0] || '0')
+  const month = parseInt(parts[1] || '1')
+  const day = parseInt(parts[2] || '1')
   const timestamp = Math.floor(new Date(year, month - 1, day).getTime() / 1000)
 
   return {
