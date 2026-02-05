@@ -1,231 +1,256 @@
 # TimeSlipSearch
 
-**Your cultural time machine.** Explore any moment in history through natural language conversation.
+**A conversational cultural time machine -- explore any moment in history.**
 
-Ask about any date—"Summer of '69", "my birthday March 15, 1987", or "the 80s"—and discover what songs topped the charts, which movies were playing, how much gas cost, and what events made headlines.
+---
 
-Built for the [Algolia Agent Studio Challenge 2026](https://dev.to/challenges/algolia).
+TimeSlipSearch lets you travel to any date between 1958 and 2020 through natural language. Type your birthday, a historical milestone, or just "Summer of '69" and instantly see the #1 song on the charts, the movies in theaters, what a gallon of gas cost, and the events that shaped the world -- all rendered in a retro CRT interface that feels like powering on a time machine.
+
+Built for the **[Algolia Agent Studio Challenge 2026](https://dev.to/challenges/algolia)**.
+
+**[Live Demo -- timeslipsearch.vercel.app](https://timeslipsearch.vercel.app)**
 
 ---
 
 ## Features
 
-- **Natural Language Date Parsing** — Understands "December 1985", "Summer of '69", "the 80s", and more
-- **Multi-Source Search** — Queries 4 Algolia indices in parallel for comprehensive results
-- **Billboard Hot 100** — Chart data from 1958 to present (~350,000 records)
-- **Movie Database** — Popular films with posters, ratings, and genres via TMDB
-- **Historical Prices** — Gas prices, minimum wage, and movie tickets via FRED
-- **Historical Events** — Births, deaths, and major events via Wikimedia
+### Search and Discovery
+
+- Algolia-powered instant search across 420,000+ records with parallel multi-index queries
+- Natural language date parsing -- understands "March 15, 1987", "the 80s", "Christmas 1992", and date ranges
+- Smart autocomplete with keyboard navigation
+- Voice search via the Web Speech API
+- Shareable URLs for every search result
+
+### Content
+
+- Billboard Hot 100 weekly charts (350,000+ entries from 1958 to present)
+- Movie releases from TMDB (50,000+ films with ratings, genres, and posters)
+- Historical prices from FRED (gas, minimum wage, movie tickets, CPI, inflation)
+- Historical events from Wikimedia (20,000+ categorized by type and importance)
+- AI-generated era insights and contextual follow-up suggestions
+
+### Retro Interface
+
+- CRT boot-up animation with phosphor glow and scanline overlays
+- VHS tracking lines and toggleable tape distortion effects
+- Era-adaptive particle system that shifts with the decade
+- Vinyl record, film strip, and cassette tape design motifs
+- VT323 LED readouts, Playfair Display headers, and Source Serif body text
+
+### Engagement
+
+- Time Capsule Wrapped -- a personalized year-in-review of your exploration history
+- Achievement system with unlockable badges for decades explored, songs discovered, and search streaks
+- Interactive Chart.js visualizations for price trends and chart statistics
+- Timeline explorer for decade-hopping navigation
+- Full keyboard shortcut suite (Cmd+K, Cmd+T, Cmd+W, Cmd+B, and more)
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Framework** | Next.js 14 (App Router) |
-| **Language** | TypeScript |
-| **Styling** | Tailwind CSS |
-| **Search** | Algolia |
-| **Date Parsing** | chrono-node |
-| **Deployment** | Vercel |
-
-### Design
-
-The interface uses a **retro-analog aesthetic** inspired by VHS tapes, CRT monitors, and vinyl records:
-
-- CRT screen effects with scan lines and phosphor glow
-- VHS cassette-style cards with tape window effects
-- Vinyl record indicators for chart rankings
-- Film strip borders on movie posters
-- Aged paper texture for historical events
-- LED segment displays for prices
-- VT323 monospace font for data, Playfair Display for headers
+| Layer | Technology | Version |
+| --- | --- | --- |
+| Framework | [Next.js](https://nextjs.org/) (App Router) | 16 |
+| Language | [TypeScript](https://www.typescriptlang.org/) | 5.9 |
+| Search | [Algolia](https://www.algolia.com/) (algoliasearch) | 5 |
+| Styling | [Tailwind CSS](https://tailwindcss.com/) | 3.4 |
+| Animation | [Framer Motion](https://www.framer.com/motion/) | 12 |
+| Charts | [Chart.js](https://www.chartjs.org/) + react-chartjs-2 | 4 |
+| Date Parsing | [chrono-node](https://github.com/wanasit/chrono) | 2.9 |
+| Voice Input | Web Speech API | Browser-native |
+| Testing | Jest + React Testing Library | 29 |
+| Deployment | [Vercel](https://vercel.com/) | -- |
 
 ---
 
-## Quick Start
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18 or later
+- An [Algolia](https://www.algolia.com/) account (free tier works)
+- API keys for [TMDB](https://www.themoviedb.org/settings/api) and [FRED](https://fred.stlouisfed.org/docs/api/api_key.html) (for data ingestion only)
+
+### Install
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/TimeSlipSearch.git
-cd TimeSlipSearch
-
-# Install dependencies
+git clone https://github.com/your-username/timeslip-search.git
+cd timeslip-search
 npm install
+```
 
-# Copy environment template
+### Configure Environment
+
+```bash
 cp .env.local.example .env.local
+```
 
-# Add your API keys to .env.local (see Setup below)
+Edit `.env.local` with your keys:
 
-# Run data ingestion (after adding keys)
-npm run ingest:billboard
-npm run ingest:fred
-npm run ingest:tmdb
-npm run ingest:wikimedia
+```env
+# Required -- Algolia
+NEXT_PUBLIC_ALGOLIA_APP_ID=your_app_id
+ALGOLIA_SEARCH_API_KEY=your_search_only_api_key
+ALGOLIA_ADMIN_API_KEY=your_admin_api_key
 
-# Start development server
+# Required for data ingestion
+TMDB_API_KEY=your_tmdb_api_key
+FRED_API_KEY=your_fred_api_key
+
+# Optional -- enhanced features
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+KV_REST_API_URL=your_vercel_kv_url
+KV_REST_API_TOKEN=your_vercel_kv_token
+```
+
+### Populate the Indices
+
+Run the ingestion scripts to load data into your Algolia indices:
+
+```bash
+npm run ingest:billboard    # Billboard Hot 100 (~350K records, ~2 min)
+npm run ingest:fred         # FRED economic data (~900 records, ~1 min)
+npm run ingest:tmdb         # TMDB movies (~50K records, ~30 min)
+npm run ingest:wikimedia    # Wikimedia events (~20K records, ~40 min)
+```
+
+### Run
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Setup
+## Architecture
 
-### Required API Keys
+### Search Flow
 
-| Service | Purpose | Get Key |
-|---------|---------|---------|
-| **Algolia** | Search infrastructure | [algolia.com/account/api-keys](https://www.algolia.com/account/api-keys) |
-| **TMDB** | Movie data & posters | [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api) |
-| **FRED** | Historical price data | [fred.stlouisfed.org/docs/api](https://fred.stlouisfed.org/docs/api/api_key.html) |
-
-### Environment Variables
-
-Create `.env.local` with:
-
-```env
-# Algolia (Required)
-NEXT_PUBLIC_ALGOLIA_APP_ID=your_app_id
-ALGOLIA_SEARCH_API_KEY=your_search_key
-ALGOLIA_ADMIN_API_KEY=your_admin_key
-
-# External APIs (Required for data ingestion)
-TMDB_API_KEY=your_tmdb_key
-FRED_API_KEY=your_fred_key
+```text
+User input ("Summer of '69")
+  -> chrono-node parses natural language to a date range (Jun 1 -- Aug 31, 1969)
+  -> API route builds numeric range filters (date >= start AND date <= end)
+  -> Four parallel Algolia queries execute against all indices
+  -> Results are assembled into a structured TimeCapsule response
+  -> UI renders with era-adaptive insights, suggestions, and visual effects
 ```
 
-For detailed setup instructions, see **[SETUP.md](./SETUP.md)**.
+### Algolia Indices
 
----
+| Index | Records | Source | Key Fields |
+| --- | --- | --- | --- |
+| `timeslip_songs` | ~350,000 | Billboard Hot 100 | chart_position, song_title, artist, weeks_on_chart |
+| `timeslip_movies` | ~50,000 | TMDB | title, genres, vote_average, poster_url, popularity |
+| `timeslip_prices` | ~800 | FRED | gas_price_gallon, minimum_wage, movie_ticket_price, cpi_index |
+| `timeslip_events` | ~20,000 | Wikimedia | title, description, event_type, importance |
 
-## Data Ingestion
+Every record shares a common schema: `date` (Unix timestamp), `date_string`, `year`, and `decade`. This uniform structure enables consistent cross-index filtering with a single set of numeric range parameters.
 
-Populate your Algolia indices with historical data:
+### Project Structure
 
-| Script | Source | Records | Time |
-|--------|--------|---------|------|
-| `npm run ingest:billboard` | GitHub dataset | ~350,000 | ~2 min |
-| `npm run ingest:fred` | Federal Reserve API | ~900 | ~1 min |
-| `npm run ingest:tmdb` | TMDB API | ~50,000 | ~30 min |
-| `npm run ingest:wikimedia` | Wikimedia Feed API | ~20,000 | ~40 min |
-
-**Recommended order:** Billboard → FRED → TMDB → Wikimedia
-
----
-
-## Project Structure
-
+```text
+src/
+  app/
+    page.tsx                  Main conversational interface
+    layout.tsx                Root layout, fonts, metadata
+    globals.css               Retro design system (CRT, VHS, vinyl)
+    api/chat/route.ts         Search API with rate limiting
+    api/og/route.tsx          Dynamic Open Graph images
+  components/
+    results/                  TimeCapsule, SongCard, MovieCard, PriceCard, EventCard
+    search/                   SearchAutocomplete
+    input/                    VoiceInput
+    animations/               VHSEffect, ParticleEffect
+    achievements/             AchievementsPanel, AchievementToast
+    wrapped/                  WrappedCard (Time Capsule Wrapped)
+    memory/                   AgentMemoryPanel
+    icons/                    Hand-crafted SVG icon components
+  lib/
+    algolia.ts                Algolia client, index queries, type definitions
+    date-parser.ts            chrono-node wrapper with range/era support
+    achievements.ts           Badge unlock logic
+    wrapped.ts                Exploration tracking and stats
+    agent-memory.ts           Search history persistence
+    autocomplete-suggestions.ts
+    rate-limit.ts
+    url-state.ts
+    share.ts
+scripts/
+  ingest/
+    billboard.ts              Billboard Hot 100 ingestion
+    tmdb.ts                   TMDB movie ingestion
+    fred.ts                   FRED economic data ingestion
+    wikimedia.ts              Wikimedia event ingestion
 ```
-TimeSlipSearch/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx              # Main chat interface
-│   │   ├── layout.tsx            # Root layout & fonts
-│   │   ├── globals.css           # Retro design system
-│   │   └── api/chat/route.ts     # Search API endpoint
-│   ├── components/
-│   │   ├── results/
-│   │   │   ├── TimeCapsule.tsx   # Main result container
-│   │   │   ├── SongCard.tsx      # Vinyl record style music cards
-│   │   │   ├── MovieCard.tsx     # Film strip style movie cards
-│   │   │   ├── PriceCard.tsx     # LED display style prices
-│   │   │   └── EventCard.tsx     # Newspaper clipping events
-│   │   └── chat/
-│   │       └── LoadingSkeleton.tsx
-│   └── lib/
-│       ├── algolia.ts            # Algolia client & search
-│       └── date-parser.ts        # Natural language → timestamps
-├── scripts/ingest/               # Data ingestion scripts
-├── .env.local.example            # Environment template
-├── SETUP.md                      # Detailed setup guide
-├── tailwind.config.js            # Custom design tokens
-└── vercel.json                   # Deployment config
-```
-
----
-
-## Algolia Indices
-
-The app uses 4 separate indices:
-
-| Index | Schema |
-|-------|--------|
-| `timeslip_songs` | `song_title`, `artist`, `chart_position`, `weeks_on_chart`, `chart_date_timestamp` |
-| `timeslip_movies` | `title`, `year`, `genres`, `poster_url`, `vote_average`, `release_timestamp` |
-| `timeslip_prices` | `year`, `gas_price_gallon`, `minimum_wage`, `movie_ticket_price`, `timestamp` |
-| `timeslip_events` | `title`, `description`, `year`, `event_type`, `importance`, `timestamp` |
-
-All indices use numeric filters on timestamp fields for date range queries.
-
----
-
-## Deployment
-
-### Vercel (Recommended)
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-```
-
-Or connect your GitHub repository at [vercel.com/new](https://vercel.com/new).
-
-**Production environment variables** (add in Vercel dashboard):
-- `NEXT_PUBLIC_ALGOLIA_APP_ID`
-- `ALGOLIA_SEARCH_API_KEY`
-
-Note: Admin keys and external API keys are only needed locally for data ingestion.
 
 ---
 
 ## Scripts
 
 | Command | Description |
-|---------|-------------|
+| --- | --- |
 | `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Start production server |
+| `npm run build` | Production build |
+| `npm start` | Start production server |
 | `npm run lint` | Run ESLint |
+| `npm test` | Run test suite |
+| `npm run test:coverage` | Run tests with coverage report |
 | `npm run ingest:billboard` | Ingest Billboard Hot 100 data |
-| `npm run ingest:fred` | Ingest FRED price data |
 | `npm run ingest:tmdb` | Ingest TMDB movie data |
-| `npm run ingest:wikimedia` | Ingest Wikimedia events |
+| `npm run ingest:fred` | Ingest FRED price data |
+| `npm run ingest:wikimedia` | Ingest Wikimedia event data |
+
+---
+
+## Deployment
+
+### Vercel
+
+```bash
+npx vercel
+```
+
+Or connect your GitHub repository at [vercel.com/new](https://vercel.com/new).
+
+Add these environment variables in the Vercel dashboard:
+
+- `NEXT_PUBLIC_ALGOLIA_APP_ID`
+- `ALGOLIA_SEARCH_API_KEY`
+
+Admin keys and external API keys are only needed locally for data ingestion -- they are not required in production.
 
 ---
 
 ## Example Queries
 
-Try these natural language inputs:
-
 - `"What was #1 on March 15, 1987?"`
 - `"Summer of '69"`
 - `"December 1985"`
+- `"The day the Berlin Wall fell"`
 - `"How much did things cost in 1990?"`
-- `"The day I was born - April 3, 1975"`
 - `"The 80s"`
+- `"Christmas 1992"`
+
+---
+
+## Acknowledgments
+
+- [Algolia](https://www.algolia.com/) -- Search infrastructure
+- [chrono-node](https://github.com/wanasit/chrono) -- Natural language date parsing
+- [TMDB](https://www.themoviedb.org/) -- The Movie Database API
+- [FRED](https://fred.stlouisfed.org/) -- Federal Reserve Economic Data
+- [Wikimedia](https://www.mediawiki.org/wiki/Wikimedia_REST_API) -- Historical events
 
 ---
 
 ## License
 
 MIT
-
----
-
-## Acknowledgments
-
-- [Algolia](https://www.algolia.com/) — Search infrastructure
-- [chrono-node](https://github.com/wanasit/chrono) — Natural language date parsing
-- [TMDB](https://www.themoviedb.org/) — Movie database API
-- [FRED](https://fred.stlouisfed.org/) — Federal Reserve Economic Data
-- [Wikimedia](https://www.mediawiki.org/wiki/Wikimedia_REST_API) — Historical events
 
 ---
 
