@@ -1,14 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { headers } from 'next/headers'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'Contact Support',
   description: 'Contact TimeSlipSearch for support, bug reports, partnership requests, and historical data corrections, including response expectations and security reporting.',
 }
 
-export default async function ContactPage() {
-  const nonce = (await headers()).get('x-nonce') ?? undefined
+export default function ContactPage() {
   const siteUrl = 'https://timeslipsearch.vercel.app'
   const publishedDate = '2026-01-15'
   const modifiedDate = '2026-02-07'
@@ -96,8 +95,8 @@ export default async function ContactPage() {
           <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
         </footer>
       </div>
-      <script
-        nonce={nonce}
+      <Script
+        id="contact-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />

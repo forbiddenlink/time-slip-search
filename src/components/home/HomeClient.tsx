@@ -517,7 +517,7 @@ function HomeContent() {
                   className={`feature-card-enhanced p-5 group cursor-pointer cascade-in stagger-${index + 1}`}
                 >
                   <div className="relative z-10 pt-14 text-center">
-                    <div className={`mb-4 flex justify-center ${feature.color} glow-text-subtle`}>
+                    <div className={`mb-4 flex justify-center ${feature.color}`}>
                       <IconComponent size={36} />
                     </div>
                     <div className="text-base font-medium text-aged-cream tracking-wide">
