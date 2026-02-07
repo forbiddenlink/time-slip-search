@@ -3,6 +3,9 @@ import { Suspense } from 'react'
 import HomeClient from '@/components/home/HomeClient'
 
 function HomeSeoFallback() {
+  const publishedDate = '2026-01-15'
+  const modifiedDate = '2026-02-07'
+
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
       <div className="container mx-auto max-w-4xl px-4 py-10 space-y-8">
@@ -12,6 +15,9 @@ function HomeSeoFallback() {
           </h1>
           <p className="text-aged-cream/80 max-w-2xl mx-auto">
             Discover what happened on any day from 1958 to 2020, including the #1 song, top movies in theaters, historical prices, and key global events.
+          </p>
+          <p className="text-sm text-aged-cream/60 led-text tracking-wide">
+            By TimeSlipSearch Editorial Team · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
           </p>
           <nav className="flex items-center justify-center gap-4 text-sm led-text tracking-wider">
             <Link href="/about" className="hover:text-phosphor-teal transition-colors">ABOUT</Link>
@@ -40,6 +46,9 @@ function HomeSeoFallback() {
               Wikimedia On This Day feed
             </a>
             .
+          </p>
+          <p>
+            TimeSlipSearch is useful for family history projects, classroom timeline activities, nostalgia newsletters, and creative research. The experience is intentionally lightweight: type a date, review a concise cultural snapshot, and follow links to broader context. As we expand coverage and improve ranking quality, we continue refining source attribution, date parsing, and comparison workflows so each result remains both entertaining and trustworthy.
           </p>
         </article>
       </div>

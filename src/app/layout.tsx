@@ -76,6 +76,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${playfair.variable} ${sourceSerif.variable} ${vt323.variable} ${specialElite.variable}`}>
+      <head>
+        <meta charSet="utf-8" />
+      </head>
       <body className="font-body antialiased">
         {/* Global grain overlay for that analog feel */}
         <div className="grain-overlay" aria-hidden="true" />
