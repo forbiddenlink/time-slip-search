@@ -53,10 +53,10 @@ const exampleQueries = [
 
 // Feature cards with professional components
 const featureCardsData = [
-  { IconComponent: MusicIcon, label: '#1 Songs', period: '350K+ charts', color: 'text-vinyl-label-bright' },
-  { IconComponent: FilmIcon, label: 'Movies', period: '50K+ films', color: 'text-phosphor-amber' },
-  { IconComponent: DollarIcon, label: 'Prices', period: 'Real costs', color: 'text-phosphor-green' },
-  { IconComponent: CalendarIcon, label: 'Events', period: '20K+ moments', color: 'text-phosphor-teal' },
+  { IconComponent: MusicIcon, label: '#1 Songs', period: '350K+ charts', iconColor: '#ffd633' },
+  { IconComponent: FilmIcon, label: 'Movies', period: '50K+ films', iconColor: '#5ffff0' },
+  { IconComponent: DollarIcon, label: 'Prices', period: 'Real costs', iconColor: '#4dff28' },
+  { IconComponent: CalendarIcon, label: 'Events', period: '20K+ moments', iconColor: '#40e0d0' },
 ] as const
 
 const decadeQuickPicks = [1960, 1970, 1980, 1990, 2000, 2010, 2020] as const
@@ -517,7 +517,7 @@ function HomeContent() {
                   className={`feature-card-enhanced p-5 group cursor-pointer cascade-in stagger-${index + 1}`}
                 >
                   <div className="relative z-10 pt-14 text-center">
-                    <div className={`mb-4 flex justify-center ${feature.color} glow-text-subtle`}>
+                    <div className="mb-4 flex justify-center glow-text-subtle" style={{ color: feature.iconColor }}>
                       <IconComponent size={36} />
                     </div>
                     <div className="text-base font-medium text-aged-cream tracking-wide">
