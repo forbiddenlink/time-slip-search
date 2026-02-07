@@ -3,7 +3,7 @@
  * Tracks user exploration and generates shareable reports
  */
 
-import { SearchResults, Song, Movie } from './algolia'
+import type { SearchResults, Song, Movie } from './algolia'
 
 export interface WrappedStats {
   userId: string

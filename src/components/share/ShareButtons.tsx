@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { SearchResults } from '@/lib/algolia'
+import type { SearchResults } from '@/lib/algolia'
 
 interface ShareButtonsProps {
   dateDisplay: string

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Favorites, type FavoriteDate } from '@/lib/agent-memory'
-import { SearchResults } from '@/lib/algolia'
+import type { SearchResults } from '@/lib/algolia'
 
 interface FavoriteButtonProps {
   dateDisplay: string

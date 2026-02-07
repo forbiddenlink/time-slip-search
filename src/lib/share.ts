@@ -3,7 +3,7 @@
  * Uses Vercel OG Image Generation or canvas-based approach
  */
 
-import { SearchResults } from './algolia'
+import type { SearchResults } from './algolia'
 
 export interface ShareCardData {
   dateDisplay: string

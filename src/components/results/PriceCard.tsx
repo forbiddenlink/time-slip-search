@@ -1,4 +1,4 @@
-import { Price } from '@/lib/algolia'
+import type { Price } from '@/lib/algolia'
 import { AnimatedNumber } from '@/components/animations/AnimatedNumber'
 
 interface PriceCardProps {

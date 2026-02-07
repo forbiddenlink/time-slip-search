@@ -1,7 +1,7 @@
 'use client'
 
 import { DataVisualization } from './DataVisualization'
-import { SearchResults } from '@/lib/algolia'
+import type { SearchResults } from '@/lib/algolia'
 
 interface ChartInsightsProps {
   results: SearchResults

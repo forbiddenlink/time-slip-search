@@ -3,7 +3,7 @@
  * Generates Spotify playlists from discovered songs
  */
 
-import { Song } from './algolia'
+import type { Song } from './algolia'
 
 export interface SpotifyTrack {
   uri: string

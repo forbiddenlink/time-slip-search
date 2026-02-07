@@ -1,4 +1,4 @@
-import { HistoricalEvent } from '@/lib/algolia'
+import type { HistoricalEvent } from '@/lib/algolia'
 
 interface EventCardProps {
   event: HistoricalEvent

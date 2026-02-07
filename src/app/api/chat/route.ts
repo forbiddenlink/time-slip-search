@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { parseDate, DateRange } from '@/lib/date-parser'
-import { searchAllIndices, SearchResults, AdvancedSearchOptions } from '@/lib/algolia'
+import { searchAllIndices } from '@/lib/algolia'
+import type { SearchResults, AdvancedSearchOptions } from '@/lib/algolia'
 import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
 
 export interface ChatResponse {

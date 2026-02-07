@@ -36,13 +36,13 @@ export const metadata: Metadata = {
     default: 'TimeSlipSearch - What Was #1 On Your Birthday?',
     template: '%s | TimeSlipSearch',
   },
-  description: 'Type any date from 1958 to 2020 and instantly see the #1 song, the movies in theaters, what things cost, and the events that shaped the world. What was #1 the day you were born?',
+  description: 'Search any date from 1958 to 2020 to instantly see the #1 song, top movies, historical prices, and major events from that day in history.',
   keywords: ['birthday song', 'what was number 1', 'nostalgia', 'history', 'time machine', 'birthday lookup', 'Billboard Hot 100', '80s music', '90s movies', 'historical prices', 'Algolia'],
   authors: [{ name: 'TimeSlipSearch' }],
   creator: 'TimeSlipSearch',
   openGraph: {
     title: 'What Was #1 The Day You Were Born?',
-    description: 'Type any date and travel back in time. See the #1 song, the movies, the prices, and the headlines — all in a retro CRT interface.',
+    description: 'Search any date from 1958 to 2020 to instantly see the #1 song, top movies, historical prices, and major events from that day.',
     url: siteUrl,
     siteName: 'TimeSlipSearch',
     locale: 'en_US',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'What Was #1 The Day You Were Born?',
-    description: 'Type any date and travel back in time. See the #1 song, the movies, the prices, and the headlines — all in a retro CRT interface.',
+    description: 'Search any date from 1958 to 2020 to instantly see the #1 song, top movies, historical prices, and major events from that day.',
   },
   robots: {
     index: true,

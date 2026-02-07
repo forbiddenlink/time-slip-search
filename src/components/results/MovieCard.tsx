@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Movie } from '@/lib/algolia'
+import type { Movie } from '@/lib/algolia'
 
 interface MovieCardProps {
   movie: Movie

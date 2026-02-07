@@ -1,4 +1,4 @@
-import { Song } from '@/lib/algolia'
+import type { Song } from '@/lib/algolia'
 
 interface SongCardProps {
   song: Song

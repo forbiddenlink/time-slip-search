@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
-import { SearchResults } from '@/lib/algolia'
+import type { SearchResults } from '@/lib/algolia'
 import { FavoriteButton } from '@/components/memory/FavoriteButton'
 import { extractShareData, copyShareLink, shareNative } from '@/lib/share'
 import { createShareableURL } from '@/lib/url-state'
