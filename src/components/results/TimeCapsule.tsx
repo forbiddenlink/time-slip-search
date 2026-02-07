@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import type { SearchResults } from '@/lib/algolia'
 import { FavoriteButton } from '@/components/memory/FavoriteButton'
-import { extractShareData, copyShareLink, shareNative } from '@/lib/share'
+import { extractShareData, copyShareLink, shareNative, generateTimeCapsuleSummary } from '@/lib/share'
 import { createShareableURL } from '@/lib/url-state'
 import { getFamousDate } from '@/lib/famous-dates'
 import { FamousDateBanner } from './FamousDateBanner'
@@ -17,6 +17,7 @@ const PriceCard = dynamic(() => import('./PriceCard').then(m => ({ default: m.Pr
 const PriceComparison = dynamic(() => import('./PriceCard').then(m => ({ default: m.PriceComparison })))
 const EventList = dynamic(() => import('./EventCard').then(m => ({ default: m.EventList })))
 const ChartInsights = dynamic(() => import('../visualizations/ChartInsights').then(m => ({ default: m.ChartInsights })))
+const decadePresets = [1960, 1970, 1980, 1990, 2000, 2010, 2020] as const
 
 interface TimeCapsuleProps {
   results: SearchResults
@@ -27,18 +28,28 @@ interface TimeCapsuleProps {
   insights?: string[]
   onCompare?: (year: number) => void
   onRandom?: () => void
+  onExploreDecade?: (decadeStart: number) => void
   query?: string
 }
 
-export function TimeCapsule({ results, dateDisplay, year, month, day, insights, onCompare, onRandom, query = '' }: TimeCapsuleProps) {
+export function TimeCapsule({ results, dateDisplay, year, month, day, insights, onCompare, onRandom, onExploreDecade, query = '' }: TimeCapsuleProps) {
   const [shareMessage, setShareMessage] = useState('')
+  const [actionMessage, setActionMessage] = useState('')
+  const [compareYearInput, setCompareYearInput] = useState('')
   const [showConfetti, setShowConfetti] = useState(true)
   const famousDate = (month && day) ? getFamousDate(month, day, year) : null
+  const compareForwardYear = Math.min(year + 10, 2020)
+  const compareBackwardYear = Math.max(year - 10, 1958)
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3000)
     return () => clearTimeout(timer)
   }, [])
+
+  const showTransientActionMessage = (message: string) => {
+    setActionMessage(message)
+    setTimeout(() => setActionMessage(''), 3000)
+  }
 
   const hasData =
     results.songs.length > 0 ||
@@ -64,6 +75,25 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
         setTimeout(() => setShareMessage(''), 3000)
       }
     }
+  }
+
+  const handleCopyRecap = async () => {
+    const recap = generateTimeCapsuleSummary(dateDisplay, year, results)
+    const copied = await copyShareLink(recap)
+    showTransientActionMessage(copied ? '\u2713 Recap copied!' : '\u2717 Failed to copy recap')
+  }
+
+  const handleCompareJump = () => {
+    if (!onCompare) return
+
+    const parsed = Number.parseInt(compareYearInput, 10)
+    if (Number.isNaN(parsed) || parsed < 1958 || parsed > 2020) {
+      showTransientActionMessage('Use a year between 1958 and 2020')
+      return
+    }
+
+    setCompareYearInput('')
+    onCompare(parsed)
   }
 
   if (!hasData) {
@@ -177,23 +207,27 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
       <div className="space-y-3">
         <div className="text-aged-cream/60 text-xs led-text tracking-widest">TRY THESE:</div>
         <div className="flex gap-2 flex-wrap">
-          {year < 2020 && onCompare && (
+          {onCompare && (
             <>
               <button
-                onClick={() => onCompare(year + 10)}
+                onClick={() => onCompare(compareForwardYear)}
+                disabled={compareForwardYear === year}
                 className="px-4 py-2 bg-crt-dark border border-phosphor-teal/30
                          rounded hover:border-phosphor-teal hover:shadow-glow-teal
-                         text-aged-cream text-sm transition-all hover-lift led-text"
+                         text-aged-cream text-sm transition-all hover-lift led-text
+                         disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Compare with {year + 10}
+                Compare with {compareForwardYear}
               </button>
               <button
-                onClick={() => onCompare(year - 10)}
+                onClick={() => onCompare(compareBackwardYear)}
+                disabled={compareBackwardYear === year}
                 className="px-4 py-2 bg-crt-dark border border-phosphor-amber/30
                          rounded hover:border-phosphor-amber hover:shadow-glow-amber
-                         text-aged-cream text-sm transition-all hover-lift led-text"
+                         text-aged-cream text-sm transition-all hover-lift led-text
+                         disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                See {year - 10}
+                See {compareBackwardYear}
               </button>
             </>
           )}
@@ -232,7 +266,67 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
               </span>
             )}
           </button>
+
+          <button
+            onClick={handleCopyRecap}
+            className="px-4 py-2 bg-crt-dark border border-phosphor-teal/40
+                     rounded hover:border-phosphor-teal hover:shadow-glow-teal
+                     text-aged-cream text-sm transition-all hover-lift led-text"
+          >
+            Copy Recap
+          </button>
         </div>
+
+        {onCompare && (
+          <div className="flex gap-2 flex-wrap items-center">
+            <input
+              type="number"
+              min={1958}
+              max={2020}
+              value={compareYearInput}
+              onChange={(e) => setCompareYearInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleCompareJump()
+                }
+              }}
+              placeholder="Jump to year (1958-2020)"
+              aria-label="Jump to a year to compare"
+              className="bg-crt-black border border-crt-light/40 rounded px-3 py-2 text-sm text-aged-cream placeholder-aged-cream/40 w-56"
+            />
+            <button
+              onClick={handleCompareJump}
+              className="px-4 py-2 bg-crt-dark border border-phosphor-amber/40
+                       rounded hover:border-phosphor-amber hover:shadow-glow-amber
+                       text-aged-cream text-sm transition-all hover-lift led-text"
+            >
+              Compare Year
+            </button>
+          </div>
+        )}
+
+        {onExploreDecade && (
+          <div className="flex gap-2 flex-wrap">
+            {decadePresets.map((decadeStart) => (
+              <button
+                key={decadeStart}
+                onClick={() => onExploreDecade(decadeStart)}
+                className="px-3 py-2 bg-crt-dark border border-crt-light/40 rounded
+                         hover:border-phosphor-green hover:shadow-glow-green
+                         text-aged-cream text-xs transition-all led-text tracking-wider"
+              >
+                {decadeStart}s
+              </button>
+            ))}
+          </div>
+        )}
+
+        {actionMessage && (
+          <p className="text-xs text-phosphor-teal led-text tracking-wider">
+            {actionMessage}
+          </p>
+        )}
       </div>
 
       {/* Data Visualizations */}

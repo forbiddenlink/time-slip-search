@@ -54,6 +54,8 @@ const featureCardsData = [
   { IconComponent: CalendarIcon, label: 'Events', period: '20K+ moments', color: 'text-phosphor-teal' },
 ] as const
 
+const decadeQuickPicks = [1960, 1970, 1980, 1990, 2000, 2010, 2020] as const
+
 function HomeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -76,6 +78,7 @@ function HomeContent() {
   const [sessionYears, setSessionYears] = useState<number[]>([])
   const [isBooted, setIsBooted] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
+  const [liveAnnouncement, setLiveAnnouncement] = useState('')
 
   // CRT boot-up sequence
   useEffect(() => {
@@ -267,12 +270,17 @@ function HomeContent() {
         content: data.response,
         structured: data.structured,
       }])
+
+      if (data.structured?.dateDisplay) {
+        setLiveAnnouncement(`Loaded results for ${data.structured.dateDisplay}`)
+      }
     } catch (error) {
       console.error('Chat error:', error)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: 'Sorry, I had trouble processing that. Please try again.'
       }])
+      setLiveAnnouncement('Search failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -310,25 +318,30 @@ function HomeContent() {
         content: data.response,
         structured: data.structured,
       }])
+      if (data.structured?.dateDisplay) {
+        setLiveAnnouncement(`Compared with ${data.structured.dateDisplay}`)
+      }
     } catch (error) {
       console.error('Comparison error:', error)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: 'Sorry, I had trouble processing that comparison.'
       }])
+      setLiveAnnouncement('Comparison failed. Please try another year.')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleRandom = async () => {
-    // Generate a random date between 1958 and 2020
-    const randomYear = Math.floor(Math.random() * (2020 - 1958 + 1)) + 1958
+  const handleRandom = async (range?: { startYear: number; endYear: number; label: string }) => {
+    const minYear = range ? range.startYear : 1958
+    const maxYear = range ? range.endYear : 2020
+    const randomYear = Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear
     const randomMonth = Math.floor(Math.random() * 12) + 1
     const randomDay = Math.floor(Math.random() * 28) + 1 // Keep it simple, avoid edge cases
     const randomDate = `${randomMonth}/${randomDay}/${randomYear}`
     
-    setMessages(prev => [...prev, { role: 'user', content: `🎲 Random: ${randomDate}` }])
+    setMessages(prev => [...prev, { role: 'user', content: range ? `${range.label}: ${randomDate}` : `🎲 Random: ${randomDate}` }])
     setIsLoading(true)
 
     try {
@@ -344,19 +357,42 @@ function HomeContent() {
         content: data.response,
         structured: data.structured,
       }])
+      if (data.structured?.dateDisplay) {
+        setLiveAnnouncement(`Loaded random result for ${data.structured.dateDisplay}`)
+      }
     } catch (error) {
       console.error('Random date error:', error)
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: 'Sorry, I had trouble with that random date.'
       }])
+      setLiveAnnouncement('Random search failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
   }
 
+  const handleExploreDecade = (decadeStart: number) => {
+    const decadeEnd = Math.min(decadeStart + 9, 2020)
+    void handleRandom({
+      startYear: decadeStart,
+      endYear: decadeEnd,
+      label: `🎛️ ${decadeStart}s jump`,
+    })
+  }
+
   return (
     <div className={`min-h-screen bg-crt-black ${!isBooted ? 'crt-boot' : ''}`}>
+      <a
+        href="#main-console"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 z-[100]
+                 bg-crt-dark border border-phosphor-teal rounded px-3 py-2 text-phosphor-teal led-text"
+      >
+        Skip to search console
+      </a>
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {liveAnnouncement}
+      </div>
       {!isBooted && <div className="boot-flash" aria-hidden="true" />}
       {/* VHS tracking line effect */}
       <div className="vhs-tracking fixed inset-0 pointer-events-none z-50" />
@@ -449,7 +485,7 @@ function HomeContent() {
         ) : null}
 
         {/* === MAIN CONSOLE: CRT Screen === */}
-        <div className="crt-screen-enhanced screen-depth border-4 border-crt-medium relative phosphor-grid">
+        <div id="main-console" tabIndex={-1} className="crt-screen-enhanced screen-depth border-4 border-crt-medium relative phosphor-grid">
           {/* VHS Effect Overlay */}
           <VHSEffect isActive={showVHSEffect} intensity="low">
             {/* Particle Effect */}
@@ -564,13 +600,27 @@ function HomeContent() {
                 {/* Random Date Quick Action */}
                 <div className="mt-6 cascade-in stagger-8">
                   <button
-                    onClick={handleRandom}
+                    onClick={() => void handleRandom()}
                     className="px-6 py-3 bg-crt-dark border border-phosphor-green/30 
                              rounded hover:border-phosphor-green hover:shadow-glow-green
                              text-aged-cream transition-all hover-lift led-text"
                   >
                     🎲 SURPRISE ME WITH A RANDOM DATE
                   </button>
+                </div>
+
+                <div className="mt-4 flex flex-wrap justify-center gap-2">
+                  {decadeQuickPicks.map((decade) => (
+                    <button
+                      key={decade}
+                      onClick={() => handleExploreDecade(decade)}
+                      className="px-3 py-2 bg-crt-dark border border-crt-light/40 rounded
+                               hover:border-phosphor-teal hover:shadow-glow-teal
+                               text-aged-cream/90 text-xs led-text tracking-wider transition-all"
+                    >
+                      Explore {decade}s
+                    </button>
+                  ))}
                 </div>
               </div>
             ) : (
@@ -599,7 +649,8 @@ function HomeContent() {
                                 day={message.structured.day}
                                 insights={message.structured.insights}
                                 onCompare={handleCompare}
-                                onRandom={handleRandom}
+                                onRandom={() => void handleRandom()}
+                                onExploreDecade={handleExploreDecade}
                                 query={message.content}
                               />
                             </ErrorBoundary>

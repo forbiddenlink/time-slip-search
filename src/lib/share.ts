@@ -103,6 +103,49 @@ export function generateShareText(data: ShareCardData): string {
 }
 
 /**
+ * Build a plain-text recap users can paste into notes, messages, or social posts.
+ */
+export function generateTimeCapsuleSummary(
+  dateDisplay: string,
+  year: number,
+  results: SearchResults
+): string {
+  const lines: string[] = [`TimeSlipSearch recap for ${dateDisplay} (${year})`]
+
+  const topSong = results.songs[0]
+  if (topSong) {
+    lines.push(`- #1 song: "${topSong.song_title}" by ${topSong.artist}`)
+  } else {
+    lines.push('- #1 song: Not available')
+  }
+
+  const topMovie = results.movies[0]
+  if (topMovie) {
+    lines.push(`- Top movie: "${topMovie.title}" (${topMovie.vote_average.toFixed(1)}/10)`)
+  } else {
+    lines.push('- Top movie: Not available')
+  }
+
+  const price = results.prices[0]
+  if (price?.gas_price_gallon !== undefined) {
+    lines.push(`- Gas price: $${price.gas_price_gallon.toFixed(2)}/gallon`)
+  } else {
+    lines.push('- Gas price: Not available')
+  }
+
+  const event = results.events[0]
+  if (event) {
+    lines.push(`- Notable event: ${event.title}`)
+  } else {
+    lines.push('- Notable event: Not available')
+  }
+
+  lines.push('- Explore more: https://timeslipsearch.vercel.app')
+
+  return lines.join('\n')
+}
+
+/**
  * Copy share link to clipboard
  */
 export async function copyShareLink(url: string): Promise<boolean> {
