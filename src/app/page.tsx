@@ -17,7 +17,7 @@ function HomeSeoFallback() {
           <p className="text-aged-cream/80 max-w-2xl mx-auto">
             Discover what happened on any day from 1958 to 2020, including the #1 song, top movies in theaters, historical prices, and key global events.
           </p>
-          <p className="text-sm text-aged-cream/60 led-text tracking-wide">
+          <p className="text-sm text-aged-cream/70 led-text tracking-wide">
             By TimeSlipSearch Editorial Team · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
           </p>
           <nav className="flex items-center justify-center gap-4 text-sm led-text tracking-wider">

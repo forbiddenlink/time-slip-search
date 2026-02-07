@@ -38,6 +38,8 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
   const [compareYearInput, setCompareYearInput] = useState('')
   const [showConfetti, setShowConfetti] = useState(true)
   const famousDate = (month && day) ? getFamousDate(month, day, year) : null
+  const topSong = results.songs[0]
+  const topMovie = results.movies[0]
   const compareForwardYear = Math.min(year + 10, 2020)
   const compareBackwardYear = Math.max(year - 10, 1958)
 
@@ -81,6 +83,39 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
     const recap = generateTimeCapsuleSummary(dateDisplay, year, results)
     const copied = await copyShareLink(recap)
     showTransientActionMessage(copied ? '\u2713 Recap copied!' : '\u2717 Failed to copy recap')
+  }
+
+  const handleDownloadSnapshot = () => {
+    if (typeof window === 'undefined') return
+
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      query,
+      dateDisplay,
+      year,
+      highlights: {
+        song: topSong ? `${topSong.song_title} - ${topSong.artist}` : null,
+        movie: topMovie ? topMovie.title : null,
+        gasPrice: results.prices[0]?.gas_price_gallon ?? null,
+        event: results.events[0]?.title ?? null,
+      },
+      results,
+    }
+
+    try {
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = `timeslip-${year}-${dateDisplay.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.json`
+      document.body.append(anchor)
+      anchor.click()
+      anchor.remove()
+      URL.revokeObjectURL(url)
+      showTransientActionMessage('\u2713 Snapshot downloaded')
+    } catch {
+      showTransientActionMessage('\u2717 Failed to download snapshot')
+    }
   }
 
   const handleCompareJump = () => {
@@ -275,6 +310,41 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
           >
             Copy Recap
           </button>
+
+          <button
+            onClick={handleDownloadSnapshot}
+            className="px-4 py-2 bg-crt-dark border border-phosphor-green/40
+                     rounded hover:border-phosphor-green hover:shadow-glow-green
+                     text-aged-cream text-sm transition-all hover-lift led-text"
+          >
+            Download JSON
+          </button>
+
+          {topSong && (
+            <a
+              href={`https://open.spotify.com/search/${encodeURIComponent(`${topSong.song_title} ${topSong.artist}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-crt-dark border border-phosphor-amber/40
+                       rounded hover:border-phosphor-amber hover:shadow-glow-amber
+                       text-aged-cream text-sm transition-all hover-lift led-text"
+            >
+              Open in Spotify
+            </a>
+          )}
+
+          {topMovie && (
+            <a
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${topMovie.title} ${topMovie.year} trailer`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-crt-dark border border-vinyl-label/40
+                       rounded hover:border-vinyl-label hover:shadow-glow-teal
+                       text-aged-cream text-sm transition-all hover-lift led-text"
+            >
+              Find Trailer
+            </a>
+          )}
         </div>
 
         {onCompare && (

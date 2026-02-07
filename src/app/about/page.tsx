@@ -41,7 +41,7 @@ export default function AboutPage() {
           <p className="text-aged-cream/75">
             TimeSlipSearch is a date-first cultural search experience that helps you explore what the world looked like on a specific day between 1958 and 2020.
           </p>
-          <p className="text-sm text-aged-cream/60 led-text tracking-wide">
+          <p className="text-sm text-aged-cream/70 led-text tracking-wide">
             By TimeSlipSearch Editorial Team · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
           </p>
         </header>
