@@ -53,7 +53,7 @@ const exampleQueries = [
 
 // Feature cards with professional components
 const featureCardsData = [
-  { IconComponent: MusicIcon, label: '#1 Songs', period: '350K+ charts', color: 'text-vinyl-label' },
+  { IconComponent: MusicIcon, label: '#1 Songs', period: '350K+ charts', color: 'text-vinyl-label-bright' },
   { IconComponent: FilmIcon, label: 'Movies', period: '50K+ films', color: 'text-phosphor-amber' },
   { IconComponent: DollarIcon, label: 'Prices', period: 'Real costs', color: 'text-phosphor-green' },
   { IconComponent: CalendarIcon, label: 'Events', period: '20K+ moments', color: 'text-phosphor-teal' },
