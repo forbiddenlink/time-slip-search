@@ -7,8 +7,31 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
+  const siteUrl = 'https://timeslipsearch.vercel.app'
   const publishedDate = '2026-01-15'
   const modifiedDate = '2026-02-07'
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'Contact TimeSlipSearch',
+    description: 'Contact details and support process for TimeSlipSearch users, reporters, and partners.',
+    image: `${siteUrl}/opengraph-image`,
+    author: {
+      '@type': 'Organization',
+      name: 'TimeSlipSearch Editorial Team',
+    },
+    datePublished: publishedDate,
+    dateModified: modifiedDate,
+    mainEntityOfPage: `${siteUrl}/contact`,
+    publisher: {
+      '@type': 'Organization',
+      name: 'TimeSlipSearch',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/icon`,
+      },
+    },
+  }
 
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
@@ -71,6 +94,10 @@ export default function ContactPage() {
           <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
         </footer>
       </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
     </main>
   )
 }

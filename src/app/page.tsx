@@ -2,10 +2,11 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import HomeClient from '@/components/home/HomeClient'
 
-function HomeSeoFallback() {
-  const publishedDate = '2026-01-15'
-  const modifiedDate = '2026-02-07'
+const siteUrl = 'https://timeslipsearch.vercel.app'
+const publishedDate = '2026-01-15'
+const modifiedDate = '2026-02-07'
 
+function HomeSeoFallback() {
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
       <div className="container mx-auto max-w-4xl px-4 py-10 space-y-8">
@@ -57,9 +58,29 @@ function HomeSeoFallback() {
 }
 
 export default function HomePage() {
+  const homeJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'TimeSlipSearch',
+    description: 'Search any date from 1958 to 2020 to instantly see the #1 song, top movies, historical prices, and major events.',
+    url: siteUrl,
+    datePublished: publishedDate,
+    dateModified: modifiedDate,
+    author: {
+      '@type': 'Organization',
+      name: 'TimeSlipSearch Editorial Team',
+    },
+  }
+
   return (
-    <Suspense fallback={<HomeSeoFallback />}>
-      <HomeClient />
-    </Suspense>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+      />
+      <Suspense fallback={<HomeSeoFallback />}>
+        <HomeClient />
+      </Suspense>
+    </>
   )
 }

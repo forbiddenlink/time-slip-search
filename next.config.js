@@ -1,5 +1,16 @@
 /* eslint-env node */
 /** @type {import('next').NextConfig} */
+const isProduction = process.env.NODE_ENV === 'production'
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isProduction ? '' : " 'unsafe-eval'"} https://vercel.live`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https://*.algolia.net https://*.algolianet.com https://vercel.live",
+  "frame-ancestors 'self'",
+].join('; ')
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -49,7 +60,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.algolia.net https://*.algolianet.com https://vercel.live; frame-ancestors 'self';"
+            value: contentSecurityPolicy
           }
         ],
       },

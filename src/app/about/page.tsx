@@ -7,8 +7,31 @@ export const metadata: Metadata = {
 }
 
 export default function AboutPage() {
+  const siteUrl = 'https://timeslipsearch.vercel.app'
   const publishedDate = '2026-01-15'
   const modifiedDate = '2026-02-07'
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'About TimeSlipSearch',
+    description: 'Learn how TimeSlipSearch works and how date-based cultural search is built and sourced.',
+    image: `${siteUrl}/opengraph-image`,
+    author: {
+      '@type': 'Organization',
+      name: 'TimeSlipSearch Editorial Team',
+    },
+    datePublished: publishedDate,
+    dateModified: modifiedDate,
+    mainEntityOfPage: `${siteUrl}/about`,
+    publisher: {
+      '@type': 'Organization',
+      name: 'TimeSlipSearch',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/icon`,
+      },
+    },
+  }
 
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
@@ -58,6 +81,10 @@ export default function AboutPage() {
           <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
         </footer>
       </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
     </main>
   )
 }

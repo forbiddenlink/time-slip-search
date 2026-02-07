@@ -7,9 +7,32 @@ export const metadata: Metadata = {
 }
 
 export default function PrivacyPolicyPage() {
+  const siteUrl = 'https://timeslipsearch.vercel.app'
   const effectiveDate = 'February 7, 2026'
   const publishedDate = '2026-01-15'
   const modifiedDate = '2026-02-07'
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: 'TimeSlipSearch Privacy Policy',
+    description: 'Privacy practices, data use, retention, and rights information for TimeSlipSearch users.',
+    image: `${siteUrl}/opengraph-image`,
+    author: {
+      '@type': 'Organization',
+      name: 'TimeSlipSearch Editorial Team',
+    },
+    datePublished: publishedDate,
+    dateModified: modifiedDate,
+    mainEntityOfPage: `${siteUrl}/privacy-policy`,
+    publisher: {
+      '@type': 'Organization',
+      name: 'TimeSlipSearch',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/icon`,
+      },
+    },
+  }
 
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
@@ -71,6 +94,10 @@ export default function PrivacyPolicyPage() {
           <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
         </footer>
       </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
     </main>
   )
 }
