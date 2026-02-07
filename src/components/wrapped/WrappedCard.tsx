@@ -34,7 +34,7 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
               <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
               <span className="led-text text-vhs-red text-xs tracking-widest">PLAYBACK SUMMARY</span>
             </div>
-            <span className="led-text text-aged-cream/40 text-xs">TIMESLIP v1.0</span>
+            <span className="led-text text-aged-cream/60 text-xs">TIMESLIP v1.0</span>
           </div>
 
           {/* Close Button */}
@@ -116,7 +116,7 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
               <div className="text-lg text-aged-cream/60 led-text tracking-widest mb-2">Your Favorite Era</div>
               <div className="text-5xl font-bold mb-2 led-text text-phosphor-amber">{stats.topDecade}</div>
               {stats.discoveries.rarestYear && (
-                <div className="text-sm text-aged-cream/40 led-text">
+                <div className="text-sm text-aged-cream/60 led-text">
                   Rarest Find: {stats.discoveries.rarestYear}
                 </div>
               )}

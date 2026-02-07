@@ -58,7 +58,7 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
                   <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
                   <span className="led-text text-vhs-red text-xs tracking-widest">REC ACHIEVEMENTS</span>
                 </div>
-                <span className="led-text text-aged-cream/40 text-xs">TIMESLIP v1.0</span>
+                <span className="led-text text-aged-cream/60 text-xs">TIMESLIP v1.0</span>
               </div>
 
               <button
@@ -150,7 +150,7 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
               {filteredAchievements.length === 0 && (
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">&#x1F512;</div>
-                  <p className="text-aged-cream/40 led-text tracking-wider">
+                  <p className="text-aged-cream/60 led-text tracking-wider">
                     No {filter === 'all' ? '' : filter} achievements yet
                   </p>
                 </div>

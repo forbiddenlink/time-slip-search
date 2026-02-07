@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
@@ -10,19 +11,20 @@ import { AgentMemoryPanel } from '@/components/memory/AgentMemoryPanel'
 import { SearchAutocomplete } from '@/components/search/SearchAutocomplete'
 import { VoiceInput } from '@/components/input/VoiceInput'
 import { SearchHistory } from '@/lib/agent-memory'
-import { Timeline } from '@/components/Timeline'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { encodeSearchToURL, decodeURLToSearch } from '@/lib/url-state'
 import { ComparisonPanel } from '@/components/results/ComparisonPanel'
-import { WrappedCard } from '@/components/wrapped/WrappedCard'
-import { AchievementsPanel } from '@/components/achievements/AchievementsPanel'
-import { AchievementToast } from '@/components/achievements/AchievementToast'
 import { VHSEffect, VHSRewindEffect } from '@/components/animations/VHSEffect'
 import { ParticleEffect } from '@/components/animations/ParticleEffect'
-import { KeyboardShortcutsModal } from '@/components/KeyboardShortcutsModal'
 import { trackSearch, getWrappedStats, type WrappedStats } from '@/lib/wrapped'
 import { checkAchievements, updateStreak, type Achievement } from '@/lib/achievements'
 import { GiftIcon, TrophyIcon, FilmIcon, SparklesIcon, MusicIcon, DollarIcon, CalendarIcon } from '@/components/icons/Icons'
+
+const Timeline = dynamic(() => import('@/components/Timeline').then((m) => m.Timeline), { ssr: false })
+const WrappedCard = dynamic(() => import('@/components/wrapped/WrappedCard').then((m) => m.WrappedCard), { ssr: false })
+const AchievementsPanel = dynamic(() => import('@/components/achievements/AchievementsPanel').then((m) => m.AchievementsPanel), { ssr: false })
+const AchievementToast = dynamic(() => import('@/components/achievements/AchievementToast').then((m) => m.AchievementToast), { ssr: false })
+const KeyboardShortcutsModal = dynamic(() => import('@/components/KeyboardShortcutsModal').then((m) => m.KeyboardShortcutsModal), { ssr: false })
 
 interface StructuredResult {
   dateDisplay: string
@@ -521,7 +523,7 @@ function HomeContent() {
                     <div className="text-base font-medium text-aged-cream tracking-wide">
                       {feature.label}
                     </div>
-                    <div className="text-xs text-aged-cream/40 mt-2 led-text tracking-wider">
+                    <div className="text-xs text-aged-cream/60 mt-2 led-text tracking-wider">
                       {feature.period}
                     </div>
                   </div>
@@ -544,7 +546,7 @@ function HomeContent() {
                 <span className="led-text text-phosphor-teal text-sm">CH</span>
                 <span className="led-text text-phosphor-amber">03</span>
               </div>
-              <div className="text-aged-cream/40 text-xs tracking-widest led-text">
+              <div className="text-aged-cream/60 text-xs tracking-widest led-text">
                 TIMESLIP SEARCH v1.0
               </div>
               <div className="flex gap-2">
@@ -578,7 +580,7 @@ function HomeContent() {
                   onClick={() => setShowVHSEffect(!showVHSEffect)}
                   className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${
                     showVHSEffect
-                      ? 'bg-vhs-red text-white shadow-lg'
+                      ? 'bg-vhs-red text-aged-cream shadow-lg'
                       : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
                   }`}
                   title="Toggle VHS Effect"
@@ -631,7 +633,7 @@ function HomeContent() {
                           <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors text-base">
                             {example.text}
                           </span>
-                          <span className="text-aged-cream/40 text-xs mt-1.5 led-text tracking-wider">
+                          <span className="text-aged-cream/60 text-xs mt-1.5 led-text tracking-wider">
                             {example.query}
                           </span>
                         </div>
@@ -640,7 +642,7 @@ function HomeContent() {
                   ))}
                 </div>
 
-                <p className="mt-8 text-sm text-aged-cream/40 led-text tracking-wide cascade-in stagger-7">
+                <p className="mt-8 text-sm text-aged-cream/60 led-text tracking-wide cascade-in stagger-7">
                   ALSO TRY: &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot; &bull; &quot;MY 21ST BIRTHDAY&quot;
                 </p>
 

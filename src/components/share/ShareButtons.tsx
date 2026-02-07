@@ -131,7 +131,7 @@ export function ShareButtons({ dateDisplay, year, results, onCompare, onRandom }
                 )}
 
                 <div className="absolute bottom-8 left-0 right-0">
-                  <div className="text-aged-cream/40 text-sm led-text tracking-wider">
+                  <div className="text-aged-cream/60 text-sm led-text tracking-wider">
                     Discover your musical time capsule at
                   </div>
                   <div className="text-phosphor-teal text-lg font-display mt-1">

@@ -94,7 +94,7 @@ export function SearchAutocomplete({ query, onSelect, isVisible, onClose }: Read
                   {suggestion.text}
                 </div>
                 {suggestion.description && (
-                  <div className="text-xs text-aged-cream/40 mt-0.5 truncate">
+                  <div className="text-xs text-aged-cream/60 mt-0.5 truncate">
                     {suggestion.description}
                   </div>
                 )}
@@ -110,7 +110,7 @@ export function SearchAutocomplete({ query, onSelect, isVisible, onClose }: Read
       </div>
       
       <div className="px-4 py-2 bg-crt-medium border-t border-crt-light/20 flex items-center justify-between">
-        <span className="text-aged-cream/40 text-xs led-text tracking-wide">
+        <span className="text-aged-cream/60 text-xs led-text tracking-wide">
           ↑↓ NAVIGATE · ↵ SELECT · ESC CLOSE
         </span>
         <span className="text-aged-cream/30 text-xs led-text">

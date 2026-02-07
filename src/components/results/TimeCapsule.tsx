@@ -145,7 +145,7 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
             : `I don&apos;t have data indexed for ${dateDisplay} yet.`
           }
         </p>
-        <p className="text-sm text-aged-cream/40 mt-2 led-text">
+        <p className="text-sm text-aged-cream/60 mt-2 led-text">
           {isOutOfRange 
             ? 'TRY A DATE BETWEEN 1958 AND 2020'
             : 'DATABASE MAY NEED POPULATION - SEE SETUP.MD'

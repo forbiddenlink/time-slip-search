@@ -53,13 +53,13 @@ export function AchievementToast({ achievement, onDismiss }: AchievementToastPro
 
               {/* Achievement Details */}
               <div className="text-center">
-                <h3 className="text-xl font-bold text-white mb-2">{achievement.title}</h3>
+                <h3 className="text-xl font-bold text-aged-cream mb-2">{achievement.title}</h3>
                 <p className="text-gray-300 text-sm mb-3">{achievement.description}</p>
                 <div className="flex items-center justify-center gap-3 text-sm">
                   <span className={`font-semibold ${getRarityColor(achievement.rarity)}`}>
                     {getRarityLabel(achievement.rarity)}
                   </span>
-                  <span className="text-gray-400">•</span>
+                  <span className="text-aged-cream/60">•</span>
                   <span className="text-amber-400 font-semibold">+{achievement.points} pts</span>
                 </div>
               </div>
@@ -70,7 +70,7 @@ export function AchievementToast({ achievement, onDismiss }: AchievementToastPro
                   setIsVisible(false)
                   setTimeout(onDismiss, 300)
                 }}
-                className="absolute top-2 right-2 text-gray-400 hover:text-white transition-colors p-1 hover:bg-gray-800 rounded"
+                className="absolute top-2 right-2 text-aged-cream/60 hover:text-aged-cream transition-colors p-1 hover:bg-gray-800 rounded"
                 aria-label="Dismiss"
               >
                 <XIcon size={18} />

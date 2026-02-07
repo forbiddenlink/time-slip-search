@@ -211,14 +211,14 @@ export function VHSRewindEffect({ onComplete }: VHSRewindEffectProps) {
           repeat: Infinity,
           ease: 'linear',
         }}
-        className="text-white text-6xl z-10"
+        className="text-aged-cream text-6xl z-10"
       >
         ⏪
       </motion.div>
 
       {/* Glitch Text */}
       <motion.div
-        className="absolute bottom-20 left-1/2 -translate-x-1/2 text-white text-2xl font-mono"
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 text-aged-cream text-2xl font-mono"
         animate={{
           opacity: [1, 0.5, 1],
         }}

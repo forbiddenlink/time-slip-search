@@ -79,7 +79,7 @@ export function Timeline({
               className="absolute top-0 bottom-0 border-l border-crt-light/20"
               style={{ left: `${position}%` }}
             >
-              <span className="absolute -bottom-5 -left-4 text-aged-cream/40 text-xs led-text">
+              <span className="absolute -bottom-5 -left-4 text-aged-cream/60 text-xs led-text">
                 {year}
               </span>
             </div>

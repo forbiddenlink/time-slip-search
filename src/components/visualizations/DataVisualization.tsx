@@ -132,7 +132,7 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
           <Bar data={chartData} options={options} />
         )}
       </div>
-      <div className="mt-3 flex items-center justify-between text-xs text-aged-cream/40 led-text">
+      <div className="mt-3 flex items-center justify-between text-xs text-aged-cream/60 led-text">
         <span>{data.labels.length} data points</span>
         <span className="text-phosphor-teal">{data.label}</span>
       </div>

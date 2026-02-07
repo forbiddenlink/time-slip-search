@@ -38,7 +38,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
           <button
             onClick={() => setShowHistory(true)}
             className={`led-text text-sm tracking-widest transition-colors ${
-              showHistory ? 'text-phosphor-teal' : 'text-aged-cream/40 hover:text-aged-cream/70'
+              showHistory ? 'text-phosphor-teal' : 'text-aged-cream/60 hover:text-aged-cream/70'
             }`}
           >
             🕐 RECENT ({recentSearches.length})
@@ -46,7 +46,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
           <button
             onClick={() => setShowHistory(false)}
             className={`led-text text-sm tracking-widest transition-colors ${
-              !showHistory ? 'text-phosphor-amber' : 'text-aged-cream/40 hover:text-aged-cream/70'
+              !showHistory ? 'text-phosphor-amber' : 'text-aged-cream/60 hover:text-aged-cream/70'
             }`}
           >
             ❤️ FAVORITES ({favorites.length})
@@ -56,7 +56,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
         {showHistory && recentSearches.length > 0 && (
           <button
             onClick={clearHistory}
-            className="led-text text-xs text-aged-cream/40 hover:text-vhs-red transition-colors"
+            className="led-text text-xs text-aged-cream/60 hover:text-vhs-red transition-colors"
           >
             CLEAR
           </button>
@@ -79,7 +79,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
                   <div className="text-aged-cream group-hover:text-phosphor-teal transition-colors">
                     {search.dateDisplay}
                   </div>
-                  <div className="text-xs text-aged-cream/40 mt-1 led-text">
+                  <div className="text-xs text-aged-cream/60 mt-1 led-text">
                     {new Date(search.timestamp).toLocaleDateString()} • {search.resultCount} results
                   </div>
                 </div>
@@ -93,7 +93,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
       ) : (
         <div className="space-y-2">
           {favorites.length === 0 ? (
-            <div className="text-center py-8 text-aged-cream/40 text-sm led-text">
+            <div className="text-center py-8 text-aged-cream/60 text-sm led-text">
               NO FAVORITES YET
               <div className="text-xs mt-2">Click ❤️ on any result to save it</div>
             </div>
@@ -116,7 +116,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
                       </div>
                     )}
                     {fav.gasPrice && (
-                      <div className="text-xs text-aged-cream/40 mt-1 led-text">
+                      <div className="text-xs text-aged-cream/60 mt-1 led-text">
                         ⛽ Gas: ${fav.gasPrice.toFixed(2)}/gal
                       </div>
                     )}

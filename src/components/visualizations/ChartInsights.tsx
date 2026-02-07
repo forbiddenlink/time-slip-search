@@ -98,7 +98,7 @@ export function ChartInsights({ results, year }: Readonly<ChartInsightsProps>) {
         )}
       </div>
 
-      <div className="text-center text-aged-cream/40 text-xs led-text mt-4">
+      <div className="text-center text-aged-cream/60 text-xs led-text mt-4">
         📈 VISUALIZATIONS POWERED BY BILLBOARD CHART DATA
       </div>
     </div>

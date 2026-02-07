@@ -80,7 +80,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
                   <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
                   <span className="led-text text-vhs-red text-xs tracking-widest">REC</span>
                 </div>
-                <span className="led-text text-aged-cream/40 text-xs tracking-widest">TIMESLIP v1.0</span>
+                <span className="led-text text-aged-cream/60 text-xs tracking-widest">TIMESLIP v1.0</span>
               </div>
 
               <div className="flex items-center justify-between">

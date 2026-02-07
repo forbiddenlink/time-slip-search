@@ -94,7 +94,7 @@ export function AchievementBadge({ achievement, size = 'medium' }: AchievementBa
           </div>
         ) : (
           <div className="absolute -top-2 -right-2 bg-crt-medium rounded-full p-1 border border-crt-light/30">
-            <LockIcon size={16} className="text-aged-cream/40" />
+            <LockIcon size={16} className="text-aged-cream/60" />
           </div>
         )}
       </div>
@@ -111,7 +111,7 @@ export function AchievementBadge({ achievement, size = 'medium' }: AchievementBa
             <span className="text-phosphor-amber led-text">{achievement.points} pts</span>
           </div>
           {!achievement.unlocked && (
-            <div className="mt-2 text-xs text-aged-cream/40 led-text">
+            <div className="mt-2 text-xs text-aged-cream/60 led-text">
               Progress: {achievement.progress}/{achievement.requirement}
             </div>
           )}

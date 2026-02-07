@@ -412,7 +412,7 @@ export function updateStreak(): void {
  */
 export function getRarityColor(rarity: AchievementRarity): string {
   const colors = {
-    common: 'text-gray-400',
+    common: 'text-aged-cream/60',
     rare: 'text-blue-400',
     epic: 'text-purple-400',
     legendary: 'text-amber-400',
