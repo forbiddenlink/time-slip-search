@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { headers } from 'next/headers'
 import HomeClient from '@/components/home/HomeClient'
 
 const siteUrl = 'https://timeslipsearch.vercel.app'
@@ -57,7 +58,8 @@ function HomeSeoFallback() {
   )
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const nonce = (await headers()).get('x-nonce') ?? undefined
   const homeJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
@@ -75,6 +77,7 @@ export default function HomePage() {
   return (
     <>
       <script
+        nonce={nonce}
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
       />
