@@ -13,6 +13,7 @@ import { SearchHistory } from '@/lib/agent-memory'
 import { Timeline } from '@/components/Timeline'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { encodeSearchToURL, decodeURLToSearch } from '@/lib/url-state'
+import { ComparisonPanel } from '@/components/results/ComparisonPanel'
 import { WrappedCard } from '@/components/wrapped/WrappedCard'
 import { AchievementsPanel } from '@/components/achievements/AchievementsPanel'
 import { AchievementToast } from '@/components/achievements/AchievementToast'
@@ -23,18 +24,20 @@ import { trackSearch, getWrappedStats, type WrappedStats } from '@/lib/wrapped'
 import { checkAchievements, updateStreak, type Achievement } from '@/lib/achievements'
 import { GiftIcon, TrophyIcon, FilmIcon, SparklesIcon, MusicIcon, DollarIcon, CalendarIcon } from '@/components/icons/Icons'
 
+interface StructuredResult {
+  dateDisplay: string
+  year: number
+  month?: number
+  day?: number
+  results: SearchResults
+  suggestions?: string[]
+  insights?: string[]
+}
+
 interface Message {
   role: 'user' | 'assistant'
   content: string
-  structured?: {
-    dateDisplay: string
-    year: number
-    month?: number
-    day?: number
-    results: SearchResults
-    suggestions?: string[]
-    insights?: string[]
-  }
+  structured?: StructuredResult
 }
 
 // Hoisted outside component to prevent recreation on each render (rerender-memo-with-default-value)
@@ -79,6 +82,10 @@ function HomeContent() {
   const [isBooted, setIsBooted] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [liveAnnouncement, setLiveAnnouncement] = useState('')
+  const [comparisonState, setComparisonState] = useState<{
+    base: StructuredResult
+    compare: StructuredResult
+  } | null>(null)
 
   // CRT boot-up sequence
   useEffect(() => {
@@ -198,6 +205,7 @@ function HomeContent() {
     e.preventDefault()
     if (!query.trim() || isLoading) return
 
+    setComparisonState(null)
     setShowAutocomplete(false)
     const userMessage = query.trim()
     setQuery('')
@@ -299,10 +307,29 @@ function HomeContent() {
     }, 100)
   }
 
-  const handleCompare = async (targetYear: number) => {
-    // Generate a query for the comparison year
+  const handleCompare = async (targetYear: number, baseData?: StructuredResult) => {
+    const fallbackBase =
+      baseData ??
+      [...messages]
+        .reverse()
+        .find((m) => m.structured)?.structured
+
+    if (!fallbackBase) {
+      setLiveAnnouncement('No base result available for comparison yet.')
+      return
+    }
+
+    if (targetYear === fallbackBase.year) {
+      setLiveAnnouncement('Pick a different year to compare.')
+      return
+    }
+
     const comparisonQuery = `Year ${targetYear}`
-    setMessages(prev => [...prev, { role: 'user', content: comparisonQuery }])
+    setComparisonState(null)
+    setMessages(prev => [...prev, {
+      role: 'user',
+      content: `🔁 Compare ${fallbackBase.year} vs ${targetYear}`,
+    }])
     setIsLoading(true)
 
     try {
@@ -318,8 +345,12 @@ function HomeContent() {
         content: data.response,
         structured: data.structured,
       }])
-      if (data.structured?.dateDisplay) {
-        setLiveAnnouncement(`Compared with ${data.structured.dateDisplay}`)
+      if (data.structured) {
+        setComparisonState({
+          base: fallbackBase,
+          compare: data.structured,
+        })
+        setLiveAnnouncement(`Compared ${fallbackBase.year} with ${data.structured.year}`)
       }
     } catch (error) {
       console.error('Comparison error:', error)
@@ -334,6 +365,7 @@ function HomeContent() {
   }
 
   const handleRandom = async (range?: { startYear: number; endYear: number; label: string }) => {
+    setComparisonState(null)
     const minYear = range ? range.startYear : 1958
     const maxYear = range ? range.endYear : 2020
     const randomYear = Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear
@@ -431,6 +463,21 @@ function HomeContent() {
             </p>
           </div>
         </header>
+
+        {comparisonState && (
+          <ComparisonPanel
+            base={comparisonState.base}
+            compare={comparisonState.compare}
+            onClose={() => setComparisonState(null)}
+            onSwap={() =>
+              setComparisonState((current) =>
+                current
+                  ? { base: current.compare, compare: current.base }
+                  : current
+              )
+            }
+          />
+        )}
 
         {/* === AGENT MEMORY: Recent Searches & Favorites === */}
         {messages.length === 0 && (
@@ -648,7 +695,9 @@ function HomeContent() {
                                 month={message.structured.month}
                                 day={message.structured.day}
                                 insights={message.structured.insights}
-                                onCompare={handleCompare}
+                                onCompare={(targetYear) => {
+                                  void handleCompare(targetYear, message.structured)
+                                }}
                                 onRandom={() => void handleRandom()}
                                 onExploreDecade={handleExploreDecade}
                                 query={message.content}
