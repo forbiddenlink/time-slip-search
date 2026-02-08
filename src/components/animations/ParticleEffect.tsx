@@ -99,6 +99,86 @@ interface ConfettiEffectProps {
   duration?: number
 }
 
+interface ParticleBurstProps {
+  isActive?: boolean
+  duration?: number
+  onComplete?: () => void
+}
+
+export function ParticleBurst({ isActive = false, duration = 1500, onComplete }: ParticleBurstProps) {
+  const [particles, setParticles] = useState<Array<{
+    id: number
+    x: number
+    y: number
+    angle: number
+    velocity: number
+    color: string
+    size: number
+  }>>([])
+
+  useEffect(() => {
+    if (!isActive) {
+      setParticles([])
+      return
+    }
+
+    // Teal and amber colors for the burst
+    const colors = ['#4ECDC4', '#45B7D1', '#F7DC6F', '#FFD93D', '#6FFFE9', '#5EEAD4']
+
+    // Create particles radiating from center
+    const burstParticles = Array.from({ length: 30 }, (_, i) => ({
+      id: i,
+      x: 50, // Start from center
+      y: 50,
+      angle: (i / 30) * Math.PI * 2, // Radiate in all directions
+      velocity: 2 + Math.random() * 3,
+      color: colors[Math.floor(Math.random() * colors.length)] ?? '#4ECDC4',
+      size: 3 + Math.random() * 4,
+    }))
+
+    setParticles(burstParticles)
+
+    const timer = setTimeout(() => {
+      setParticles([])
+      onComplete?.()
+    }, duration)
+
+    return () => clearTimeout(timer)
+  }, [isActive, duration, onComplete])
+
+  if (!isActive || particles.length === 0) return null
+
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full"
+          style={{
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
+            backgroundColor: particle.color,
+            boxShadow: `0 0 ${particle.size * 3}px ${particle.color}`,
+          }}
+          initial={{ scale: 0, opacity: 1 }}
+          animate={{
+            x: Math.cos(particle.angle) * particle.velocity * 100,
+            y: Math.sin(particle.angle) * particle.velocity * 100,
+            scale: [0, 1.5, 0],
+            opacity: [1, 1, 0],
+          }}
+          transition={{
+            duration: duration / 1000,
+            ease: 'easeOut',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
 export function ConfettiEffect({ isActive = false, duration = 3000 }: ConfettiEffectProps) {
   const [pieces, setPieces] = useState<Array<{ id: number; x: number; delay: number; color: string }>>([])
 

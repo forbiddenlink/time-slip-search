@@ -65,6 +65,11 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    animation: {
+      duration: 1500,
+      easing: 'easeOutQuart' as const,
+      delay: (context: { dataIndex: number }) => context.dataIndex * 100,
+    },
     plugins: {
       legend: {
         display: false,

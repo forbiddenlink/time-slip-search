@@ -199,3 +199,61 @@ export function getFamousDate(month: number, day: number, year: number): FamousD
 export function getNearbyFamousDates(year: number): FamousDate[] {
   return FAMOUS_DATES.filter(fd => fd.year === year)
 }
+
+/**
+ * Get a random selection of famous dates
+ */
+export function getRandomFamousDates(count: number): FamousDate[] {
+  const shuffled = [...FAMOUS_DATES].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, Math.min(count, FAMOUS_DATES.length))
+}
+
+/**
+ * Get seasonal picks based on current month
+ */
+export function getSeasonalPicks(): FamousDate[] {
+  const now = new Date()
+  const month = now.getMonth() + 1 // 1-12
+
+  // Get dates that match the current month or nearby
+  const monthKey = String(month).padStart(2, '0')
+  const prevMonth = String(month === 1 ? 12 : month - 1).padStart(2, '0')
+  const nextMonth = String(month === 12 ? 1 : month + 1).padStart(2, '0')
+
+  const seasonal = FAMOUS_DATES.filter(fd => {
+    const fdMonth = fd.date.split('-')[0]
+    return fdMonth === monthKey || fdMonth === prevMonth || fdMonth === nextMonth
+  })
+
+  // If we have seasonal matches, return a random subset
+  if (seasonal.length > 0) {
+    const shuffled = [...seasonal].sort(() => Math.random() - 0.5)
+    return shuffled.slice(0, Math.min(4, seasonal.length))
+  }
+
+  // Fallback to random picks
+  return getRandomFamousDates(4)
+}
+
+/**
+ * Get all famous dates for display
+ */
+export function getAllFamousDates(): FamousDate[] {
+  return FAMOUS_DATES
+}
+
+/**
+ * Get category icon for display
+ */
+export function getCategoryIcon(category: string): string {
+  const icons: Record<string, string> = {
+    space: '🚀',
+    politics: '🏛️',
+    music: '🎵',
+    technology: '💻',
+    sports: '🏆',
+    disaster: '⚠️',
+    culture: '🎭',
+  }
+  return icons[category] ?? '📅'
+}
