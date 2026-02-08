@@ -46,7 +46,7 @@ The result is a time machine powered by Algolia vector search, styled like a 198
 ### 🎨 Retro UX Features
 - **VHS aesthetic**: CRT scan lines, static noise, retro color palette
 - **"NO SIGNAL" errors**: Even 404s are themed with TV static
-- **Voice input**: Speak your date, we'll parse it
+- **Voice input**: Speak your date, the app parses it
 - **Keyboard shortcuts**: Power user features (press `?` to see all)
 - **Agent memory**: Remembers your searches and favorites across sessions
 - **Achievements**: Unlock badges for exploring different decades
@@ -54,7 +54,7 @@ The result is a time machine powered by Algolia vector search, styled like a 198
 
 ---
 
-## 🛠️ How We Built It
+## 🛠️ How I Built It
 
 ### Tech Stack
 - **Frontend**: Next.js 16.1.6 (App Router), React 18.3.1, TypeScript 5.9.3
@@ -159,7 +159,7 @@ Billboard data = 352,187 records. Needed to batch upload to Algolia without hitt
 
 ---
 
-## 😅 Challenges We Ran Into
+## 😅 Challenges I Ran Into
 
 ### 1. **Date Parsing Edge Cases**
 Users can input dates in infinite ways. "1957" (before data range), "2030" (future), "show me the 80s", etc.
@@ -183,7 +183,7 @@ Federal Reserve API has strict limits (300 req/day for free tier).
 
 ---
 
-## 🏆 Accomplishments We're Proud Of
+## 🏆 Accomplishments I'm Proud Of
 
 1. ✅ **350,000+ indexed records** searchable in < 100ms
 2. ✅ **Zero search failures** after fixing timezone bug
@@ -202,12 +202,12 @@ Federal Reserve API has strict limits (300 req/day for free tier).
 
 ---
 
-## 📚 What We Learned
+## 📚 What I Learned
 
 ### Technical Learnings:
 1. **Vector search is powerful**: Algolia made querying 350K+ records trivial. The biggest challenge was data preparation, not search performance.
 
-2. **Date parsing is harder than it looks**: Timezones, ranges, natural language—every assumption broke at some point. chrono-node saved us, but required careful preprocessing.
+2. **Date parsing is harder than it looks**: Timezones, ranges, natural language—every assumption broke at some point. chrono-node saved the project, but required careful preprocessing.
 
 3. **UX is as important as tech**: The VHS aesthetic makes TimeSlipSearch memorable. Users stay for the search, but they share because of the vibes.
 

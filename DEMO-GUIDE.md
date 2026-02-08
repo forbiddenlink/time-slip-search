@@ -272,7 +272,7 @@ After the demo, suggest:
 > 
 > But it gets better. Watch what happens when I search for '1957'—before our data range. [Show NO SIGNAL screen] Even the errors are themed with TV static!
 > 
-> We've got 350,000+ songs spanning 62 years, all searchable in milliseconds thanks to Algolia. You can use voice input, unlock achievements, and the app remembers your favorite searches.
+> I've got 350,000+ songs spanning 62 years, all searchable in milliseconds thanks to Algolia. You can use voice input, unlock achievements, and the app remembers your favorite searches.
 > 
 > This isn't just a search engine—it's a time machine. Try it yourself at timeslipsearch.vercel.app."
 

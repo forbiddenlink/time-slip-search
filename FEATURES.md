@@ -20,6 +20,7 @@
 - **Improved Accessibility** - ARIA labels, screen reader support
 - **Better Loading States** - Skeleton screens and progress indicators
 - **Print Stylesheet** - Optimized printing for results
+- **Visual Polish** - Consistent glass-morphism and retro icons for all result cards
 
 ### Developer Experience
 - **Stricter TypeScript** - Added noUncheckedIndexedAccess, noImplicitOverride

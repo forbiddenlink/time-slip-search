@@ -21,7 +21,7 @@ export default async function PrivacyPolicyPage() {
     image: `${siteUrl}/opengraph-image`,
     author: {
       '@type': 'Organization',
-      name: 'TimeSlipSearch Editorial Team',
+      name: 'Elizabeth Stein',
     },
     datePublished: publishedDate,
     dateModified: modifiedDate,
@@ -43,7 +43,7 @@ export default async function PrivacyPolicyPage() {
           <h1 className="font-display text-5xl tracking-tight">Privacy Policy</h1>
           <p className="text-aged-cream/75">Effective date: {effectiveDate}</p>
           <p className="text-sm text-aged-cream/70 led-text tracking-wide">
-            By TimeSlipSearch Editorial Team · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
+            By Elizabeth Stein · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
           </p>
         </header>
 

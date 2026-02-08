@@ -56,94 +56,146 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
 
   if (picks.length === 0) return null
 
+  // Constants for layout
+  const CARD_WIDTH = 280 // w-70 equivalent (approx) or slightly larger than w-64
+  const GAP = 16 // gap-4
+
   return (
     <div
-      className="mb-8 animate-fade-in"
+      className="mb-12 animate-fade-in relative group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Section header with VHS tape label aesthetic */}
-      <div className="flex items-center justify-center gap-3 mb-4">
+      <div className="flex items-center justify-center gap-3 mb-6">
         <div className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent via-phosphor-amber/40 to-phosphor-amber/60" />
-        <span className="led-text text-phosphor-amber text-sm tracking-widest uppercase">
+        <span className="led-text text-phosphor-amber text-sm tracking-widest uppercase glow-text-subtle">
           Staff Picks
         </span>
         <div className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-phosphor-amber/40 to-phosphor-amber/60" />
       </div>
 
-      {/* Carousel container */}
-      <div className="relative overflow-hidden">
-        <div className="flex gap-4 justify-center">
-          <AnimatePresence mode="wait">
-            {picks.map((pick, index) => (
-              <motion.button
-                key={`${pick.date}-${pick.year}`}
-                onClick={() => handleClick(pick)}
-                className={`
-                  relative flex-shrink-0 w-64 p-4 rounded-lg
-                  bg-crt-dark border transition-all duration-300
-                  ${index === currentIndex
-                    ? 'border-phosphor-amber shadow-glow-amber scale-105 z-10'
-                    : 'border-crt-light/30 opacity-60 hover:opacity-90 hover:border-phosphor-teal/50'
-                  }
-                `}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{
-                  opacity: index === currentIndex ? 1 : 0.6,
-                  y: 0,
-                  scale: index === currentIndex ? 1.05 : 1,
-                }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ scale: 1.02 }}
-                aria-label={`Explore ${pick.title}`}
-              >
-                {/* VHS tape label decoration */}
-                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-phosphor-amber/60 via-vhs-red/40 to-phosphor-amber/60 rounded-t-lg" />
+      {/* Carousel container with mask for fade-out edges */}
+      <div
+        className="relative overflow-hidden h-[180px] mask-gradient-x"
+        style={{
+          maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
+        }}
+      >
+        <div className="absolute left-1/2 top-0 h-full w-full">
+          <motion.div
+            className="flex gap-4 absolute top-0"
+            initial={false}
+            animate={{
+              x: `calc(-50% - ${currentIndex * (CARD_WIDTH + GAP)}px + ${CARD_WIDTH / 2}px)`
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <AnimatePresence mode="popLayout">
+              {picks.map((pick, index) => (
+                <motion.button
+                  key={`${pick.date}-${pick.year}`}
+                  onClick={() => handleClick(pick)}
+                  layout
+                  className={`
+                    flex-shrink-0 relative overflow-hidden rounded-lg
+                    transition-all duration-300
+                    text-left border backdrop-blur-sm
+                    ${index === currentIndex
+                      ? 'border-phosphor-amber shadow-glow-amber z-10 bg-crt-medium'
+                      : 'border-crt-light/30 opacity-60 hover:opacity-100 hover:border-phosphor-teal/50 hover:scale-[1.02] bg-crt-dark'
+                    }
+                  `}
+                  style={{
+                    width: CARD_WIDTH,
+                    height: '160px', // Fixed height
+                  }}
+                  animate={{
+                    scale: index === currentIndex ? 1.05 : 1,
+                    opacity: index === currentIndex ? 1 : 0.6,
+                    filter: index === currentIndex ? 'grayscale(0%)' : 'grayscale(30%)',
+                  }}
+                  whileHover={{
+                    scale: index === currentIndex ? 1.05 : 1.02,
+                    filter: 'grayscale(0%)'
+                  }}
+                >
+                  {/* VHS tape label decoration */}
+                  <div className={`absolute top-0 left-0 right-0 h-1.5 rounded-t-lg ${index === currentIndex
+                      ? 'bg-gradient-to-r from-phosphor-amber/60 via-vhs-red/60 to-phosphor-amber/60'
+                      : 'bg-crt-light'
+                    }`} />
 
-                <div className="flex items-start gap-3 text-left pt-2">
-                  <span className="text-2xl flex-shrink-0">{getCategoryIcon(pick.category)}</span>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-aged-cream font-medium text-sm leading-tight truncate">
-                      {pick.title}
-                    </h3>
-                    <p className="text-phosphor-teal text-xs led-text mt-1">
-                      {pick.year}
+                  <div className="p-4 pt-5 h-full flex flex-col">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl flex-shrink-0 filter drop-shadow-md">
+                        {getCategoryIcon(pick.category)}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <h3 className={`font-medium text-sm leading-tight truncate ${index === currentIndex ? 'text-aged-cream glow-text-subtle' : 'text-aged-cream/80'
+                          }`}>
+                          {pick.title}
+                        </h3>
+                        <p className="text-phosphor-teal text-xs led-text mt-1 tracking-wider">
+                          {pick.year}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-aged-cream/70 text-xs mt-3 line-clamp-3 leading-relaxed">
+                      {pick.description}
                     </p>
-                    <p className="text-aged-cream/60 text-xs mt-2 line-clamp-2">
-                      {pick.description.length > 80
-                        ? `${pick.description.slice(0, 80)}...`
-                        : pick.description}
-                    </p>
+
+                    {/* Play indicator */}
+                    <div className={`absolute bottom-3 right-3 text-xs led-text transition-all duration-300 ${index === currentIndex ? 'text-phosphor-teal opacity-100' : 'text-phosphor-teal/40 opacity-0 group-hover:opacity-100'
+                      }`}>
+                      ▶ PLAY
+                    </div>
                   </div>
-                </div>
-
-                {/* Play indicator */}
-                <div className="absolute bottom-2 right-2 text-phosphor-teal/60 text-xs led-text">
-                  ▶ PLAY
-                </div>
-              </motion.button>
-            ))}
-          </AnimatePresence>
+                </motion.button>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         </div>
       </div>
 
-      {/* Navigation dots */}
-      <div className="flex justify-center gap-2 mt-4">
-        {picks.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goTo(index)}
-            className={`
-              w-2 h-2 rounded-full transition-all duration-300
-              ${index === currentIndex
-                ? 'bg-phosphor-amber w-6'
-                : 'bg-crt-light/40 hover:bg-phosphor-teal/60'
-              }
-            `}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
+      {/* Manual Navigation Controls - Enhanced */}
+      <div className="flex items-center justify-center gap-4 mt-2">
+        <button
+          onClick={() => goTo((currentIndex - 1 + picks.length) % picks.length)}
+          className="text-phosphor-teal/50 hover:text-phosphor-teal hover:scale-110 transition-all"
+          aria-label="Previous pick"
+        >
+          ←
+        </button>
+
+        <div className="flex gap-1.5">
+          {picks.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goTo(index)}
+              className={`
+                h-1.5 rounded-full transition-all duration-300
+                ${index === currentIndex
+                  ? 'bg-phosphor-amber w-6 shadow-[0_0_8px_rgba(255,191,0,0.6)]'
+                  : 'bg-crt-light/40 w-1.5 hover:bg-phosphor-teal/60'
+                }
+              `}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={() => goTo((currentIndex + 1) % picks.length)}
+          className="text-phosphor-teal/50 hover:text-phosphor-teal hover:scale-110 transition-all"
+          aria-label="Next pick"
+        >
+          →
+        </button>
       </div>
     </div>
   )
 }
+

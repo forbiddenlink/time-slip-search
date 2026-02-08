@@ -1,5 +1,6 @@
 import type { Price } from '@/lib/algolia'
 import { AnimatedNumber } from '@/components/animations/AnimatedNumber'
+import { DollarIcon, FilmIcon } from '@/components/icons/Icons'
 
 interface PriceCardProps {
   price: Price
@@ -11,30 +12,30 @@ export function PriceCard({ price }: PriceCardProps) {
       label: 'GAS',
       value: price.gas_price_gallon,
       unit: '/gal',
-      icon: '⛽',
+      icon: <span className="text-2xl">⛽</span>, // Keep emoji for gas as it's distinct
     },
     {
       label: 'WAGE',
       value: price.minimum_wage,
       unit: '/hr',
-      icon: '◐',
+      icon: <DollarIcon size={24} />,
     },
     {
       label: 'MOVIE',
       value: price.movie_ticket_price,
       unit: '',
-      icon: '▶',
+      icon: <FilmIcon size={24} />,
     },
   ].filter((item) => item.value != null)
 
   if (items.length === 0) return null
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {/* Section header - gas station sign style */}
       <div className="flex items-center gap-3 pb-2 border-b border-crt-light/20">
-        <div className="led-display px-2 py-1">
-          <span className="text-phosphor-green text-lg">$</span>
+        <div className="led-display px-2 py-1 bg-crt-dark/50 border-phosphor-green/30">
+          <DollarIcon size={20} className="text-phosphor-green" />
         </div>
         <div>
           <h3 className="font-display text-xl text-aged-cream">
@@ -51,22 +52,22 @@ export function PriceCard({ price }: PriceCardProps) {
         {items.map((item, index) => (
           <div
             key={item.label}
-            className="bg-crt-black border-2 border-crt-light/40 rounded p-3 text-center hover:border-phosphor-green/50 transition-colors group cascade-in"
+            className="glass-card p-3 text-center border border-crt-light/20 rounded-lg hover:border-phosphor-green/50 transition-all duration-300 group cascade-in hover:shadow-[0_0_15px_rgba(57,255,20,0.15)]"
             style={{ animationDelay: `${0.3 + index * 0.15}s` }}
           >
             {/* Icon */}
-            <div className="text-2xl mb-2 text-phosphor-amber group-hover:animate-pulse">
+            <div className="mb-2 text-phosphor-amber group-hover:animate-pulse flex justify-center h-8 items-center">
               {item.icon}
             </div>
 
             {/* Price - LED segment display style */}
-            <div className="led-display inline-block px-3 py-2 mb-2">
+            <div className="led-display inline-block px-3 py-2 mb-2 bg-black/40 w-full">
               <AnimatedNumber
                 value={item.value!}
                 prefix="$"
                 suffix={item.unit}
                 decimals={2}
-                className="led-text text-phosphor-green text-xl"
+                className="led-text text-phosphor-green text-lg tracking-widest"
               />
             </div>
 

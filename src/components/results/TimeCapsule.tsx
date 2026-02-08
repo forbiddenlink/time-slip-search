@@ -241,42 +241,49 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
       )}
 
       {/* === QUICK ACTIONS === */}
-      <div className="space-y-3">
-        <div className="text-aged-cream/60 text-xs led-text tracking-widest">TRY THESE:</div>
-        <div className="flex gap-2 flex-wrap">
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="h-px bg-crt-light/30 flex-1" />
+          <div className="text-aged-cream/50 text-xs led-text tracking-widest">TRY THESE</div>
+          <div className="h-px bg-crt-light/30 flex-1" />
+        </div>
+
+        <div className="flex gap-3 flex-wrap justify-center">
           {onCompare && (
-            <>
+            <div className="flex gap-2 w-full md:w-auto justify-center">
               <button
                 onClick={() => onCompare(compareForwardYear)}
                 disabled={compareForwardYear === year}
-                className="px-4 py-2 bg-crt-dark border border-phosphor-teal/30
-                         rounded hover:border-phosphor-teal hover:shadow-glow-teal
-                         text-aged-cream text-sm transition-all hover-lift led-text
-                         disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 bg-crt-dark border border-phosphor-teal/30
+                         rounded-lg hover:border-phosphor-teal hover:shadow-glow-teal
+                         text-aged-cream text-sm transition-all hover-lift led-text tracking-wide
+                         disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                Compare with {compareForwardYear}
+                <span>Compare {compareForwardYear}</span>
+                <span className="text-phosphor-teal">→</span>
               </button>
               <button
                 onClick={() => onCompare(compareBackwardYear)}
                 disabled={compareBackwardYear === year}
-                className="px-4 py-2 bg-crt-dark border border-phosphor-amber/30
-                         rounded hover:border-phosphor-amber hover:shadow-glow-amber
-                         text-aged-cream text-sm transition-all hover-lift led-text
-                         disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-4 py-2.5 bg-crt-dark border border-phosphor-amber/30
+                         rounded-lg hover:border-phosphor-amber hover:shadow-glow-amber
+                         text-aged-cream text-sm transition-all hover-lift led-text tracking-wide
+                         disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                See {compareBackwardYear}
+                <span className="text-phosphor-amber">←</span>
+                <span>See {compareBackwardYear}</span>
               </button>
-            </>
+            </div>
           )}
 
           {onRandom && (
             <button
               onClick={onRandom}
-              className="px-4 py-2 bg-crt-dark border border-phosphor-green/30
-                       rounded hover:border-phosphor-green hover:shadow-glow-green
-                       text-aged-cream text-sm transition-all hover-lift led-text"
+              className="px-4 py-2.5 bg-crt-dark border border-phosphor-green/30
+                       rounded-lg hover:border-phosphor-green hover:shadow-glow-green
+                       text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
             >
-              Random Date
+              <span>🎲</span> Random Date
             </button>
           )}
 
@@ -291,14 +298,14 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
           {/* Enhanced Share Button */}
           <button
             onClick={handleShare}
-            className="px-4 py-2 bg-crt-dark border border-vinyl-label/50
-                     rounded hover:border-vinyl-label hover:shadow-glow-amber
-                     text-aged-cream text-sm transition-all hover-lift led-text relative"
+            className="px-4 py-2.5 bg-crt-dark border border-vinyl-label/40
+                     rounded-lg hover:border-vinyl-label hover:shadow-glow-amber
+                     text-aged-cream text-sm transition-all hover-lift led-text tracking-wide relative flex items-center gap-2"
           >
-            Share
+            <span>📤</span> Share
             {shareMessage && (
-              <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap
-                             bg-crt-dark border border-phosphor-teal px-2 py-1 rounded text-xs">
+              <span className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap
+                             bg-crt-black border border-phosphor-teal px-3 py-1.5 rounded text-xs shadow-lg animate-fade-in z-50">
                 {shareMessage}
               </span>
             )}
@@ -306,20 +313,20 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
 
           <button
             onClick={handleCopyRecap}
-            className="px-4 py-2 bg-crt-dark border border-phosphor-teal/40
-                     rounded hover:border-phosphor-teal hover:shadow-glow-teal
-                     text-aged-cream text-sm transition-all hover-lift led-text"
+            className="px-4 py-2.5 bg-crt-dark border border-phosphor-teal/30
+                     rounded-lg hover:border-phosphor-teal hover:shadow-glow-teal
+                     text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
           >
-            Copy Recap
+            <span>📋</span> Recap
           </button>
 
           <button
             onClick={handleDownloadSnapshot}
-            className="px-4 py-2 bg-crt-dark border border-phosphor-green/40
-                     rounded hover:border-phosphor-green hover:shadow-glow-green
-                     text-aged-cream text-sm transition-all hover-lift led-text"
+            className="px-4 py-2.5 bg-crt-dark border border-phosphor-green/30
+                     rounded-lg hover:border-phosphor-green hover:shadow-glow-green
+                     text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
           >
-            Download JSON
+            <span>💾</span> JSON
           </button>
 
           {topSong && (
@@ -327,66 +334,56 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
               href={`https://open.spotify.com/search/${encodeURIComponent(`${topSong.song_title} ${topSong.artist}`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-crt-dark border border-phosphor-amber/40
-                       rounded hover:border-phosphor-amber hover:shadow-glow-amber
-                       text-aged-cream text-sm transition-all hover-lift led-text"
+              className="px-4 py-2.5 bg-crt-dark border border-[#1DB954]/40
+                       rounded-lg hover:border-[#1DB954] hover:shadow-[0_0_15px_rgba(29,185,84,0.3)]
+                       text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
             >
-              Open in Spotify
-            </a>
-          )}
-
-          {topMovie && (
-            <a
-              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${topMovie.title} ${topMovie.year} trailer`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 bg-crt-dark border border-vinyl-label/40
-                       rounded hover:border-vinyl-label hover:shadow-glow-teal
-                       text-aged-cream text-sm transition-all hover-lift led-text"
-            >
-              Find Trailer
+              <span className="text-[#1DB954]">♪</span> Spotify
             </a>
           )}
         </div>
 
         {onCompare && (
-          <div className="flex gap-2 flex-wrap items-center">
-            <input
-              type="number"
-              min={1958}
-              max={2020}
-              value={compareYearInput}
-              onChange={(e) => setCompareYearInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  handleCompareJump()
-                }
-              }}
-              placeholder="Jump to year (1958-2020)"
-              aria-label="Jump to a year to compare"
-              className="bg-crt-black border border-crt-light/40 rounded px-3 py-2 text-sm text-aged-cream placeholder-aged-cream/40 w-full md:w-56"
-            />
+          <div className="flex gap-3 flex-wrap items-center justify-center mt-6 pt-4 border-t border-crt-light/20">
+            <div className="relative group">
+              <input
+                type="number"
+                min={1958}
+                max={2020}
+                value={compareYearInput}
+                onChange={(e) => setCompareYearInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleCompareJump()
+                  }
+                }}
+                placeholder="YEAR (1958-2020)"
+                aria-label="Jump to a year to compare"
+                className="bg-crt-black/80 border border-crt-light/40 rounded-lg px-4 py-2.5 text-sm text-aged-cream placeholder-aged-cream/30 w-full md:w-48 led-text tracking-widest focus:border-phosphor-amber focus:shadow-glow-amber focus:outline-none transition-all text-center"
+              />
+            </div>
+
             <button
               onClick={handleCompareJump}
-              className="px-4 py-2 bg-crt-dark border border-phosphor-amber/40
-                       rounded hover:border-phosphor-amber hover:shadow-glow-amber
-                       text-aged-cream text-sm transition-all hover-lift led-text"
+              className="px-5 py-2.5 bg-phosphor-amber/10 border border-phosphor-amber/40
+                       rounded-lg hover:bg-phosphor-amber/20 hover:border-phosphor-amber hover:shadow-glow-amber
+                       text-phosphor-amber text-sm transition-all hover-lift led-text tracking-wide font-semibold"
             >
-              Compare Year
+              JUMP TO YEAR
             </button>
           </div>
         )}
 
         {onExploreDecade && (
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap justify-center mt-4">
             {decadePresets.map((decadeStart) => (
               <button
                 key={decadeStart}
                 onClick={() => onExploreDecade(decadeStart)}
-                className="px-3 py-2 bg-crt-dark border border-crt-light/40 rounded
-                         hover:border-phosphor-green hover:shadow-glow-green
-                         text-aged-cream text-xs transition-all led-text tracking-wider"
+                className="px-3 py-1.5 bg-crt-dark border border-crt-light/30 rounded
+                         hover:border-phosphor-green hover:shadow-glow-green hover:text-phosphor-green
+                         text-aged-cream/70 text-xs transition-all led-text tracking-widest"
               >
                 {decadeStart}s
               </button>

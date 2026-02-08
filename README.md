@@ -6,7 +6,7 @@
 
 TimeSlipSearch lets you travel to any date between 1958 and 2020 through natural language. Type your birthday, a historical milestone, or just "Summer of '69" and instantly see the #1 song on the charts, the movies in theaters, what a gallon of gas cost, and the events that shaped the world -- all rendered in a retro CRT interface that feels like powering on a time machine.
 
-Built for the **[Algolia Agent Studio Challenge 2026](https://dev.to/challenges/algolia)**.
+Built by **Elizabeth Stein** for the **[Algolia Agent Studio Challenge 2026](https://dev.to/challenges/algolia)**.
 
 **[Live Demo -- timeslipsearch.vercel.app](https://timeslipsearch.vercel.app)**
 

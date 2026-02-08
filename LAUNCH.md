@@ -125,6 +125,10 @@ What date will you look up first?
 - [ ] Post Twitter thread
 - [ ] Post to LinkedIn
 - [ ] Share in relevant Discord/Slack communities
+- [ ] **How I built it**: Next.js + Algolia + chrono-node
+- [ ] **Challenges**: Timezone bugs, date parsing edge cases
+- [ ] **Accomplishments**: 350K+ records, sub-100ms search
+- [ ] **What I learned**: Vector search, date normalization
 - [ ] Submit to Algolia challenge
 - [ ] Monitor for issues and feedback
 - [ ] Respond to all comments

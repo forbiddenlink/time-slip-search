@@ -19,7 +19,7 @@ function HomeSeoFallback() {
             Discover what happened on any day from 1958 to 2020, including the #1 song, top movies in theaters, historical prices, and key global events.
           </p>
           <p className="text-sm text-aged-cream/70 led-text tracking-wide">
-            By TimeSlipSearch Editorial Team · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
+            By Elizabeth Stein · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
           </p>
           <nav className="flex items-center justify-center gap-4 text-sm led-text tracking-wider">
             <Link href="/about" className="hover:text-phosphor-teal transition-colors">ABOUT</Link>
@@ -70,7 +70,7 @@ export default async function HomePage() {
     dateModified: modifiedDate,
     author: {
       '@type': 'Organization',
-      name: 'TimeSlipSearch Editorial Team',
+      name: 'Elizabeth Stein',
     },
   }
 

@@ -61,7 +61,7 @@ scratchpad/
 
 # Test artifacts & screenshots
 .artifacts/
-*.png
+# *.png (Commented out to allow README screenshots)
 search-results-snapshot.md
 
 # Audit tools
