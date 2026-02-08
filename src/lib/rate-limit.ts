@@ -1,7 +1,9 @@
 /**
- * Simple in-memory rate limiting
- * For production, use Vercel KV or Redis
+ * Production-ready rate limiting with Redis support
+ * Automatically falls back to in-memory for development
  */
+
+import { Redis } from '@upstash/redis'
 
 interface RateLimitEntry {
   count: number
@@ -10,7 +12,7 @@ interface RateLimitEntry {
 
 const rateLimitStore = new Map<string, RateLimitEntry>()
 
-// Clean up old entries every 5 minutes
+// Clean up old entries every 5 minutes (in-memory only)
 if (typeof globalThis !== 'undefined') {
   setInterval(() => {
     const now = Date.now()
@@ -29,15 +31,83 @@ export interface RateLimitResult {
 }
 
 /**
- * Check if request should be rate limited
- * @param identifier - Usually IP address or user ID
- * @param limit - Max requests per window
- * @param windowMs - Time window in milliseconds
+ * Get Redis client (returns null if not configured)
  */
-export function checkRateLimit(
+function getRedisClient(): Redis | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+
+  if (!url || !token) {
+    return null
+  }
+
+  try {
+    return new Redis({
+      url,
+      token,
+    })
+  } catch (error) {
+    console.error('[Rate Limit] Failed to initialize Redis:', error)
+    return null
+  }
+}
+
+/**
+ * Check rate limit using Redis (production)
+ */
+async function checkRateLimitRedis(
+  redis: Redis,
   identifier: string,
-  limit: number = 30, // 30 requests
-  windowMs: number = 60 * 1000 // per minute
+  limit: number,
+  windowMs: number
+): Promise<RateLimitResult> {
+  const now = Date.now()
+  const key = `ratelimit:${identifier}`
+  const resetAt = now + windowMs
+
+  try {
+    // Get current count
+    const currentCount = await redis.get<number>(key) || 0
+
+    if (currentCount >= limit) {
+      // Get TTL to determine reset time
+      const ttl = await redis.ttl(key)
+      const actualResetAt = ttl > 0 ? now + (ttl * 1000) : resetAt
+
+      return {
+        allowed: false,
+        remaining: 0,
+        resetAt: actualResetAt,
+      }
+    }
+
+    // Increment and set expiry
+    const newCount = await redis.incr(key)
+
+    // Set expiry only on first request
+    if (newCount === 1) {
+      await redis.pexpire(key, windowMs)
+    }
+
+    return {
+      allowed: true,
+      remaining: limit - newCount,
+      resetAt,
+    }
+  } catch (error) {
+    console.error('[Rate Limit] Redis error, falling back to in-memory:', error)
+    // Fall back to in-memory on Redis errors
+    return checkRateLimitMemory(identifier, limit, windowMs)
+  }
+}
+
+/**
+ * Check rate limit using in-memory store (development fallback)
+ */
+function checkRateLimitMemory(
+  identifier: string,
+  limit: number,
+  windowMs: number
 ): RateLimitResult {
   const now = Date.now()
   const entry = rateLimitStore.get(identifier)
@@ -58,12 +128,36 @@ export function checkRateLimit(
 }
 
 /**
+ * Check if request should be rate limited
+ * Automatically uses Redis in production, in-memory in development
+ *
+ * @param identifier - Usually IP address or user ID
+ * @param limit - Max requests per window (default: 30)
+ * @param windowMs - Time window in milliseconds (default: 60000 = 1 minute)
+ */
+export async function checkRateLimit(
+  identifier: string,
+  limit: number = 30,
+  windowMs: number = 60 * 1000
+): Promise<RateLimitResult> {
+  const redis = getRedisClient()
+
+  if (redis) {
+    // Use Redis in production
+    return checkRateLimitRedis(redis, identifier, limit, windowMs)
+  } else {
+    // Fall back to in-memory in development
+    return checkRateLimitMemory(identifier, limit, windowMs)
+  }
+}
+
+/**
  * Get client identifier from request
  */
 export function getClientIdentifier(request: Request): string {
   // Try to get real IP from headers (Vercel, Cloudflare, etc.)
   const forwarded = request.headers.get('x-forwarded-for')
   const realIP = request.headers.get('x-real-ip')
-  
+
   return forwarded?.split(',')[0] || realIP || 'unknown'
 }

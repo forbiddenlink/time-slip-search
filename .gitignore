@@ -58,3 +58,13 @@ thoughts/
 *.temp
 scratchpad/
 .history/
+
+# Test artifacts & screenshots
+.artifacts/
+*.png
+search-results-snapshot.md
+
+# Audit tools
+squirrel.toml
+surface-audit.txt
+full-audit.txt

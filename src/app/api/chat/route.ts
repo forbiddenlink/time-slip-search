@@ -21,10 +21,10 @@ export interface ChatResponse {
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
+    // Rate limiting (async with Redis support)
     const clientId = getClientIdentifier(request)
-    const rateLimit = checkRateLimit(clientId, 30, 60 * 1000) // 30 req/min
-    
+    const rateLimit = await checkRateLimit(clientId, 30, 60 * 1000) // 30 req/min
+
     if (!rateLimit.allowed) {
       return NextResponse.json<ChatResponse>({
         response: '',
