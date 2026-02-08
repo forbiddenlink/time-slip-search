@@ -27,6 +27,7 @@ export function parseDate(input: string): DateRange | null {
     /between\s+(.+?)\s+and\s+(.+)/,
     /(.+?)\s+to\s+(.+)/,
     /(.+?)\s*-\s*(.+)/,
+    /compare\s+(.+?)\s+(?:vs|to|and)\s+(.+)/,
   ]
 
   for (const pattern of rangePatterns) {
@@ -34,7 +35,7 @@ export function parseDate(input: string): DateRange | null {
     if (match && match[1] && match[2]) {
       const start = parseDate(match[1])
       const end = parseDate(match[2])
-      
+
       if (start && end) {
         return {
           start: start.start,
