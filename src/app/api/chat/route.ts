@@ -4,6 +4,7 @@ import { searchAllIndices } from '@/lib/algolia'
 import type { SearchResults, AdvancedSearchOptions } from '@/lib/algolia'
 import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
 import { getCache, setCache, createCacheKey, CACHE_TTL } from '@/lib/cache'
+import { getEraContext, YEAR_HIGHLIGHTS, getCulturalMovement, getPriceComparisonNarrative } from '@/lib/era-narratives'
 
 export interface ChatResponse {
   response: string
@@ -234,32 +235,69 @@ function generateSuggestions(
   results: SearchResults
 ): string[] {
   const suggestions: string[] = []
-  
-  // Comparison suggestions
-  if (dateInfo.year < 2020) {
-    suggestions.push(
-      `Compare with ${dateInfo.year + 10}`,
-      `See ${dateInfo.year - 10}`
-    )
+  const year = dateInfo.year
+  const decade = Math.floor(year / 10) * 10
+
+  // Famous years nearby (prioritize these)
+  const famousYears: Record<number, string> = {
+    1969: 'Moon Landing year',
+    1977: 'When Elvis left us',
+    1980: "John Lennon's final year",
+    1982: 'Thriller was released',
+    1989: 'The Wall came down',
+    1991: 'Grunge broke through',
+    1999: 'Y2K eve',
+    2000: 'New millennium',
+    2001: 'A year that changed everything',
+    2007: 'iPhone launched',
   }
-  
+
+  // Check if there's a famous year nearby
+  for (const [famousYear, label] of Object.entries(famousYears)) {
+    const fy = parseInt(famousYear, 10)
+    if (Math.abs(fy - year) <= 5 && fy !== year) {
+      suggestions.push(`${famousYear} - ${label}`)
+      break
+    }
+  }
+
+  // Same month, different decade
+  const startDate = new Date(dateInfo.start * 1000)
+  const month = startDate.getMonth() + 1
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December']
+  const monthName = monthNames[month - 1]
+
+  if (year + 10 <= 2020 && monthName) {
+    suggestions.push(`${monthName} ${year + 10}`)
+  }
+  if (year - 10 >= 1958 && monthName) {
+    suggestions.push(`${monthName} ${year - 10}`)
+  }
+
   // Decade exploration
-  const decade = Math.floor(dateInfo.year / 10) * 10
-  suggestions.push(`Explore the entire ${decade}s`)
-  
-  // Top songs of the year
+  suggestions.push(`Explore more of the ${decade}s`)
+
+  // Adjacent decades
+  if (decade > 1950) {
+    suggestions.push(`Jump to the ${decade - 10}s`)
+  }
+  if (decade < 2010) {
+    suggestions.push(`Jump to the ${decade + 10}s`)
+  }
+
+  // Top song artist exploration
   if (results.songs.length > 0) {
-    suggestions.push(`Top songs of ${dateInfo.year}`)
     const topSong = results.songs[0]
     if (topSong && topSong.artist) {
       suggestions.push(`More by ${topSong.artist}`)
     }
   }
-  
+
   // Random suggestion
-  suggestions.push('🎲 Random date')
-  
-  return suggestions.slice(0, 5)
+  suggestions.push('🎲 Surprise me')
+
+  return suggestions.slice(0, 6)
 }
 
 function generateInsights(
@@ -268,53 +306,57 @@ function generateInsights(
 ): string[] {
   const insights: string[] = []
   const year = dateInfo.year
-  
-  // Historical context
-  if (year === 1969) {
-    insights.push('🌙 The year of the Moon Landing!')
-  } else if (year === 1989) {
-    insights.push('🧱 The year the Berlin Wall fell')
-  } else if (year >= 1980 && year <= 1989) {
-    insights.push('📼 The golden age of MTV and cassette tapes')
-  } else if (year >= 1990 && year <= 1999) {
-    insights.push('💿 The CD era and grunge revolution')
-  } else if (year >= 1960 && year <= 1969) {
-    insights.push('✌️ The decade of peace, love, and revolution')
-  } else if (year >= 1950 && year <= 1959) {
-    insights.push('🎸 Rock & Roll was born')
+
+  // Use era narratives for rich historical context
+  const yearHighlight = YEAR_HIGHLIGHTS[year]
+  if (yearHighlight) {
+    insights.push(`✨ ${yearHighlight}`)
+  } else {
+    // Get cultural movement context
+    const culturalMovement = getCulturalMovement(year)
+    if (culturalMovement) {
+      insights.push(`🎭 ${culturalMovement}`)
+    }
   }
-  
+
+  // Add era-specific narrative
+  const startDate = new Date(dateInfo.start * 1000)
+  const month = startDate.getMonth() + 1
+  const eraContext = getEraContext(year, month)
+  if (eraContext && !insights.some(i => i.includes(eraContext))) {
+    insights.push(`📺 ${eraContext}`)
+  }
+
   // Music insights
   if (results.songs.length > 0) {
     const topSong = results.songs[0]
     if (topSong && topSong.weeks_on_chart && topSong.weeks_on_chart > 15) {
       insights.push(`💿 #1 song stayed on charts for ${topSong.weeks_on_chart} weeks!`)
     }
-    
+
     // Genre insights (simple detection from artist names)
     const hasMultipleSongs = results.songs.length >= 3
     if (hasMultipleSongs) {
       insights.push(`🎵 ${results.songs.length} songs were charting this week`)
     }
   }
-  
-  // Price insights
+
+  // Price insights with comparison narratives
   if (results.prices.length > 0) {
     const price = results.prices[0]
-    if (price && price.gas_price_gallon && price.gas_price_gallon < 2) {
-      const gasNow = 3.5 // approximate current price
-      const increase = Math.round(((gasNow - price.gas_price_gallon) / price.gas_price_gallon) * 100)
-      insights.push(`⛽ Gas has increased ${increase}% since then`)
-    }
-    if (price && price.minimum_wage && price.minimum_wage < 7) {
+    if (price && price.gas_price_gallon && price.gas_price_gallon < 3) {
+      const gasNow = 3.50 // approximate current price
+      const narrative = getPriceComparisonNarrative('a gallon of gas', price.gas_price_gallon, gasNow, year)
+      insights.push(`⛽ ${narrative}`)
+    } else if (price && price.minimum_wage && price.minimum_wage < 7.25) {
       insights.push(`💵 Minimum wage was just $${price.minimum_wage.toFixed(2)}/hour`)
     }
   }
-  
+
   // Decade milestones
   if (year % 10 === 0) {
     insights.push(`🎊 Start of a new decade!`)
   }
-  
-  return insights.slice(0, 3)
+
+  return insights.slice(0, 4)
 }

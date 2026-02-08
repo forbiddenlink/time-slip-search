@@ -9,19 +9,21 @@ import { TimeCapsule } from '@/components/results/TimeCapsule'
 import { MessageSkeleton } from '@/components/chat/LoadingSkeleton'
 import { AgentMemoryPanel } from '@/components/memory/AgentMemoryPanel'
 import { SearchAutocomplete } from '@/components/search/SearchAutocomplete'
+import { QuickActionChips } from '@/components/search/QuickActionChips'
+import { StaffPicksCarousel } from '@/components/home/StaffPicksCarousel'
 import { VoiceInput } from '@/components/input/VoiceInput'
 import { SearchHistory } from '@/lib/agent-memory'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { encodeSearchToURL, decodeURLToSearch } from '@/lib/url-state'
 import { ComparisonPanel } from '@/components/results/ComparisonPanel'
 import { VHSEffect, VHSRewindEffect } from '@/components/animations/VHSEffect'
-import { ParticleEffect } from '@/components/animations/ParticleEffect'
+import { ParticleEffect, ParticleBurst } from '@/components/animations/ParticleEffect'
 import { trackSearch, getWrappedStats, type WrappedStats } from '@/lib/wrapped'
 import { checkAchievements, updateStreak, type Achievement } from '@/lib/achievements'
 import { GiftIcon, TrophyIcon, FilmIcon, SparklesIcon, MusicIcon, DollarIcon, CalendarIcon } from '@/components/icons/Icons'
 
 const Timeline = dynamic(() => import('@/components/Timeline').then((m) => m.Timeline), { ssr: false })
-const WrappedCard = dynamic(() => import('@/components/wrapped/WrappedCard').then((m) => m.WrappedCard), { ssr: false })
+const WrappedExperience = dynamic(() => import('@/components/wrapped/WrappedExperience').then((m) => m.WrappedExperience), { ssr: false })
 const AchievementsPanel = dynamic(() => import('@/components/achievements/AchievementsPanel').then((m) => m.AchievementsPanel), { ssr: false })
 const AchievementToast = dynamic(() => import('@/components/achievements/AchievementToast').then((m) => m.AchievementToast), { ssr: false })
 const KeyboardShortcutsModal = dynamic(() => import('@/components/KeyboardShortcutsModal').then((m) => m.KeyboardShortcutsModal), { ssr: false })
@@ -79,6 +81,7 @@ function HomeContent() {
   const [showVHSEffect, setShowVHSEffect] = useState(false)
   const [showParticles, setShowParticles] = useState(true)
   const [showRewind, setShowRewind] = useState(false)
+  const [showRandomBurst, setShowRandomBurst] = useState(false)
   const [sessionYears, setSessionYears] = useState<number[]>([])
   const [isBooted, setIsBooted] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
@@ -365,6 +368,8 @@ function HomeContent() {
   }
 
   const handleRandom = async (range?: { startYear: number; endYear: number; label: string }) => {
+    // Trigger particle burst effect
+    setShowRandomBurst(true)
     setComparisonState(null)
     const minYear = range ? range.startYear : 1958
     const maxYear = range ? range.endYear : 2020
@@ -506,29 +511,41 @@ function HomeContent() {
 
         {/* === FEATURE CARDS: Cassette Tape Style === */}
         {messages.length === 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
-            {featureCardsData.map((feature, index) => {
-              const IconComponent = feature.IconComponent
-              return (
-                <div
-                  key={feature.label}
-                  className={`feature-card-enhanced p-5 group cursor-pointer cascade-in stagger-${index + 1}`}
-                >
-                  <div className="relative z-10 pt-14 text-center">
-                    <div className={`mb-4 flex justify-center ${feature.color}`}>
-                      <IconComponent size={36} />
-                    </div>
-                    <div className="text-base font-medium text-aged-cream tracking-wide">
-                      {feature.label}
-                    </div>
-                    <div className="text-xs text-aged-cream/60 mt-2 led-text tracking-wider">
-                      {feature.period}
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
+              {featureCardsData.map((feature, index) => {
+                const IconComponent = feature.IconComponent
+                return (
+                  <div
+                    key={feature.label}
+                    className={`feature-card-enhanced p-5 group cursor-pointer cascade-in stagger-${index + 1}`}
+                  >
+                    <div className="relative z-10 pt-14 text-center">
+                      <div className={`mb-4 flex justify-center ${feature.color}`}>
+                        <IconComponent size={36} />
+                      </div>
+                      <div className="text-base font-medium text-aged-cream tracking-wide">
+                        {feature.label}
+                      </div>
+                      <div className="text-xs text-aged-cream/60 mt-2 led-text tracking-wider">
+                        {feature.period}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
+            {/* Staff Picks Carousel */}
+            <StaffPicksCarousel
+              onSelect={(query) => {
+                setQuery(query)
+                setTimeout(() => {
+                  const form = document.querySelector('form')
+                  if (form) form.requestSubmit()
+                }, 100)
+              }}
+            />
+          </>
         ) : null}
 
         {/* === MAIN CONSOLE: CRT Screen === */}
@@ -641,6 +658,20 @@ function HomeContent() {
                   <p className="mt-8 text-sm text-aged-cream/60 led-text tracking-wide cascade-in stagger-7">
                     ALSO TRY: &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot; &bull; &quot;MY 21ST BIRTHDAY&quot;
                   </p>
+
+                  {/* Quick Action Chips */}
+                  <div className="mt-6">
+                    <QuickActionChips
+                      visible={true}
+                      onSelect={(chipQuery) => {
+                        setQuery(chipQuery)
+                        setTimeout(() => {
+                          const form = document.querySelector('form')
+                          if (form) form.requestSubmit()
+                        }, 100)
+                      }}
+                    />
+                  </div>
 
                   {/* Random Date Quick Action */}
                   <div className="mt-6 cascade-in stagger-8">
@@ -811,7 +842,7 @@ function HomeContent() {
 
       {/* Modals and Overlays */}
       {showWrapped && wrappedStats && (
-        <WrappedCard stats={wrappedStats} onClose={() => setShowWrapped(false)} />
+        <WrappedExperience stats={wrappedStats} onClose={() => setShowWrapped(false)} />
       )}
 
       {showAchievements && (
@@ -827,6 +858,13 @@ function HomeContent() {
 
       {showRewind && (
         <VHSRewindEffect onComplete={() => setShowRewind(false)} />
+      )}
+
+      {showRandomBurst && (
+        <ParticleBurst
+          isActive={showRandomBurst}
+          onComplete={() => setShowRandomBurst(false)}
+        />
       )}
 
       <KeyboardShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />

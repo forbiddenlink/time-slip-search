@@ -7,6 +7,7 @@ import { FavoriteButton } from '@/components/memory/FavoriteButton'
 import { extractShareData, copyShareLink, shareNative, generateTimeCapsuleSummary } from '@/lib/share'
 import { createShareableURL } from '@/lib/url-state'
 import { getFamousDate } from '@/lib/famous-dates'
+import { generateEmotionalNarrative } from '@/lib/ai-insights'
 import { FamousDateBanner } from './FamousDateBanner'
 import { Confetti } from '@/components/animations/Confetti'
 
@@ -38,6 +39,7 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
   const [compareYearInput, setCompareYearInput] = useState('')
   const [showConfetti, setShowConfetti] = useState(true)
   const famousDate = (month && day) ? getFamousDate(month, day, year) : null
+  const emotionalNarrative = generateEmotionalNarrative(year, month, results)
   const topSong = results.songs[0]
   const topMovie = results.movies[0]
   const compareForwardYear = Math.min(year + 10, 2020)
@@ -173,8 +175,8 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
             {dateDisplay}
           </h2>
 
-          <p className="text-aged-cream/50 text-center mt-2 italic font-body">
-            Here&apos;s what was happening...
+          <p className="text-aged-cream/70 text-center mt-2 italic font-body max-w-lg mx-auto">
+            {emotionalNarrative}
           </p>
 
           {/* Tape counter decoration */}
