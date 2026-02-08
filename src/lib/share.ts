@@ -178,3 +178,71 @@ export async function shareNative(data: ShareCardData, url: string): Promise<boo
     return false
   }
 }
+
+/**
+ * Generate Wrapped share image URL
+ */
+export function generateWrappedShareURL(
+  stats: {
+    personality: string
+    emoji: string
+    title: string
+    topDecade: string
+    totalSearches: number
+    yearsExplored: number
+    totalSongs: number
+  },
+  format: 'twitter' | 'instagram' | 'square' = 'twitter'
+): string {
+  const params = new URLSearchParams({
+    emoji: stats.emoji,
+    title: stats.title,
+    decade: stats.topDecade,
+    searches: stats.totalSearches.toString(),
+    years: stats.yearsExplored.toString(),
+    songs: stats.totalSongs.toString(),
+    format,
+  })
+
+  return `/api/og/wrapped?${params.toString()}`
+}
+
+/**
+ * Download wrapped image
+ */
+export async function downloadWrappedImage(
+  stats: {
+    personality: string
+    emoji: string
+    title: string
+    topDecade: string
+    totalSearches: number
+    yearsExplored: number
+    totalSongs: number
+  },
+  format: 'twitter' | 'instagram' | 'square' = 'twitter'
+): Promise<boolean> {
+  try {
+    const imageUrl = generateWrappedShareURL(stats, format)
+    const response = await fetch(imageUrl)
+
+    if (!response.ok) {
+      throw new Error('Failed to generate image')
+    }
+
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = `timeslip-wrapped-${format}.png`
+    document.body.appendChild(anchor)
+    anchor.click()
+    document.body.removeChild(anchor)
+    URL.revokeObjectURL(url)
+
+    return true
+  } catch (error) {
+    console.error('Failed to download wrapped image:', error)
+    return false
+  }
+}
