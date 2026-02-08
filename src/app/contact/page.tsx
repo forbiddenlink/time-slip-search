@@ -99,6 +99,7 @@ export default async function ContactPage() {
       <script
         nonce={nonce}
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
     </main>

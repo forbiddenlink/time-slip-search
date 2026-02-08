@@ -86,6 +86,7 @@ export default async function AboutPage() {
       <script
         nonce={nonce}
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
     </main>

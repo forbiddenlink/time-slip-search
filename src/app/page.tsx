@@ -79,6 +79,7 @@ export default async function HomePage() {
       <script
         nonce={nonce}
         type="application/ld+json"
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
       />
       <Suspense fallback={<HomeSeoFallback />}>
