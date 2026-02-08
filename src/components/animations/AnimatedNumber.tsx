@@ -24,7 +24,7 @@ export function AnimatedNumber({
   className,
 }: AnimatedNumberProps) {
   const [displayValue, setDisplayValue] = useState(0)
-  const [hasAnimated, setHasAnimated] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const elementRef = useRef<HTMLSpanElement>(null)
   const rafRef = useRef<number | null>(null)
 
@@ -45,6 +45,10 @@ export function AnimatedNumber({
       }
     }
 
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current)
+    }
+
     rafRef.current = requestAnimationFrame(tick)
   }, [value, duration])
 
@@ -53,22 +57,19 @@ export function AnimatedNumber({
     if (!el) return
 
     // Respect reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches
-
-    if (prefersReducedMotion) {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mediaQuery.matches) {
+      setIsVisible(true)
       setDisplayValue(value)
-      setHasAnimated(true)
       return
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasAnimated) {
-            setHasAnimated(true)
-            animate()
+          if (entry.isIntersecting) {
+            setIsVisible(true)
+            observer.disconnect()
           }
         })
       },
@@ -83,7 +84,13 @@ export function AnimatedNumber({
         cancelAnimationFrame(rafRef.current)
       }
     }
-  }, [animate, hasAnimated, value])
+  }, [])
+
+  useEffect(() => {
+    if (isVisible) {
+      animate()
+    }
+  }, [isVisible, animate])
 
   return (
     <span ref={elementRef} className={className}>

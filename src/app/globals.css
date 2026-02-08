@@ -130,6 +130,36 @@ body {
   will-change: opacity;
 }
 
+/* === CRT POWER ON ANIMATION === */
+
+@keyframes crtPowerOn {
+  0% {
+    transform: scaleY(0.005) scaleX(0);
+    opacity: 0;
+    filter: brightness(30);
+  }
+  20% {
+    transform: scaleY(0.005) scaleX(1);
+    opacity: 1;
+    filter: brightness(10);
+  }
+  60% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  100% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.crt-power-on {
+  animation: crtPowerOn 4s cubic-bezier(0.1, 0, 0.2, 1) forwards;
+  transform-origin: center;
+}
+
 /* Enhanced CRT variant with deeper shadows */
 .crt-screen-enhanced {
   position: relative;

@@ -70,7 +70,7 @@ function HomeContent() {
   const [currentTime, setCurrentTime] = useState('--:--')
   const [showAutocomplete, setShowAutocomplete] = useState(false)
   const [showTimeline, setShowTimeline] = useState(false)
-  
+
   // New state for viral features
   const [showWrapped, setShowWrapped] = useState(false)
   const [wrappedStats, setWrappedStats] = useState<WrappedStats | null>(null)
@@ -78,7 +78,6 @@ function HomeContent() {
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null)
   const [showVHSEffect, setShowVHSEffect] = useState(false)
   const [showParticles, setShowParticles] = useState(true)
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear())
   const [showRewind, setShowRewind] = useState(false)
   const [sessionYears, setSessionYears] = useState<number[]>([])
   const [isBooted, setIsBooted] = useState(false)
@@ -222,19 +221,18 @@ function HomeContent() {
       })
 
       const data = await response.json()
-      
+
       // Track search in wrapped stats and check achievements
       if (data.structured) {
         const year = data.structured.year
-        setCurrentYear(year)
         setSessionYears(prev => [...prev, year])
-        
+
         // Track in wrapped system
         trackSearch(userMessage, year, data.structured.results)
-        
+
         // Get all years explored for achievement checking
         const wrappedData = getWrappedStats()
-        
+
         // Check for new achievements
         const newAchievements = checkAchievements({
           yearsExplored: wrappedData.yearsExplored,
@@ -244,12 +242,12 @@ function HomeContent() {
           currentYear: year,
           sessionYears: sessionYears,
         })
-        
+
         // Show achievement toast if any unlocked
         if (newAchievements.length > 0) {
           setCurrentAchievement(newAchievements[0] ?? null)
         }
-        
+
         // Track search in agent memory
         SearchHistory.add({
           query: userMessage,
@@ -263,7 +261,7 @@ function HomeContent() {
           ),
         })
       }
-      
+
       // Track search in agent memory
       if (data.structured) {
         const urlParams = encodeSearchToURL(userMessage, {
@@ -374,7 +372,7 @@ function HomeContent() {
     const randomMonth = Math.floor(Math.random() * 12) + 1
     const randomDay = Math.floor(Math.random() * 28) + 1 // Keep it simple, avoid edge cases
     const randomDate = `${randomMonth}/${randomDay}/${randomYear}`
-    
+
     setMessages(prev => [...prev, { role: 'user', content: range ? `${range.label}: ${randomDate}` : `🎲 Random: ${randomDate}` }])
     setIsLoading(true)
 
@@ -449,7 +447,7 @@ function HomeContent() {
 
           {/* Main title */}
           <div className="text-center space-y-5">
-            <h2 className="font-display text-6xl md:text-8xl lg:text-9xl tracking-tight leading-none">
+            <h2 className="font-display text-5xl md:text-8xl lg:text-9xl tracking-tight leading-none">
               <span className="title-glow-teal phosphor-breathe inline-block">Time</span>
               <span className="title-glow-amber inline-block ml-1">Slip</span>
             </h2>
@@ -534,12 +532,12 @@ function HomeContent() {
         ) : null}
 
         {/* === MAIN CONSOLE: CRT Screen === */}
-        <div id="main-console" tabIndex={-1} className="crt-screen-enhanced screen-depth border-4 border-crt-medium relative phosphor-grid">
+        <div id="main-console" tabIndex={-1} className={`crt-screen-enhanced screen-depth border-4 border-crt-medium relative phosphor-grid ${!isBooted ? 'crt-power-on' : ''}`}>
           {/* VHS Effect Overlay */}
           <VHSEffect isActive={showVHSEffect} intensity="low">
             {/* Particle Effect */}
-            <ParticleEffect year={currentYear} isActive={showParticles && messages.length > 0} />
-            
+            <ParticleEffect isActive={showParticles && messages.length > 0} />
+
             {/* Screen bezel top */}
             <div className="bg-crt-dark px-6 py-3 border-b border-crt-light/20 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -563,7 +561,7 @@ function HomeContent() {
                   <GiftIcon size={16} />
                   <span>Wrapped</span>
                 </button>
-                
+
                 {/* Achievements Button */}
                 <button
                   onClick={() => setShowAchievements(true)}
@@ -574,30 +572,28 @@ function HomeContent() {
                   <TrophyIcon size={16} />
                   <span>Badges</span>
                 </button>
-                
+
                 {/* VHS Effect Toggle */}
                 <button
                   onClick={() => setShowVHSEffect(!showVHSEffect)}
-                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${
-                    showVHSEffect
-                      ? 'bg-vhs-red text-aged-cream shadow-lg'
-                      : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
-                  }`}
+                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${showVHSEffect
+                    ? 'bg-vhs-red text-aged-cream shadow-lg'
+                    : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
+                    }`}
                   title="Toggle VHS Effect"
                   aria-label="Toggle VHS Effect"
                 >
                   <FilmIcon size={16} />
                   <span className="hidden sm:inline">VHS</span>
                 </button>
-                
+
                 {/* Particles Toggle */}
                 <button
                   onClick={() => setShowParticles(!showParticles)}
-                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${
-                    showParticles
-                      ? 'bg-crt-dark border border-phosphor-teal text-phosphor-teal shadow-glow-teal'
-                      : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
-                  }`}
+                  className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all hover:scale-105 flex items-center gap-1.5 ${showParticles
+                    ? 'bg-crt-dark border border-phosphor-teal text-phosphor-teal shadow-glow-teal'
+                    : 'bg-crt-light/30 text-aged-cream hover:bg-crt-light/40'
+                    }`}
                   title="Toggle Era Particles"
                   aria-label="Toggle Era Particles"
                 >
@@ -606,182 +602,182 @@ function HomeContent() {
               </div>
             </div>
 
-          {/* Messages Area */}
-          <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">
-            {messages.length === 0 ? (
-              <div className="text-center">
-                <p className="text-aged-cream/80 mb-2 text-xl font-body italic">
-                  What was the world like the day you were born?
-                </p>
-                <p className="text-aged-cream/50 mb-8 text-sm font-body">
-                  Type any date, year, or era from 1958 to 2020
-                </p>
+            {/* Messages Area */}
+            <div className="min-h-[400px] max-h-[600px] overflow-y-auto p-6 retro-scroll relative z-20">
+              {messages.length === 0 ? (
+                <div className="text-center">
+                  <p className="text-aged-cream/80 mb-2 text-xl font-body italic">
+                    What was the world like the day you were born?
+                  </p>
+                  <p className="text-aged-cream/50 mb-8 text-sm font-body">
+                    Type any date, year, or era from 1958 to 2020
+                  </p>
 
-                {/* Example queries as tape labels */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {exampleQueries.map((example, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleExampleClick(example.query)}
-                      className={`example-card group text-left p-5 bg-crt-dark border border-crt-light/30 rounded hover:border-phosphor-teal/50 transition-all duration-300 hover:shadow-glow-teal cascade-in stagger-${index + 3}`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="led-text text-phosphor-amber text-lg shrink-0">
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
-                        <div className="flex flex-col">
-                          <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors text-base">
-                            {example.text}
+                  {/* Example queries as tape labels */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {exampleQueries.map((example, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleExampleClick(example.query)}
+                        className={`example-card group text-left p-5 bg-crt-dark border border-crt-light/30 rounded hover:border-phosphor-teal/50 transition-all duration-300 hover:shadow-glow-teal cascade-in stagger-${index + 3}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className="led-text text-phosphor-amber text-lg shrink-0">
+                            {String(index + 1).padStart(2, '0')}
                           </span>
-                          <span className="text-aged-cream/60 text-xs mt-1.5 led-text tracking-wider">
-                            {example.query}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className="text-aged-cream group-hover:text-phosphor-teal transition-colors text-base">
+                              {example.text}
+                            </span>
+                            <span className="text-aged-cream/60 text-xs mt-1.5 led-text tracking-wider">
+                              {example.query}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                      </button>
+                    ))}
+                  </div>
 
-                <p className="mt-8 text-sm text-aged-cream/60 led-text tracking-wide cascade-in stagger-7">
-                  ALSO TRY: &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot; &bull; &quot;MY 21ST BIRTHDAY&quot;
-                </p>
+                  <p className="mt-8 text-sm text-aged-cream/60 led-text tracking-wide cascade-in stagger-7">
+                    ALSO TRY: &quot;THE 80S&quot; &bull; &quot;CHRISTMAS 1992&quot; &bull; &quot;MY 21ST BIRTHDAY&quot;
+                  </p>
 
-                {/* Random Date Quick Action */}
-                <div className="mt-6 cascade-in stagger-8">
-                  <button
-                    onClick={() => void handleRandom()}
-                    className="px-6 py-3 bg-crt-dark border border-phosphor-green/30 
+                  {/* Random Date Quick Action */}
+                  <div className="mt-6 cascade-in stagger-8">
+                    <button
+                      onClick={() => void handleRandom()}
+                      className="px-6 py-3 bg-crt-dark border border-phosphor-green/30 
                              rounded hover:border-phosphor-green hover:shadow-glow-green
                              text-aged-cream transition-all hover-lift led-text"
-                  >
-                    🎲 SURPRISE ME WITH A RANDOM DATE
-                  </button>
-                </div>
+                    >
+                      🎲 SURPRISE ME WITH A RANDOM DATE
+                    </button>
+                  </div>
 
-                <div className="mt-4 flex flex-wrap justify-center gap-2">
-                  {decadeQuickPicks.map((decade) => (
-                    <button
-                      key={decade}
-                      onClick={() => handleExploreDecade(decade)}
-                      className="px-3 py-2 bg-crt-dark border border-crt-light/40 rounded
+                  <div className="mt-4 flex flex-wrap justify-center gap-2">
+                    {decadeQuickPicks.map((decade) => (
+                      <button
+                        key={decade}
+                        onClick={() => handleExploreDecade(decade)}
+                        className="px-3 py-2 bg-crt-dark border border-crt-light/40 rounded
                                hover:border-phosphor-teal hover:shadow-glow-teal
                                text-aged-cream/90 text-xs led-text tracking-wider transition-all"
-                    >
-                      Explore {decade}s
-                    </button>
+                      >
+                        Explore {decade}s
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {messages.map((message, index) => (
+                    <div key={index}>
+                      {message.role === 'user' ? (
+                        <div className="flex justify-end">
+                          <div className="max-w-[80%] bg-crt-medium border border-crt-light/50 rounded px-4 py-3">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="led-text text-phosphor-amber text-xs">INPUT</span>
+                            </div>
+                            <p className="text-aged-cream">{message.content}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-start">
+                          <div className="max-w-full w-full">
+                            {message.structured ? (
+                              <ErrorBoundary>
+                                <TimeCapsule
+                                  results={message.structured.results}
+                                  dateDisplay={message.structured.dateDisplay}
+                                  year={message.structured.year}
+                                  month={message.structured.month}
+                                  day={message.structured.day}
+                                  insights={message.structured.insights}
+                                  onCompare={(targetYear) => {
+                                    void handleCompare(targetYear, message.structured)
+                                  }}
+                                  onRandom={() => void handleRandom()}
+                                  onExploreDecade={handleExploreDecade}
+                                  query={message.content}
+                                />
+                              </ErrorBoundary>
+                            ) : (
+                              <div className="bg-crt-dark border border-crt-light/30 rounded px-4 py-3">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="led-text text-phosphor-teal text-xs">OUTPUT</span>
+                                </div>
+                                <p className="text-aged-cream whitespace-pre-wrap">{message.content}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ))}
+                  {isLoading && <MessageSkeleton />}
+                </div>
+              )}
+            </div>
+
+            {/* === INPUT AREA: VCR Control Panel === */}
+            <form onSubmit={handleSubmit} className="border-t border-crt-light/20 bg-crt-dark p-4">
+              <div className="flex gap-3 items-center">
+                {/* Tape reels decoration */}
+                <div className="hidden md:flex items-center gap-2">
+                  <div className={`tape-reel ${isLoading ? 'animate-tape-roll' : ''}`} />
+                </div>
+
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => handleQueryChange(e.target.value)}
+                    onFocus={() => query.length > 0 && setShowAutocomplete(true)}
+                    placeholder="Try your birthday, a year, or any date..."
+                    aria-label="Enter a date to search, like your birthday or a year"
+                    className="w-full bg-crt-black text-aged-cream placeholder-aged-cream/30 border-2 border-crt-light/40 rounded px-4 py-3 focus:outline-none input-glow transition-all led-text text-lg tracking-wide"
+                    disabled={isLoading}
+                  />
+                  {isLoading && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      <div className="rec-indicator led-text text-vhs-red text-sm">
+                        SEARCHING
+                      </div>
+                    </div>
+                  )}
+                  <SearchAutocomplete
+                    query={query}
+                    onSelect={handleSuggestionSelect}
+                    isVisible={showAutocomplete}
+                    onClose={() => setShowAutocomplete(false)}
+                  />
+                </div>
+
+                <VoiceInput
+                  onTranscript={handleVoiceTranscript}
+                  isDisabled={isLoading}
+                />
+
+                <button
+                  type="submit"
+                  disabled={isLoading || !query.trim()}
+                  className="retro-btn px-6 py-3 text-phosphor-teal disabled:text-aged-cream/30 disabled:cursor-not-allowed text-lg"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="inline-block w-2 h-2 bg-vhs-red rounded-full animate-pulse" />
+                    </span>
+                  ) : (
+                    'PLAY ▶'
+                  )}
+                </button>
+
+                {/* Tape reels decoration */}
+                <div className="hidden md:flex items-center gap-2">
+                  <div className={`tape-reel ${isLoading ? 'animate-tape-roll' : ''}`} />
                 </div>
               </div>
-            ) : (
-              <div className="space-y-6">
-                {messages.map((message, index) => (
-                  <div key={index}>
-                    {message.role === 'user' ? (
-                      <div className="flex justify-end">
-                        <div className="max-w-[80%] bg-crt-medium border border-crt-light/50 rounded px-4 py-3">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="led-text text-phosphor-amber text-xs">INPUT</span>
-                          </div>
-                          <p className="text-aged-cream">{message.content}</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex justify-start">
-                        <div className="max-w-full w-full">
-                          {message.structured ? (
-                            <ErrorBoundary>
-                              <TimeCapsule
-                                results={message.structured.results}
-                                dateDisplay={message.structured.dateDisplay}
-                                year={message.structured.year}
-                                month={message.structured.month}
-                                day={message.structured.day}
-                                insights={message.structured.insights}
-                                onCompare={(targetYear) => {
-                                  void handleCompare(targetYear, message.structured)
-                                }}
-                                onRandom={() => void handleRandom()}
-                                onExploreDecade={handleExploreDecade}
-                                query={message.content}
-                              />
-                            </ErrorBoundary>
-                          ) : (
-                            <div className="bg-crt-dark border border-crt-light/30 rounded px-4 py-3">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="led-text text-phosphor-teal text-xs">OUTPUT</span>
-                              </div>
-                              <p className="text-aged-cream whitespace-pre-wrap">{message.content}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {isLoading && <MessageSkeleton />}
-              </div>
-            )}
-          </div>
-
-          {/* === INPUT AREA: VCR Control Panel === */}
-          <form onSubmit={handleSubmit} className="border-t border-crt-light/20 bg-crt-dark p-4">
-            <div className="flex gap-3 items-center">
-              {/* Tape reels decoration */}
-              <div className="hidden md:flex items-center gap-2">
-                <div className={`tape-reel ${isLoading ? 'animate-tape-roll' : ''}`} />
-              </div>
-
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => handleQueryChange(e.target.value)}
-                  onFocus={() => query.length > 0 && setShowAutocomplete(true)}
-                  placeholder="Try your birthday, a year, or any date..."
-                  aria-label="Enter a date to search, like your birthday or a year"
-                  className="w-full bg-crt-black text-aged-cream placeholder-aged-cream/30 border-2 border-crt-light/40 rounded px-4 py-3 focus:outline-none input-glow transition-all led-text text-lg tracking-wide"
-                  disabled={isLoading}
-                />
-                {isLoading && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <div className="rec-indicator led-text text-vhs-red text-sm">
-                      SEARCHING
-                    </div>
-                  </div>
-                )}
-                <SearchAutocomplete
-                  query={query}
-                  onSelect={handleSuggestionSelect}
-                  isVisible={showAutocomplete}
-                  onClose={() => setShowAutocomplete(false)}
-                />
-              </div>
-
-              <VoiceInput
-                onTranscript={handleVoiceTranscript}
-                isDisabled={isLoading}
-              />
-
-              <button
-                type="submit"
-                disabled={isLoading || !query.trim()}
-                className="retro-btn px-6 py-3 text-phosphor-teal disabled:text-aged-cream/30 disabled:cursor-not-allowed text-lg"
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 bg-vhs-red rounded-full animate-pulse" />
-                  </span>
-                ) : (
-                  'PLAY ▶'
-                )}
-              </button>
-
-              {/* Tape reels decoration */}
-              <div className="hidden md:flex items-center gap-2">
-                <div className={`tape-reel ${isLoading ? 'animate-tape-roll' : ''}`} />
-              </div>
-            </div>
-          </form>
+            </form>
           </VHSEffect>
         </div>
 
@@ -812,23 +808,23 @@ function HomeContent() {
           </div>
         </footer>
       </div>
-      
+
       {/* Modals and Overlays */}
       {showWrapped && wrappedStats && (
         <WrappedCard stats={wrappedStats} onClose={() => setShowWrapped(false)} />
       )}
-      
+
       {showAchievements && (
         <AchievementsPanel isOpen={showAchievements} onClose={() => setShowAchievements(false)} />
       )}
-      
+
       {currentAchievement && (
         <AchievementToast
           achievement={currentAchievement}
           onDismiss={() => setCurrentAchievement(null)}
         />
       )}
-      
+
       {showRewind && (
         <VHSRewindEffect onComplete={() => setShowRewind(false)} />
       )}

@@ -10,27 +10,15 @@ interface Particle {
   vx: number
   vy: number
   size: number
-  emoji: string
+  opacity: number
 }
 
 interface ParticleEffectProps {
-  year: number
   isActive?: boolean
 }
 
-export function ParticleEffect({ year, isActive = true }: ParticleEffectProps) {
+export function ParticleEffect({ isActive = true }: ParticleEffectProps) {
   const [particles, setParticles] = useState<Particle[]>([])
-
-  // Determine era-specific emojis
-  const getEraEmojis = (year: number): string[] => {
-    if (year >= 2010) return ['💻', '📱', '🎮', '🚀', '⚡']
-    if (year >= 2000) return ['💿', '📀', '🎧', '🌐', '✨']
-    if (year >= 1990) return ['📼', '💾', '🎮', '📟', '⭐']
-    if (year >= 1980) return ['🎸', '🎹', '🎤', '🌟', '💫']
-    if (year >= 1970) return ['🌼', '☮️', '🎵', '🌈', '✌️']
-    if (year >= 1960) return ['🎭', '🎬', '📻', '🎪', '🌙']
-    return ['⏰', '📜', '🕰️', '📖', '🔮']
-  }
 
   useEffect(() => {
     if (!isActive) {
@@ -38,17 +26,15 @@ export function ParticleEffect({ year, isActive = true }: ParticleEffectProps) {
       return
     }
 
-    const emojis = getEraEmojis(year)
-    
-    // Create initial particles
-    const initialParticles: Particle[] = Array.from({ length: 15 }, (_, i) => ({
+    // Create initial particles - more numerous but smaller/subtler
+    const initialParticles: Particle[] = Array.from({ length: 40 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 0.5,
-      size: Math.random() * 20 + 15,
-      emoji: emojis[Math.floor(Math.random() * emojis.length)] ?? '✨',
+      vx: (Math.random() - 0.5) * 0.2, // Slower movement
+      vy: (Math.random() - 0.5) * 0.2,
+      size: Math.random() * 3 + 1, // 1-4px size
+      opacity: Math.random() * 0.5 + 0.1, // 0.1 - 0.6 opacity
     }))
 
     setParticles(initialParticles)
@@ -62,15 +48,11 @@ export function ParticleEffect({ year, isActive = true }: ParticleEffectProps) {
           let newVx = particle.vx
           let newVy = particle.vy
 
-          // Bounce off edges
-          if (newX <= 0 || newX >= 100) {
-            newVx = -particle.vx
-            newX = Math.max(0, Math.min(100, newX))
-          }
-          if (newY <= 0 || newY >= 100) {
-            newVy = -particle.vy
-            newY = Math.max(0, Math.min(100, newY))
-          }
+          // Wrap around edges for continuous flow
+          if (newX < -5) newX = 105
+          if (newX > 105) newX = -5
+          if (newY < -5) newY = 105
+          if (newY > 105) newY = -5
 
           return {
             ...particle,
@@ -84,7 +66,7 @@ export function ParticleEffect({ year, isActive = true }: ParticleEffectProps) {
     }, 50)
 
     return () => clearInterval(interval)
-  }, [year, isActive])
+  }, [isActive])
 
   if (!isActive) return null
 
@@ -93,19 +75,20 @@ export function ParticleEffect({ year, isActive = true }: ParticleEffectProps) {
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute"
+          className="absolute rounded-full bg-aged-cream"
           style={{
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            fontSize: `${particle.size}px`,
+            width: `${particle.size}px`,
+            height: `${particle.size}px`,
+            opacity: particle.opacity,
+            boxShadow: `0 0 ${particle.size * 2}px rgba(255, 253, 208, 0.3)`
           }}
           initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 0.3, scale: 1 }}
+          animate={{ opacity: particle.opacity, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {particle.emoji}
-        </motion.div>
+          transition={{ duration: 1.5 }}
+        />
       ))}
     </div>
   )
@@ -126,7 +109,7 @@ export function ConfettiEffect({ isActive = false, duration = 3000 }: ConfettiEf
     }
 
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE']
-    
+
     const confetti = Array.from({ length: 50 }, (_, i) => ({
       id: i,
       x: Math.random() * 100,

@@ -133,20 +133,20 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
 
   if (!hasData) {
     const isOutOfRange = year < 1958 || year > 2020
-    
+
     return (
       <div className="bg-crt-dark border border-crt-light/30 rounded p-6 text-center">
         <div className="led-text text-vhs-red text-sm tracking-widest mb-3">
           NO SIGNAL
         </div>
         <p className="text-aged-cream/80">
-          {isOutOfRange 
+          {isOutOfRange
             ? `${dateDisplay} is outside my coverage period.`
             : `I don&apos;t have data indexed for ${dateDisplay} yet.`
           }
         </p>
         <p className="text-sm text-aged-cream/60 mt-2 led-text">
-          {isOutOfRange 
+          {isOutOfRange
             ? 'TRY A DATE BETWEEN 1958 AND 2020'
             : 'DATABASE MAY NEED POPULATION - SEE SETUP.MD'
           }
@@ -363,7 +363,7 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
               }}
               placeholder="Jump to year (1958-2020)"
               aria-label="Jump to a year to compare"
-              className="bg-crt-black border border-crt-light/40 rounded px-3 py-2 text-sm text-aged-cream placeholder-aged-cream/40 w-56"
+              className="bg-crt-black border border-crt-light/40 rounded px-3 py-2 text-sm text-aged-cream placeholder-aged-cream/40 w-full md:w-56"
             />
             <button
               onClick={handleCompareJump}
