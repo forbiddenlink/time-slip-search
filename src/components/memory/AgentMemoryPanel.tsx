@@ -143,7 +143,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
                   </div>
                 </div>
               ) : (
-                favorites.map((fav, index) => (
+                favorites.map((fav) => (
                   <div
                     key={fav.id}
                     className="px-5 py-4 bg-crt-dark/50 border border-vinyl-label/20 rounded
