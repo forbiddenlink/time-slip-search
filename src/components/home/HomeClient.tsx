@@ -36,6 +36,7 @@ interface StructuredResult {
   results: SearchResults
   suggestions?: string[]
   insights?: string[]
+  comparisonResult?: StructuredResult
 }
 
 interface Message {
@@ -284,6 +285,15 @@ function HomeContent() {
 
       if (data.structured?.dateDisplay) {
         setLiveAnnouncement(`Loaded results for ${data.structured.dateDisplay}`)
+      }
+
+      // Handle auto-comparison from natural language query
+      if (data.structured?.comparisonResult) {
+        setComparisonState({
+          base: data.structured,
+          compare: data.structured.comparisonResult,
+        })
+        setLiveAnnouncement(`Comparing ${data.structured.year} vs ${data.structured.comparisonResult.year}`)
       }
     } catch (error) {
       console.error('Chat error:', error)

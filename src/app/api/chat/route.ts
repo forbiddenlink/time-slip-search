@@ -99,14 +99,22 @@ export async function POST(request: NextRequest) {
     const cachedResults = await getCache<SearchResults>(cacheKey)
 
     let results: SearchResults
+    let comparisonResults: SearchResults | null = null
     let fromCache = false
 
     if (cachedResults) {
       results = cachedResults
       fromCache = true
     } else {
+      // Execute primary search
       results = await searchAllIndices(dateInfo.start, dateInfo.end, searchOptions)
-      // Cache results for 1 hour
+
+      // Execute secondary search if comparison
+      if (dateInfo.isComparison && dateInfo.compareTarget) {
+        comparisonResults = await searchAllIndices(dateInfo.compareTarget.start, dateInfo.compareTarget.end, searchOptions)
+      }
+
+      // Cache results for 1 hour (only caching primary for now to keep it simple)
       await setCache(cacheKey, results, CACHE_TTL.SEARCH_RESULTS)
     }
 
@@ -115,12 +123,29 @@ export async function POST(request: NextRequest) {
     const insights = generateInsights(dateInfo, results)
 
     // Format the text response
-    const response = formatResponse(dateInfo, results)
+    let response = formatResponse(dateInfo, results)
+
+    // enhance response if comparison
+    if (comparisonResults && dateInfo.compareTarget) {
+      response = `Comparing ${dateInfo.display}:\n\n` + response
+    }
 
     // Extract month and day from the start timestamp for famous date matching
     const startDate = new Date(dateInfo.start * 1000)
     const month = startDate.getMonth() + 1
     const day = startDate.getDate()
+
+    // Prepare structured data for comparison if valid
+    let comparisonData = undefined
+    if (comparisonResults && dateInfo.compareTarget) {
+      comparisonData = {
+        dateDisplay: dateInfo.compareTarget.display,
+        year: dateInfo.compareTarget.year,
+        month: new Date(dateInfo.compareTarget.start * 1000).getMonth() + 1,
+        day: new Date(dateInfo.compareTarget.start * 1000).getDate(),
+        results: comparisonResults
+      }
+    }
 
     // Return both text and structured data with rate limit and cache headers
     return NextResponse.json<ChatResponse>({
@@ -133,6 +158,9 @@ export async function POST(request: NextRequest) {
         results,
         suggestions,
         insights,
+        comparisonMode: !!comparisonResults,
+        // @ts-ignore - extending the type dynamically
+        comparisonResult: comparisonData,
       },
     }, {
       headers: {
@@ -220,7 +248,7 @@ function formatResponse(
     if (dateInfo.year < 1958 || dateInfo.year > 2020) {
       return `I found the date ${dateInfo.display}, but my data coverage is best between 1958 and 2020. Try a date in that range for better results!`
     }
-    
+
     // Date is in range but no data found
     return `I found the date ${dateInfo.display}, but I don't have any data indexed for that period yet. The database may need to be populated with historical data. For the best experience, make sure to run the data ingestion scripts (see SETUP.md).`
   }

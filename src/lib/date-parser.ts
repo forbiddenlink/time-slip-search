@@ -6,6 +6,8 @@ export interface DateRange {
   display: string
   year: number
   isRange?: boolean  // Flag for date range queries
+  isComparison?: boolean // Flag for explicit comparisons
+  compareTarget?: DateRange // The second date in a comparison
 }
 
 /**
@@ -21,13 +23,28 @@ export function parseDate(input: string): DateRange | null {
     .replace(/^(show me|tell me about|what was|give me)/i, '')
     .trim()
 
+  // Explicit comparison pattern: "compare X vs Y"
+  const compareMatch = cleanedInput.match(/compare\s+(.+?)\s+(?:vs|to|and|with)\s+(.+)/)
+  if (compareMatch && compareMatch[1] && compareMatch[2]) {
+    const start = parseDate(compareMatch[1])
+    const end = parseDate(compareMatch[2])
+
+    if (start && end) {
+      return {
+        ...start,
+        display: `${start.display} vs ${end.display}`,
+        isComparison: true,
+        compareTarget: end
+      }
+    }
+  }
+
   // Date range patterns: "from X to Y", "between X and Y", "X to Y", "X - Y"
   const rangePatterns = [
     /from\s+(.+?)\s+to\s+(.+)/,
     /between\s+(.+?)\s+and\s+(.+)/,
     /(.+?)\s+to\s+(.+)/,
     /(.+?)\s*-\s*(.+)/,
-    /compare\s+(.+?)\s+(?:vs|to|and)\s+(.+)/,
   ]
 
   for (const pattern of rangePatterns) {
