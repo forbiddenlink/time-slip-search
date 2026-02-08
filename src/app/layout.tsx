@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Source_Serif_4, VT323, Special_Elite } from 'next/font/google'
 import './globals.css'
+import { Suspense } from 'react'
 import { RetroAudioProvider } from '@/components/layout/RetroAudioProvider'
 
 const playfair = Playfair_Display({
@@ -83,9 +84,11 @@ export default function RootLayout({
       <body className="font-body antialiased">
         {/* Global grain overlay for that analog feel */}
         <div className="grain-overlay" aria-hidden="true" />
-        <RetroAudioProvider>
-          {children}
-        </RetroAudioProvider>
+        <Suspense fallback={null}>
+          <RetroAudioProvider>
+            {children}
+          </RetroAudioProvider>
+        </Suspense>
       </body>
     </html>
   )
