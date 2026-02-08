@@ -17,7 +17,7 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4"
       onClick={onClose}
     >
       <motion.div
@@ -41,7 +41,7 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
           {onClose && (
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-aged-cream/50 hover:text-phosphor-teal transition-colors p-2 hover:bg-crt-light/20 rounded-full"
+              className="absolute top-4 right-4 text-aged-cream/50 hover:text-phosphor-teal transition-colors p-2 bg-crt-black/50 hover:bg-crt-black rounded-full"
               aria-label="Close"
             >
               <XIcon size={20} />
@@ -178,7 +178,7 @@ export function WrappedCard({ stats, onClose }: WrappedCardProps) {
                     title: 'My Time Capsule',
                     text: text,
                     url: typeof window !== 'undefined' ? window.location.href : '',
-                  }).catch(() => {})
+                  }).catch(() => { })
                 } else {
                   navigator.clipboard.writeText(text)
                   alert('Copied to clipboard!')

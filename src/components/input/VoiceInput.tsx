@@ -8,6 +8,8 @@ interface VoiceInputProps {
 }
 
 export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceInputProps>) {
+  const [hasError, setHasError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const [isListening, setIsListening] = useState(false)
   const [isSupported, setIsSupported] = useState(false)
   const [recognition, setRecognition] = useState<any>(null)
@@ -15,10 +17,10 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
   useEffect(() => {
     // Check for browser support
     const SpeechRecognition = (globalThis as any).SpeechRecognition || (globalThis as any).webkitSpeechRecognition
-    
+
     if (SpeechRecognition) {
       setIsSupported(true)
-      
+
       const recognitionInstance = new SpeechRecognition()
       recognitionInstance.continuous = false
       recognitionInstance.interimResults = false
@@ -28,11 +30,23 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
         const transcript = event.results[0][0].transcript
         onTranscript(transcript)
         setIsListening(false)
+        setHasError(false)
       }
 
       recognitionInstance.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error)
         setIsListening(false)
+        setHasError(true)
+        if (event.error === 'not-allowed') {
+          setErrorMessage('MIC BLOCKED')
+        } else {
+          setErrorMessage('ERR: SIGNAL LOST')
+        }
+        // Clear error after 3 seconds
+        setTimeout(() => {
+          setHasError(false)
+          setErrorMessage('')
+        }, 3000)
       }
 
       recognitionInstance.onend = () => {
@@ -56,8 +70,15 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
       recognition.stop()
       setIsListening(false)
     } else {
-      recognition.start()
-      setIsListening(true)
+      setHasError(false)
+      try {
+        recognition.start()
+        setIsListening(true)
+      } catch (err) {
+        console.error('Failed to start recognition:', err)
+        setHasError(true)
+        setErrorMessage('ERR: START FAILED')
+      }
     }
   }
 
@@ -71,18 +92,24 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
       onClick={toggleListening}
       disabled={isDisabled}
       className={`px-4 py-3 rounded border-2 transition-all led-text
-        ${
-          isListening
+        ${hasError
+          ? 'bg-vhs-red/20 border-vhs-red text-vhs-red animate-flicker'
+          : isListening
             ? 'bg-vhs-red/20 border-vhs-red text-vhs-red animate-pulse'
             : 'bg-crt-dark border-crt-light/40 text-aged-cream hover:border-phosphor-teal hover:shadow-glow-teal'
         }
         ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover-lift'}
       `}
-      aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
-      title={isListening ? 'Listening... Click to stop' : 'Search by voice'}
+      aria-label={isListening ? 'Stop voice input' : hasError ? 'Microphone error' : 'Start voice input'}
+      title={hasError ? errorMessage : isListening ? 'Listening... Click to stop' : 'Search by voice'}
     >
       <span className="flex items-center gap-2">
-        {isListening ? (
+        {hasError ? (
+          <>
+            <span className="text-lg">❌</span>
+            <span className="hidden md:inline text-sm">{errorMessage}</span>
+          </>
+        ) : isListening ? (
           <>
             <span className="inline-block w-2 h-2 bg-vhs-red rounded-full animate-pulse" />
             <span className="text-sm">LISTENING...</span>

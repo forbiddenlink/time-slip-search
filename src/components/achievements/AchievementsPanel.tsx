@@ -40,7 +40,7 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-4"
           onClick={onClose}
         >
           <motion.div
@@ -64,7 +64,7 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
               <button
                 type="button"
                 onClick={onClose}
-                className="absolute top-4 right-4 text-aged-cream/50 hover:text-phosphor-teal transition-colors p-2 hover:bg-crt-light/20 rounded-full"
+                className="absolute top-4 right-4 text-aged-cream/50 hover:text-phosphor-teal transition-colors p-2 bg-crt-black/50 hover:bg-crt-black rounded-full"
                 aria-label="Close"
               >
                 <XIcon size={20} />
@@ -106,10 +106,9 @@ export function AchievementsPanel({ isOpen, onClose }: AchievementsPanelProps) {
                     onClick={() => setFilter(filterOption)}
                     className={`
                       px-4 py-2 rounded-lg text-sm font-semibold capitalize transition-all led-text tracking-wider
-                      ${
-                        filter === filterOption
-                          ? 'bg-phosphor-teal text-crt-black shadow-glow-teal'
-                          : 'bg-crt-dark border border-crt-light/30 text-aged-cream/60 hover:border-phosphor-teal/40 hover:text-phosphor-teal'
+                      ${filter === filterOption
+                        ? 'bg-phosphor-teal text-crt-black shadow-glow-teal'
+                        : 'bg-crt-dark border border-crt-light/30 text-aged-cream/60 hover:border-phosphor-teal/40 hover:text-phosphor-teal'
                       }
                     `}
                   >

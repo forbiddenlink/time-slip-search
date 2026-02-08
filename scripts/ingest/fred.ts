@@ -71,6 +71,30 @@ const MOVIE_TICKET_PRICES: Record<number, number> = {
   2020: 9.16,
 }
 
+// Historical gas prices (average price per gallon)
+// Sources: US Energy Information Administration / various historical records
+const HISTORICAL_GAS_PRICES: Record<number, number> = {
+  1950: 0.27,
+  1955: 0.29,
+  1960: 0.31,
+  1965: 0.31,
+  1970: 0.36,
+  1975: 0.57,
+  1978: 0.63,
+  1979: 0.86,
+  1980: 1.19,
+  1981: 1.31,
+  1982: 1.22,
+  1983: 1.16,
+  1984: 1.13,
+  1985: 1.12,
+  1986: 0.86,
+  1987: 0.90,
+  1988: 0.90,
+  1989: 1.00,
+  1990: 1.16,
+}
+
 interface FredObservation {
   date: string
   value: string
@@ -175,6 +199,50 @@ function getMovieTicketPrice(year: number): number | null {
   return MOVIE_TICKET_PRICES[closestYear] ?? null
 }
 
+function getGasPrice(year: number, fredValue: number | null): number | null {
+  // If we have a value from FRED (1990+ usually), use it
+  if (fredValue !== null) return fredValue
+
+  // Otherwise try historical fallback with linear interpolation
+  const years = Object.keys(HISTORICAL_GAS_PRICES)
+    .map(Number)
+    .sort((a, b) => a - b)
+
+  // Find closest year
+  let closestYear = years[0] ?? 0
+  for (const y of years) {
+    if (Math.abs(y - year) < Math.abs(closestYear - year)) {
+      closestYear = y
+    }
+  }
+
+  const idx = years.indexOf(closestYear)
+  if (year === closestYear) {
+    return HISTORICAL_GAS_PRICES[closestYear] ?? null
+  }
+
+  // Interpolate
+  if (year < closestYear && idx > 0) {
+    const prevYear = years[idx - 1]
+    const prevPrice = HISTORICAL_GAS_PRICES[prevYear ?? 0]
+    const nextPrice = HISTORICAL_GAS_PRICES[closestYear]
+    if (!prevPrice || !nextPrice || !prevYear) return null
+    const ratio = (year - prevYear) / (closestYear - prevYear)
+    return Math.round((prevPrice + ratio * (nextPrice - prevPrice)) * 100) / 100
+  }
+
+  if (year > closestYear && idx < years.length - 1) {
+    const nextYear = years[idx + 1]
+    const prevPrice = HISTORICAL_GAS_PRICES[closestYear]
+    const nextPrice = HISTORICAL_GAS_PRICES[nextYear ?? 0]
+    if (!prevPrice || !nextPrice || !nextYear) return null
+    const ratio = (year - closestYear) / (nextYear - closestYear)
+    return Math.round((prevPrice + ratio * (nextPrice - prevPrice)) * 100) / 100
+  }
+
+  return HISTORICAL_GAS_PRICES[closestYear] ?? null
+}
+
 async function fetchFredSeries(
   seriesId: string,
   apiKey: string,
@@ -249,12 +317,14 @@ async function main() {
 
   for (let year = startYear; year <= endYear; year++) {
     for (let month = 1; month <= 12; month++) {
-      const monthKey = `${year}-${String(month).padStart(2, '0')}`
-      const dateStr = `${monthKey}-01`
+      const key = `${year}-${String(month).padStart(2, '0')}`
+      const dateStr = `${key}-01`
       const timestamp = Math.floor(new Date(year, month - 1, 1).getTime() / 1000)
 
-      const gasPrice = gasData.get(monthKey) ?? null
-      const cpi = cpiData.get(monthKey) ?? null
+      const fredGas = gasData.get(key) ?? null
+      const gasPrice = getGasPrice(year, fredGas)
+
+      const cpi = cpiData.get(key) ?? null
       const minWage = getMinimumWage(year)
       const movieTicket = getMovieTicketPrice(year)
 
@@ -264,7 +334,7 @@ async function main() {
       }
 
       records.push({
-        objectID: `prices_${monthKey}`,
+        objectID: `prices_${key}`,
         date: timestamp,
         date_string: dateStr,
         year,
