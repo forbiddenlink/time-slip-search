@@ -136,13 +136,13 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                           }`}>
                           {pick.title}
                         </h3>
-                        <p className="text-phosphor-teal text-xs led-text mt-1 tracking-wider">
+                        <p className="text-phosphor-teal text-sm led-text mt-1 tracking-wider">
                           {pick.year}
                         </p>
                       </div>
                     </div>
 
-                    <p className="text-aged-cream/70 text-xs mt-3 line-clamp-3 leading-relaxed">
+                    <p className="text-aged-cream/70 text-sm mt-3 line-clamp-3 leading-relaxed">
                       {pick.description}
                     </p>
 

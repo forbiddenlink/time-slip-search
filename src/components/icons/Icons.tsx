@@ -37,7 +37,7 @@ export interface IconProps {
 // Wrapper to ensure consistent props and styling defaults
 const createIcon = (IconComponent: any) => {
   return function IconWrapper({ className = '', size = 24 }: IconProps) {
-    return <IconComponent className={className} size={size} strokeWidth={1.5} />
+    return <IconComponent className={`${className} filter drop-shadow-sm`} size={size} strokeWidth={2} />
   }
 }
 

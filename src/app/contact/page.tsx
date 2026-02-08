@@ -51,8 +51,8 @@ export default async function ContactPage() {
         <section className="space-y-4 text-aged-cream/80 leading-relaxed">
           <p>
             For support, feedback, or corrections to historical data, email us at{' '}
-            <a className="underline hover:text-phosphor-teal" href="mailto:hello@timeslipsearch.com">
-              hello@timeslipsearch.com
+            <a className="underline hover:text-phosphor-teal" href="mailto:purplegumdropz@gmail.com">
+              purplegumdropz@gmail.com
             </a>
             . Please include the date you searched and a short description of what you expected to see.
           </p>
@@ -102,6 +102,6 @@ export default async function ContactPage() {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-    </main>
+    </main >
   )
 }

@@ -138,7 +138,7 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
                   <div className="text-aged-cream/60 text-sm led-text tracking-widest">
                     NO FAVORITES SAVED
                   </div>
-                  <div className="text-xs text-aged-cream/40 mt-2 font-mono">
+                  <div className="text-sm text-aged-cream/40 mt-2 font-mono">
                     Click the ❤️ icon on any result to save it to your collection
                   </div>
                 </div>
@@ -163,13 +163,13 @@ export function AgentMemoryPanel({ onSelectSearch }: AgentMemoryPanelProps) {
 
                         <div className="grid grid-cols-2 gap-x-8 gap-y-1 mt-2">
                           {fav.topSong && (
-                            <div className="text-xs text-aged-cream/70 flex items-center gap-2 truncate">
+                            <div className="text-sm text-aged-cream/70 flex items-center gap-2 truncate">
                               <span className="text-vinyl-label-bright">♪</span>
                               <span>{fav.topSong}</span>
                             </div>
                           )}
                           {fav.gasPrice && (
-                            <div className="text-xs text-aged-cream/70 flex items-center gap-2 font-mono">
+                            <div className="text-sm text-aged-cream/70 flex items-center gap-2 font-mono">
                               <span className="text-phosphor-green">RH</span>
                               <span>Gas: ${fav.gasPrice.toFixed(2)}</span>
                             </div>

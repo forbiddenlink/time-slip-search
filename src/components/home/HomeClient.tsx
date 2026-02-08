@@ -527,7 +527,7 @@ function HomeContent() {
                       <div className="text-base font-medium text-aged-cream tracking-wide">
                         {feature.label}
                       </div>
-                      <div className="text-xs text-aged-cream/60 mt-2 led-text tracking-wider">
+                      <div className="text-sm text-aged-cream/60 mt-2 led-text tracking-wider">
                         {feature.period}
                       </div>
                     </div>
