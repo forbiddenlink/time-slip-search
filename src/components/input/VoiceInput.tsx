@@ -54,11 +54,11 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
       }
 
       setRecognition(recognitionInstance)
-    }
 
-    return () => {
-      if (recognition) {
-        recognition.stop()
+      // Return cleanup that references the local instance, not state
+      // (state would be stale/null due to closure timing)
+      return () => {
+        recognitionInstance.stop()
       }
     }
   }, [onTranscript])

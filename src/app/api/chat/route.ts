@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json<ChatResponse>({
         response: '',
         error: 'Too many requests. Please try again in a minute.'
-      }, { 
+      }, {
         status: 429,
         headers: {
           'X-RateLimit-Limit': '30',
@@ -39,12 +39,40 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const { message, filters } = await request.json()
-
-    if (!message) {
+    // Parse request body with proper error handling
+    let body: { message?: unknown; filters?: AdvancedSearchOptions }
+    try {
+      body = await request.json()
+    } catch {
       return NextResponse.json<ChatResponse>({
         response: '',
-        error: 'Message is required'
+        error: 'Invalid JSON in request body'
+      }, { status: 400 })
+    }
+
+    const { message, filters } = body
+
+    // Validate message is a non-empty string
+    if (!message || typeof message !== 'string') {
+      return NextResponse.json<ChatResponse>({
+        response: '',
+        error: 'Message must be a non-empty string'
+      }, { status: 400 })
+    }
+
+    // Validate message length to prevent DoS
+    if (message.length > 500) {
+      return NextResponse.json<ChatResponse>({
+        response: '',
+        error: 'Message too long (maximum 500 characters)'
+      }, { status: 400 })
+    }
+
+    // Validate filters structure if provided
+    if (filters !== undefined && (typeof filters !== 'object' || filters === null)) {
+      return NextResponse.json<ChatResponse>({
+        response: '',
+        error: 'Invalid filters format'
       }, { status: 400 })
     }
 
