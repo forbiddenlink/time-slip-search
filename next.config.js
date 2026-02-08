@@ -35,6 +35,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             // Default to self, but allow vercel.live for preview framing
             value: "frame-src 'self' https://vercel.live;"
+          },
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff'
