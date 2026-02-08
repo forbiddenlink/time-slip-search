@@ -17,11 +17,16 @@ export function useRetroAudio() {
         }
 
         // Modern browsers require user interaction to start AudioContext
-        document.addEventListener('click', initAudio, { once: true })
-        document.addEventListener('keydown', initAudio, { once: true })
+        // We defer initialization until the first click/keypress to avoid "The AudioContext was not allowed to start" warnings
+        const handleInteraction = () => {
+            initAudio()
+            // Remove listeners after first successful init
+            document.removeEventListener('click', handleInteraction)
+            document.removeEventListener('keydown', handleInteraction)
+        }
 
-        // Try to init immediately just in case (for some browsers)
-        initAudio()
+        document.addEventListener('click', handleInteraction)
+        document.addEventListener('keydown', handleInteraction)
 
         return () => {
             // Cleanup if needed
