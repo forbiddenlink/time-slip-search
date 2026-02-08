@@ -20,14 +20,15 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
     const currentMonth = today.toLocaleDateString('en-US', { month: 'long' })
     const currentDay = today.getDate()
 
-    // Random decade for variety
+    // Use day of year as deterministic seed to avoid hydration mismatch
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000)
     const decades = ['60s', '70s', '80s', '90s', '2000s']
-    const randomDecade = decades[Math.floor(Math.random() * decades.length)]
+    const randomDecade = decades[dayOfYear % decades.length]
 
     return [
       {
         label: 'This Day in History',
-        getQuery: () => `${currentMonth} ${currentDay}, ${1960 + Math.floor(Math.random() * 50)}`,
+        getQuery: () => `${currentMonth} ${currentDay}, ${1960 + (dayOfYear % 50)}`,
         icon: '📅',
       },
       {
@@ -41,6 +42,7 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
             '2000s': 2000,
           }
           const startYear = decadeMap[randomDecade ?? '80s'] ?? 1980
+          // Use Math.random only in click handler (not render)
           const year = startYear + Math.floor(Math.random() * 10)
           const month = Math.floor(Math.random() * 12) + 1
           return `${month}/${Math.floor(Math.random() * 28) + 1}/${year}`
