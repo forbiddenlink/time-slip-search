@@ -1,6 +1,7 @@
 import { memo } from 'react'
 import type { Song } from '@/lib/algolia'
 import { MusicIcon } from '@/components/icons/Icons'
+import { TiltCard } from '@/components/ui/TiltCard'
 
 interface SongCardProps {
   song: Song
@@ -11,7 +12,7 @@ export const SongCard = memo(function SongCard({ song, rank }: SongCardProps) {
   const position = rank ?? song.chart_position
 
   return (
-    <div className="flex items-center gap-4 p-3 glass-card border border-crt-light/20 rounded-lg hover:border-vinyl-label/50 transition-all duration-300 group hover:bg-crt-dark/60">
+    <TiltCard className="flex items-center gap-4 p-3 glass-card border border-crt-light/20 rounded-lg hover:border-vinyl-label/50 transition-all duration-300 group hover:bg-crt-dark/60">
       {/* Vinyl record style rank indicator */}
       <div className="relative flex-shrink-0">
         <div className="w-12 h-12 vinyl-record flex items-center justify-center group-hover:animate-vinyl-spin shadow-md">
@@ -39,7 +40,7 @@ export const SongCard = memo(function SongCard({ song, rank }: SongCardProps) {
           </span>
         </div>
       )}
-    </div>
+    </TiltCard>
   )
 })
 

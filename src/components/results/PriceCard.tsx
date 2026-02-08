@@ -1,6 +1,7 @@
 import type { Price } from '@/lib/algolia'
 import { AnimatedNumber } from '@/components/animations/AnimatedNumber'
 import { DollarIcon, FilmIcon } from '@/components/icons/Icons'
+import { TiltCard } from '@/components/ui/TiltCard'
 
 interface PriceCardProps {
   price: Price
@@ -50,7 +51,7 @@ export function PriceCard({ price }: PriceCardProps) {
       {/* Price grid - LED display style like old gas station signs */}
       <div className="grid grid-cols-3 gap-3">
         {items.map((item, index) => (
-          <div
+          <TiltCard
             key={item.label}
             className="glass-card p-3 text-center border border-crt-light/20 rounded-lg hover:border-phosphor-green/50 transition-all duration-300 group cascade-in hover:shadow-[0_0_15px_rgba(57,255,20,0.15)]"
             style={{ animationDelay: `${0.3 + index * 0.15}s` }}
@@ -75,7 +76,7 @@ export function PriceCard({ price }: PriceCardProps) {
             <div className="led-text text-aged-cream/50 text-xs tracking-widest">
               {item.label}
             </div>
-          </div>
+          </TiltCard>
         ))}
       </div>
     </div>

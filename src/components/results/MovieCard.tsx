@@ -2,6 +2,7 @@ import { memo } from 'react'
 import Image from 'next/image'
 import type { Movie } from '@/lib/algolia'
 import { FilmIcon, StarIcon } from '@/components/icons/Icons'
+import { TiltCard } from '@/components/ui/TiltCard'
 
 interface MovieCardProps {
   movie: Movie
@@ -9,7 +10,7 @@ interface MovieCardProps {
 
 export const MovieCard = memo(function MovieCard({ movie }: MovieCardProps) {
   return (
-    <div className="flex gap-4 p-3 glass-card border border-crt-light/20 rounded-lg hover:border-phosphor-amber/50 transition-all duration-300 group hover:bg-crt-dark/60">
+    <TiltCard className="flex gap-4 p-3 glass-card border border-crt-light/20 rounded-lg hover:border-phosphor-amber/50 transition-all duration-300 group hover:bg-crt-dark/60">
       {/* Movie poster with film strip aesthetic */}
       <div className="relative flex-shrink-0">
         <div className="film-strip">
@@ -56,7 +57,7 @@ export const MovieCard = memo(function MovieCard({ movie }: MovieCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </TiltCard>
   )
 })
 
