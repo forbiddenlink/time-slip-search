@@ -73,7 +73,7 @@ export function PriceCard({ price }: PriceCardProps) {
             </div>
 
             {/* Label */}
-            <div className="led-text text-aged-cream/50 text-xs tracking-widest">
+            <div className="led-text text-aged-cream/50 text-sm tracking-widest">
               {item.label}
             </div>
           </TiltCard>

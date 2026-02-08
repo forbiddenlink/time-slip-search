@@ -42,7 +42,7 @@ export const MovieCard = memo(function MovieCard({ movie }: MovieCardProps) {
         <p className="led-text text-phosphor-teal text-sm tracking-wide">{movie.year}</p>
 
         {movie.genres && movie.genres.length > 0 && (
-          <p className="text-xs text-aged-cream/50 truncate mt-1.5 font-body">
+          <p className="text-sm text-aged-cream/50 truncate mt-1.5 font-body">
             {movie.genres.slice(0, 2).join(' / ')}
           </p>
         )}

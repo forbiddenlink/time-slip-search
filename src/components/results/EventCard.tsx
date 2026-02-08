@@ -40,7 +40,7 @@ export const EventCard = memo(function EventCard({ event }: EventCardProps) {
 
           {/* Description */}
           {event.description && event.description !== event.title && (
-            <p className="text-xs text-crt-medium mt-1 line-clamp-2 font-body italic">
+            <p className="text-sm text-crt-medium mt-1 line-clamp-2 font-body italic">
               {event.description}
             </p>
           )}
