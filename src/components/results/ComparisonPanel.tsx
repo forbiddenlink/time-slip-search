@@ -109,19 +109,19 @@ export function ComparisonPanel({ base, compare, onClose, onSwap }: ComparisonPa
         <div className="flex gap-2">
           <button
             onClick={onSwap}
-            className="px-3 py-2 text-xs led-text tracking-wider bg-crt-dark border border-phosphor-amber/40 rounded hover:border-phosphor-amber"
+            className="px-3 py-2 text-sm led-text tracking-wider bg-crt-dark border border-phosphor-amber/40 rounded hover:border-phosphor-amber"
           >
             Swap
           </button>
           <button
             onClick={handleCopyComparison}
-            className="px-3 py-2 text-xs led-text tracking-wider bg-crt-dark border border-phosphor-teal/40 rounded hover:border-phosphor-teal"
+            className="px-3 py-2 text-sm led-text tracking-wider bg-crt-dark border border-phosphor-teal/40 rounded hover:border-phosphor-teal"
           >
             Copy
           </button>
           <button
             onClick={onClose}
-            className="px-3 py-2 text-xs led-text tracking-wider bg-crt-dark border border-crt-light/40 rounded hover:border-crt-light"
+            className="px-3 py-2 text-sm led-text tracking-wider bg-crt-dark border border-crt-light/40 rounded hover:border-crt-light"
           >
             Close
           </button>
