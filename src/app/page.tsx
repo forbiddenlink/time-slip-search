@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
 import HomeClient from '@/components/home/HomeClient'

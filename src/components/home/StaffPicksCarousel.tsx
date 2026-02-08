@@ -97,7 +97,6 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                 <motion.button
                   key={`${pick.date}-${pick.year}`}
                   onClick={() => handleClick(pick)}
-                  onClick={() => handleClick(pick)}
                   className={`
                     flex-shrink-0 relative overflow-hidden rounded-lg
                     transition-all duration-300
