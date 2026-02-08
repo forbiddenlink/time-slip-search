@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import type { SearchResults } from '@/lib/algolia'
@@ -177,12 +177,12 @@ function HomeContent() {
     return () => globalThis.removeEventListener('keydown', handleKeyDown)
   }, [isLoading, showWrapped, showAchievements])
 
-  const handleQueryChange = (value: string) => {
+  const handleQueryChange = useCallback((value: string) => {
     setQuery(value)
     setShowAutocomplete(value.length > 0)
-  }
+  }, [])
 
-  const handleSuggestionSelect = (suggestion: string) => {
+  const handleSuggestionSelect = useCallback((suggestion: string) => {
     setQuery(suggestion)
     setShowAutocomplete(false)
     // Auto-submit after a brief delay
@@ -190,9 +190,9 @@ function HomeContent() {
       const form = document.querySelector('form')
       if (form) form.requestSubmit()
     }, 100)
-  }
+  }, [])
 
-  const handleVoiceTranscript = (transcript: string) => {
+  const handleVoiceTranscript = useCallback((transcript: string) => {
     setQuery(transcript)
     setShowAutocomplete(false)
     // Auto-submit voice queries
@@ -200,7 +200,7 @@ function HomeContent() {
       const form = document.querySelector('form')
       if (form) form.requestSubmit()
     }, 300)
-  }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -294,18 +294,18 @@ function HomeContent() {
     }
   }
 
-  const handleExampleClick = (example: string) => {
+  const handleExampleClick = useCallback((example: string) => {
     setQuery(example)
-  }
+  }, [])
 
-  const handleMemorySelect = (query: string) => {
+  const handleMemorySelect = useCallback((query: string) => {
     setQuery(query)
     // Auto-submit
     setTimeout(() => {
       const form = document.querySelector('form')
       if (form) form.requestSubmit()
     }, 100)
-  }
+  }, [])
 
   const handleCompare = async (targetYear: number, baseData?: StructuredResult) => {
     const fallbackBase =

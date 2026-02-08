@@ -3,6 +3,7 @@ import { parseDate, DateRange } from '@/lib/date-parser'
 import { searchAllIndices } from '@/lib/algolia'
 import type { SearchResults, AdvancedSearchOptions } from '@/lib/algolia'
 import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
+import { getCache, setCache, createCacheKey, CACHE_TTL } from '@/lib/cache'
 
 export interface ChatResponse {
   response: string
@@ -91,8 +92,22 @@ export async function POST(request: NextRequest) {
       chartPositions: filters.chartPositions,
       showOnlyNumber1: filters.showOnlyNumber1
     } : undefined
-    
-    const results = await searchAllIndices(dateInfo.start, dateInfo.end, searchOptions)
+
+    // Check cache first
+    const cacheKey = createCacheKey(dateInfo.start, dateInfo.end, searchOptions)
+    const cachedResults = await getCache<SearchResults>(cacheKey)
+
+    let results: SearchResults
+    let fromCache = false
+
+    if (cachedResults) {
+      results = cachedResults
+      fromCache = true
+    } else {
+      results = await searchAllIndices(dateInfo.start, dateInfo.end, searchOptions)
+      // Cache results for 1 hour
+      await setCache(cacheKey, results, CACHE_TTL.SEARCH_RESULTS)
+    }
 
     // Generate AI agent suggestions and insights
     const suggestions = generateSuggestions(dateInfo, results)
@@ -106,7 +121,7 @@ export async function POST(request: NextRequest) {
     const month = startDate.getMonth() + 1
     const day = startDate.getDate()
 
-    // Return both text and structured data with rate limit headers
+    // Return both text and structured data with rate limit and cache headers
     return NextResponse.json<ChatResponse>({
       response,
       structured: {
@@ -122,6 +137,8 @@ export async function POST(request: NextRequest) {
       headers: {
         'X-RateLimit-Limit': '30',
         'X-RateLimit-Remaining': rateLimit.remaining.toString(),
+        'X-Cache': fromCache ? 'HIT' : 'MISS',
+        'Cache-Control': 'private, max-age=3600',
         'X-RateLimit-Reset': new Date(rateLimit.resetAt).toISOString(),
       }
     })

@@ -88,87 +88,108 @@ export interface AdvancedSearchOptions {
   showOnlyNumber1?: boolean
 }
 
+// Attributes to retrieve per index (reduces payload size)
+const SONG_ATTRIBUTES = [
+  'objectID', 'date', 'date_string', 'year', 'decade',
+  'chart_position', 'song_title', 'artist', 'weeks_on_chart', 'peak_position', 'category'
+]
+
+const MOVIE_ATTRIBUTES = [
+  'objectID', 'tmdb_id', 'date', 'date_string', 'year', 'decade',
+  'title', 'overview', 'genres', 'poster_url', 'vote_average', 'popularity', 'category'
+]
+
+const EVENT_ATTRIBUTES = [
+  'objectID', 'date', 'date_string', 'year', 'decade',
+  'event_type', 'title', 'description', 'category', 'importance'
+]
+
 /**
  * Search all TimeSlipSearch indices for a date range with advanced filters
+ * Uses batched multi-index search for efficiency (single HTTP request)
  */
 export async function searchAllIndices(
   startTimestamp: number,
   endTimestamp: number,
   options?: AdvancedSearchOptions
 ): Promise<SearchResults> {
-  let filters = `date >= ${startTimestamp} AND date <= ${endTimestamp}`
+  let baseFilters = `date >= ${startTimestamp} AND date <= ${endTimestamp}`
 
   // Add decade filters if specified
   if (options?.decades && options.decades.length > 0) {
     const decadeFilters = options.decades.map(d => `decade:"${d}"`).join(' OR ')
-    filters += ` AND (${decadeFilters})`
+    baseFilters += ` AND (${decadeFilters})`
   }
 
-  // Add chart position filters
+  // Build song-specific filters (chart position only applies to songs)
+  let songFilters = baseFilters
   if (options?.showOnlyNumber1) {
-    filters += ' AND chart_position:1'
+    songFilters += ' AND chart_position:1'
   } else if (options?.chartPositions && options.chartPositions.length > 0) {
     if (options.chartPositions.includes('top10')) {
-      filters += ' AND chart_position <= 10'
+      songFilters += ' AND chart_position <= 10'
     } else if (options.chartPositions.includes('top40')) {
-      filters += ' AND chart_position <= 40'
+      songFilters += ' AND chart_position <= 40'
     }
   }
 
-  console.log('[Algolia] Searching with filters:', filters)
+  console.log('[Algolia] Searching with filters:', baseFilters)
 
   try {
     const client = getClient()
-    console.log('[Algolia] Client initialized')
-    const [songsResponse, moviesResponse, pricesResponse, eventsResponse] = await Promise.all([
-      client.searchSingleIndex({
-        indexName: 'timeslip_songs',
-        searchParams: {
-          query: '',
-          filters,
-          hitsPerPage: 10,
-        },
-      }),
-      client.searchSingleIndex({
-        indexName: 'timeslip_movies',
-        searchParams: {
-          query: '',
-          filters,
-          hitsPerPage: 10,
-        },
-      }),
-      client.searchSingleIndex({
-        indexName: 'timeslip_prices',
-        searchParams: {
-          query: '',
-          filters,
-          hitsPerPage: 1,
-        },
-      }),
-      client.searchSingleIndex({
-        indexName: 'timeslip_events',
-        searchParams: {
-          query: '',
-          filters,
-          hitsPerPage: 10,
-        },
-      }),
-    ])
 
-    console.log('[Algolia] Songs found:', songsResponse.nbHits)
-    console.log('[Algolia] Movies found:', moviesResponse.nbHits)
-    console.log('[Algolia] Prices found:', pricesResponse.nbHits)
-    console.log('[Algolia] Events found:', eventsResponse.nbHits)
+    // Single batched request to all indices (1 HTTP call instead of 4)
+    const response = await client.search({
+      requests: [
+        {
+          indexName: 'timeslip_songs',
+          query: '',
+          filters: songFilters,
+          hitsPerPage: 5,
+          attributesToRetrieve: SONG_ATTRIBUTES,
+        },
+        {
+          indexName: 'timeslip_movies',
+          query: '',
+          filters: baseFilters,
+          hitsPerPage: 3,
+          attributesToRetrieve: MOVIE_ATTRIBUTES,
+        },
+        {
+          indexName: 'timeslip_prices',
+          query: '',
+          filters: baseFilters,
+          hitsPerPage: 1,
+          attributesToRetrieve: ['*'], // Small payload, retrieve all
+        },
+        {
+          indexName: 'timeslip_events',
+          query: '',
+          filters: baseFilters,
+          hitsPerPage: 3,
+          attributesToRetrieve: EVENT_ATTRIBUTES,
+        },
+      ],
+    })
+
+    // Extract hits from each result (type assertions needed due to Algolia's union types)
+    const results = response.results as Array<{ hits: unknown[]; nbHits: number }>
+    const [songsResponse, moviesResponse, pricesResponse, eventsResponse] = results
+
+    console.log('[Algolia] Songs found:', songsResponse?.nbHits ?? 0)
+    console.log('[Algolia] Movies found:', moviesResponse?.nbHits ?? 0)
+    console.log('[Algolia] Prices found:', pricesResponse?.nbHits ?? 0)
+    console.log('[Algolia] Events found:', eventsResponse?.nbHits ?? 0)
 
     return {
-      songs: (songsResponse.hits as unknown as Song[]).sort(
+      songs: ((songsResponse?.hits ?? []) as Song[]).sort(
         (a, b) => a.chart_position - b.chart_position
       ),
-      movies: (moviesResponse.hits as unknown as Movie[]).sort(
+      movies: ((moviesResponse?.hits ?? []) as Movie[]).sort(
         (a, b) => (b.popularity || 0) - (a.popularity || 0)
       ),
-      prices: pricesResponse.hits as unknown as Price[],
-      events: eventsResponse.hits as unknown as HistoricalEvent[],
+      prices: (pricesResponse?.hits ?? []) as Price[],
+      events: (eventsResponse?.hits ?? []) as HistoricalEvent[],
     }
   } catch (error) {
     console.error('[Algolia] Search error:', error)
