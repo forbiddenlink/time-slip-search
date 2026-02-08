@@ -31,11 +31,7 @@ const nextConfig = {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN' // Allows creating frames from the same origin
           },
-          {
-            key: 'Content-Security-Policy',
-            // Default to self, but allow vercel.live for preview framing
-            value: "frame-src 'self' https://vercel.live;"
-          },
+
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff'

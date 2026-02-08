@@ -31,7 +31,7 @@ export function proxy(request: NextRequest) {
     "img-src 'self' data: https:",
     "font-src 'self' data:",
     "connect-src 'self' https://*.algolia.net https://*.algolianet.com https://vercel.live",
-    "frame-ancestors 'self'",
+    "frame-src 'self' https://vercel.live",
     "base-uri 'self'",
     "object-src 'none'",
     "form-action 'self'",
