@@ -1,7 +1,6 @@
-'use client'
-
 import { useState } from 'react'
 import type { SearchResults } from '@/lib/algolia'
+import html2canvas from 'html2canvas'
 
 interface ShareButtonsProps {
   dateDisplay: string
@@ -13,6 +12,7 @@ interface ShareButtonsProps {
 
 export function ShareButtons({ dateDisplay, year, results, onCompare, onRandom }: ShareButtonsProps) {
   const [showShareCard, setShowShareCard] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
 
   const handleCompare = (yearsOffset: number) => {
     if (onCompare) {
@@ -22,19 +22,35 @@ export function ShareButtons({ dateDisplay, year, results, onCompare, onRandom }
 
   const handleDownloadCard = () => {
     setShowShareCard(true)
-    // Wait for next frame to ensure card is rendered
-    setTimeout(() => {
-      const card = document.getElementById('shareable-card')
-      if (!card) return
+  }
 
-      // Use html2canvas or similar library in production
-      // For now, we'll show a modal with the card
-      alert('Share card feature coming soon! You can screenshot this for now.')
-    }, 100)
+  const generateImage = async () => {
+    const card = document.getElementById('shareable-card')
+    if (!card) return
+
+    try {
+      setIsGenerating(true)
+      const canvas = await html2canvas(card, {
+        backgroundColor: '#0d0d0d',
+        scale: 2, // Retinas resolution
+        useCORS: true,
+        logging: false,
+      })
+
+      const link = document.createElement('a')
+      link.download = `timeslip-search-${year}.png`
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    } catch (err) {
+      console.error('Failed to generate sharing card:', err)
+      alert('Could not generate image. Please try screenshotting instead.')
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const topSong = results.songs[0]
-  
+
   return (
     <div className="space-y-4">
       {/* Quick Action Suggestions */}
@@ -61,7 +77,7 @@ export function ShareButtons({ dateDisplay, year, results, onCompare, onRandom }
             </button>
           </>
         )}
-        
+
         {onRandom && (
           <button
             onClick={onRandom}
@@ -105,12 +121,12 @@ export function ShareButtons({ dateDisplay, year, results, onCompare, onRandom }
             >
               {/* VHS effect overlay */}
               <div className="absolute inset-0 vhs-tracking opacity-30 pointer-events-none" />
-              
+
               <div className="relative z-10 space-y-6">
                 <div className="text-phosphor-teal text-7xl font-display tracking-tight glow-text">
                   {dateDisplay}
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="text-aged-cream/60 text-xl led-text tracking-widest">
                     #1 SONG
@@ -118,7 +134,7 @@ export function ShareButtons({ dateDisplay, year, results, onCompare, onRandom }
                   <div className="text-aged-cream text-3xl font-medium leading-tight">
                     "{topSong.song_title}"
                   </div>
-                  
+
                   <div className="text-aged-cream/80 text-2xl mt-4">
                     {topSong.artist}
                   </div>
@@ -142,13 +158,11 @@ export function ShareButtons({ dateDisplay, year, results, onCompare, onRandom }
             </div>
             <div className="mt-4 text-center">
               <button
-                onClick={() => {
-                  // In production, use html2canvas here
-                  alert('Screenshot this card to share! Full download feature coming soon.')
-                }}
-                className="retro-btn px-6 py-3 text-phosphor-teal led-text"
+                onClick={generateImage}
+                disabled={isGenerating}
+                className="retro-btn px-6 py-3 text-phosphor-teal led-text disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                📥 DOWNLOAD
+                {isGenerating ? '⏳ GENERATING...' : '📥 DOWNLOAD IMAGE'}
               </button>
             </div>
           </div>
