@@ -11,21 +11,36 @@ function HomeSeoFallback() {
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
       <div className="container mx-auto max-w-4xl px-4 py-10 space-y-8">
-        <header className="text-center space-y-4">
-          <h1 className="font-display text-5xl md:text-7xl tracking-tight leading-none">
-            TimeSlipSearch
-          </h1>
-          <p className="text-aged-cream/80 max-w-2xl mx-auto">
-            Discover what happened on any day from 1958 to 2020, including the #1 song, top movies in theaters, historical prices, and key global events.
-          </p>
-          <p className="text-sm text-aged-cream/70 led-text tracking-wide">
-            By Elizabeth Stein · Published <time dateTime={publishedDate}>January 15, 2026</time> · Updated <time dateTime={modifiedDate}>February 7, 2026</time>
-          </p>
-          <nav className="flex items-center justify-center gap-4 text-sm led-text tracking-wider">
-            <Link href="/about" className="hover:text-phosphor-teal transition-colors">ABOUT</Link>
-            <Link href="/contact" className="hover:text-phosphor-teal transition-colors">CONTACT</Link>
-            <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
-          </nav>
+        <header className="mb-12">
+          {/* Top control strip match */}
+          <div className="flex items-center justify-between mb-6 px-2">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-vhs-red opacity-80" />
+              <span className="led-text text-vhs-red text-sm tracking-widest">REC</span>
+            </div>
+            <div className="led-display">
+              <span className="text-phosphor-amber text-lg tracking-wider">
+                --:--
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center space-y-4">
+            <h1 className="font-display text-5xl md:text-8xl lg:text-9xl tracking-tight leading-none">
+              <span className="text-phosphor-teal inline-block">Time</span>
+              <span className="text-phosphor-amber inline-block ml-1">Slip</span>
+            </h1>
+            <div className="flex items-center justify-center gap-4">
+              <div className="h-px flex-1 max-w-[120px] bg-gradient-to-r from-transparent via-phosphor-teal/40 to-transparent" />
+              <p className="led-text text-phosphor-amber text-2xl tracking-[0.4em] uppercase">
+                Search
+              </p>
+              <div className="h-px flex-1 max-w-[120px] bg-gradient-to-l from-transparent via-phosphor-teal/40 to-transparent" />
+            </div>
+            <p className="text-aged-cream/70 text-lg italic font-body max-w-md mx-auto">
+              Your cultural time machine — see the #1 song, the movies, the prices, and the headlines from any date
+            </p>
+          </div>
         </header>
 
         <article className="space-y-4 text-aged-cream/80 leading-relaxed">

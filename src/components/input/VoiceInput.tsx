@@ -38,7 +38,7 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
         setIsListening(false)
         setHasError(true)
         if (event.error === 'not-allowed') {
-          setErrorMessage('MIC BLOCKED')
+          setErrorMessage('MIC DENIED - ENABLE IN SETTINGS')
         } else {
           setErrorMessage('ERR: SIGNAL LOST')
         }

@@ -97,7 +97,7 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                 <motion.button
                   key={`${pick.date}-${pick.year}`}
                   onClick={() => handleClick(pick)}
-                  layout
+                  onClick={() => handleClick(pick)}
                   className={`
                     flex-shrink-0 relative overflow-hidden rounded-lg
                     transition-all duration-300
@@ -123,8 +123,8 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                 >
                   {/* VHS tape label decoration */}
                   <div className={`absolute top-0 left-0 right-0 h-1.5 rounded-t-lg ${index === currentIndex
-                      ? 'bg-gradient-to-r from-phosphor-amber/60 via-vhs-red/60 to-phosphor-amber/60'
-                      : 'bg-crt-light'
+                    ? 'bg-gradient-to-r from-phosphor-amber/60 via-vhs-red/60 to-phosphor-amber/60'
+                    : 'bg-crt-light'
                     }`} />
 
                   <div className="p-4 pt-5 h-full flex flex-col">
