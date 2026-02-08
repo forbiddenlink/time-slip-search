@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { Song } from '@/lib/algolia'
 
 interface SongCardProps {
@@ -5,7 +6,7 @@ interface SongCardProps {
   rank?: number
 }
 
-export function SongCard({ song, rank }: SongCardProps) {
+export const SongCard = memo(function SongCard({ song, rank }: SongCardProps) {
   const position = rank ?? song.chart_position
 
   return (
@@ -39,7 +40,7 @@ export function SongCard({ song, rank }: SongCardProps) {
       )}
     </div>
   )
-}
+})
 
 interface SongListProps {
   songs: Song[]

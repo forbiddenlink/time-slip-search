@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import Image from 'next/image'
 import type { Movie } from '@/lib/algolia'
 
@@ -5,7 +6,7 @@ interface MovieCardProps {
   movie: Movie
 }
 
-export function MovieCard({ movie }: MovieCardProps) {
+export const MovieCard = memo(function MovieCard({ movie }: MovieCardProps) {
   return (
     <div className="flex gap-4 p-3 bg-crt-dark/50 border border-crt-light/20 rounded hover:border-phosphor-amber/50 transition-all group">
       {/* Movie poster with film strip aesthetic */}
@@ -54,7 +55,7 @@ export function MovieCard({ movie }: MovieCardProps) {
       </div>
     </div>
   )
-}
+})
 
 interface MovieListProps {
   movies: Movie[]

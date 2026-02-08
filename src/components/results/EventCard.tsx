@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import type { HistoricalEvent } from '@/lib/algolia'
 
 interface EventCardProps {
@@ -17,7 +18,7 @@ function getEventIcon(eventType?: string): { icon: string; color: string } {
   }
 }
 
-export function EventCard({ event }: EventCardProps) {
+export const EventCard = memo(function EventCard({ event }: EventCardProps) {
   const { icon, color } = getEventIcon(event.event_type)
 
   return (
@@ -54,7 +55,7 @@ export function EventCard({ event }: EventCardProps) {
       </div>
     </div>
   )
-}
+})
 
 interface EventListProps {
   events: HistoricalEvent[]
