@@ -1,3 +1,4 @@
+// Updated for deployment verification
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { headers } from 'next/headers'
