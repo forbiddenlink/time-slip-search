@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Playfair_Display, Source_Serif_4, VT323, Special_Elite } from 'next/font/google'
 import './globals.css'
 import { Suspense } from 'react'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { RetroAudioProvider } from '@/components/layout/RetroAudioProvider'
 
 const playfair = Playfair_Display({
@@ -89,6 +91,8 @@ export default function RootLayout({
             {children}
           </RetroAudioProvider>
         </Suspense>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
