@@ -55,7 +55,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "tsx": "^4.21.0"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
   }
