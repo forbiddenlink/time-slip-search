@@ -20,7 +20,7 @@
     "@types/node": "^25.0.9",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
-    "@upstash/redis": "^1.36.2",
+    "@upstash/redis": "^1.37.0",
     "algoliasearch": "^5.46.3",
     "autoprefixer": "^10.4.23",
     "chart.js": "^4.5.1",
