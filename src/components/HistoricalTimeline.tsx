@@ -47,7 +47,7 @@ export function HistoricalTimeline({
           primary: "hsl(var(--primary))",
           secondary: "hsl(var(--muted))",
           cardBgColor: "hsl(var(--card))",
-          cardForeColor: "hsl(var(--card-foreground))",
+          cardDetailsColor: "hsl(var(--card-foreground))",
           titleColor: "hsl(var(--foreground))",
           titleColorActive: "hsl(var(--primary))",
         }}
@@ -58,7 +58,6 @@ export function HistoricalTimeline({
         }}
         showAllCardsHorizontal
         useReadMore={false}
-        enableOutline
       />
     </div>
   );
