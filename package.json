@@ -17,6 +17,7 @@
   },
   "description": "A conversational cultural time machine - explore any moment in history",
   "dependencies": {
+    "@sentry/nextjs": "^10.0.0",
     "@types/node": "^25.0.9",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
