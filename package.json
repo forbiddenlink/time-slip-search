@@ -85,7 +85,7 @@
       "@tootallnate/once": ">=3.0.1",
       "cookie": ">=0.7.0",
       "systeminformation": ">=5.31.0",
-      "vite": ">=8.0.5",
+      "vite": "^8.0.8",
       "next": ">=16.2.3"
     }
   }
