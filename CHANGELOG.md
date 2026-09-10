@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.4...v1.0.5) (2026-09-10)
+
+
+### Bug Fixes
+
+* **deps:** resync pnpm-lock.yaml after dependabot's partial motion bump ([#92](https://github.com/forbiddenlink/time-slip-search/issues/92)) ([517b140](https://github.com/forbiddenlink/time-slip-search/commit/517b140032e208e59d206efbed9f32231a8d52bc))
+
 ## [1.0.4](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.3...v1.0.4) (2026-09-08)
 
 
