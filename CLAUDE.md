@@ -14,9 +14,9 @@ and it assembles a cultural snapshot: Billboard #1 song, movies in theaters, his
 - Background jobs: Trigger.dev
 - Observability: Sentry, Axiom (`next-axiom`), Langfuse
 - Analytics: Vercel Analytics + Speed Insights
-- Testing: Jest (jsdom) + Testing Library + MSW; Vitest and vite are devDependencies but no
-  vitest config or `*.vitest.*` script exists, so they are unused in practice
-- Package manager: pnpm (`packageManager: pnpm@10.32.1` in package.json)
+- Testing: Jest (jsdom) + Testing Library + MSW; `vitest.config.ts` and `vitest-setup.ts` also
+  exist, but no package.json script invokes vitest, so it is unused in practice
+- Package manager: pnpm (`packageManager: pnpm@10.34.5` in package.json)
 - Deploy: Vercel (`vercel.json` pins region `iad1`, framework `nextjs`)
 
 ## Commands
