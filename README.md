@@ -63,16 +63,23 @@ pnpm dev
 
 ### Required environment variables
 
-Set these in `.env.local`:
+Set these in `.env.local` (validated in `src/env.ts`; the app fails to start without them
+unless `SKIP_ENV_VALIDATION=true`):
 
-- `NEXT_PUBLIC_ALGOLIA_APP_ID`, `ALGOLIA_SEARCH_API_KEY`, `ALGOLIA_ADMIN_API_KEY` - Algolia project (required for search to work)
-- `TMDB_API_KEY` - required to run the movie ingest script
-- `FRED_API_KEY` - required to run the price ingest script
+- `NEXT_PUBLIC_ALGOLIA_APP_ID`, `ALGOLIA_SEARCH_API_KEY`, `ALGOLIA_ADMIN_API_KEY` - Algolia project (search)
+- `GROQ_API_KEY`, `MINIMAX_API_KEY` - required by `src/env.ts`
+- `NEXT_PUBLIC_POSTHOG_KEY` - required by `src/env.ts`
+
+Required only to run the data-ingest scripts:
+
+- `TMDB_API_KEY` - movie ingest
+- `FRED_API_KEY` - price ingest
 
 Optional:
 
-- `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` - playlist export from discovered songs
+- `NEXT_PUBLIC_SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` - playlist export from discovered songs
 - `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` - production-grade rate limiting/caching (without these it falls back to in-memory)
+- `ALGOLIA_APP_ID`, `AXIOM_TOKEN`, `NEXT_PUBLIC_AXIOM_DATASET`, `NEXT_PUBLIC_POSTHOG_HOST`, `MINIMAX_GROUP_ID`
 
 After setting API keys, populate Algolia with historical data:
 
