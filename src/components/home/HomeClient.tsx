@@ -567,15 +567,15 @@ function HomeContent() {
             <ParticleEffect isActive={showParticles && messages.length > 0} />
 
             {/* Screen bezel top */}
-            <div className="bg-crt-dark px-6 py-3 border-b border-crt-light/20 flex items-center justify-between">
+            <div className="bg-crt-dark px-3 sm:px-6 py-3 border-b border-crt-light/20 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="led-text text-phosphor-teal text-sm">CH</span>
                 <span className="led-text text-phosphor-amber">03</span>
               </div>
-              <div className="text-aged-cream/60 text-xs tracking-widest led-text">
+              <div className="hidden sm:block text-aged-cream/60 text-xs tracking-widest led-text">
                 TIMESLIP SEARCH v1.0
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-1.5 sm:gap-2">
                 {/* Time Capsule Button */}
                 <button
                   onClick={() => {
@@ -587,7 +587,7 @@ function HomeContent() {
                   aria-label="Wrapped"
                 >
                   <GiftIcon size={16} />
-                  <span>Wrapped</span>
+                  <span className="hidden sm:inline">Wrapped</span>
                 </button>
 
                 {/* Achievements Button */}
@@ -598,7 +598,7 @@ function HomeContent() {
                   aria-label="Badges"
                 >
                   <TrophyIcon size={16} />
-                  <span>Badges</span>
+                  <span className="hidden sm:inline">Badges</span>
                 </button>
 
                 {/* VHS Effect Toggle */}
