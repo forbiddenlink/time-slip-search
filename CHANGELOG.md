@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.6](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.5...v1.0.6) (2026-10-02)
+
+
+### Bug Fixes
+
+* **deps:** apply override fix plan ([#102](https://github.com/forbiddenlink/time-slip-search/issues/102)) ([2cc2e67](https://github.com/forbiddenlink/time-slip-search/commit/2cc2e67fa3c9ed8acd11e0133bb534e315d74b17))
+* **deps:** apply override fix plan (round 2) ([#103](https://github.com/forbiddenlink/time-slip-search/issues/103)) ([7727c7e](https://github.com/forbiddenlink/time-slip-search/commit/7727c7e5b1df2fd1f1cc1f755f8ff58faec960a8))
+* post-Tailwind polish (header fit, contrast, apostrophe) ([#106](https://github.com/forbiddenlink/time-slip-search/issues/106)) ([d462ce1](https://github.com/forbiddenlink/time-slip-search/commit/d462ce1702a86248c498f3d90ab5a22d3302e9ec))
+* restore Tailwind 3 so utility classes generate again ([#105](https://github.com/forbiddenlink/time-slip-search/issues/105)) ([8247adf](https://github.com/forbiddenlink/time-slip-search/commit/8247adf79b084a4a9f22e2b7e75262517da5869c))
+* voice search mic policy, og:image/favicon, decade filter validation, blocking CI gates ([#104](https://github.com/forbiddenlink/time-slip-search/issues/104)) ([9971f94](https://github.com/forbiddenlink/time-slip-search/commit/9971f942a66a15e614e42bb4c6065134226209c2))
+
 ## [1.0.5](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.4...v1.0.5) (2026-09-21)
 
 
