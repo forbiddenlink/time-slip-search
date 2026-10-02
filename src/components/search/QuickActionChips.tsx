@@ -70,7 +70,7 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
   return (
     <div className="flex flex-wrap gap-2 justify-center mb-6 animate-fade-in">
       <div className="w-full text-center mb-2">
-        <span className="text-aged-cream/50 text-xs led-text tracking-wider flex items-center justify-center gap-2">
+        <span className="text-aged-cream/60 text-xs led-text tracking-wider flex items-center justify-center gap-2">
           <SparklesIcon size={12} className="text-phosphor-teal" />
           QUICK JUMPS
           <SparklesIcon size={12} className="text-phosphor-teal" />

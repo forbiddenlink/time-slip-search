@@ -133,7 +133,7 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                         {getCategoryIcon(pick.category)}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <h3 className={`font-medium text-sm leading-tight truncate ${index === currentIndex ? 'text-aged-cream glow-text-subtle' : 'text-aged-cream/80'
+                        <h3 className={`font-medium text-sm leading-tight truncate ${index === currentIndex ? 'text-aged-cream' : 'text-aged-cream/80'
                           }`}>
                           {pick.title}
                         </h3>

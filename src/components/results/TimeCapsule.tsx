@@ -144,7 +144,7 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
         <p className="text-aged-cream/80">
           {isOutOfRange
             ? `${dateDisplay} is outside my coverage period.`
-            : `I don&apos;t have data indexed for ${dateDisplay} yet.`
+            : `I don't have data indexed for ${dateDisplay} yet.`
           }
         </p>
         <p className="text-sm text-aged-cream/60 mt-2 led-text">
