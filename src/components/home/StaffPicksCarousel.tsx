@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { getSeasonalPicks, getCategoryIcon, type FamousDate } from '@/lib/famous-dates'
 
 interface StaffPicksCarouselProps {
@@ -13,15 +13,16 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const reduceMotion = useReducedMotion()
 
   // Load seasonal picks on mount
   useEffect(() => {
     setPicks(getSeasonalPicks())
   }, [])
 
-  // Auto-rotate every 8 seconds (pause on hover)
+  // Auto-rotate every 8 seconds (pause on hover, never under reduced motion)
   useEffect(() => {
-    if (isPaused || picks.length === 0) {
+    if (isPaused || reduceMotion || picks.length === 0) {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
         intervalRef.current = null
@@ -38,7 +39,7 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
         clearInterval(intervalRef.current)
       }
     }
-  }, [isPaused, picks.length])
+  }, [isPaused, reduceMotion, picks.length])
 
   const handleClick = useCallback((pick: FamousDate) => {
     // Format as "Month Day, Year"
@@ -103,7 +104,7 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                     text-left border backdrop-blur-sm
                     ${index === currentIndex
                       ? 'border-phosphor-amber shadow-glow-amber z-10 bg-crt-medium'
-                      : 'border-crt-light/30 opacity-60 hover:opacity-100 hover:border-phosphor-teal/50 hover:scale-[1.02] bg-crt-dark'
+                      : 'border-crt-light/30 opacity-80 hover:opacity-100 hover:border-phosphor-teal/50 hover:scale-[1.02] bg-crt-dark'
                     }
                   `}
                   style={{
@@ -112,7 +113,7 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                   }}
                   animate={{
                     scale: index === currentIndex ? 1.05 : 1,
-                    opacity: index === currentIndex ? 1 : 0.6,
+                    opacity: index === currentIndex ? 1 : 0.8,
                     filter: index === currentIndex ? 'grayscale(0%)' : 'grayscale(30%)',
                   }}
                   whileHover={{
@@ -142,7 +143,7 @@ export function StaffPicksCarousel({ onSelect }: Readonly<StaffPicksCarouselProp
                       </div>
                     </div>
 
-                    <p className="text-aged-cream/70 text-sm mt-3 line-clamp-3 leading-relaxed">
+                    <p className="text-aged-cream/80 text-sm mt-3 line-clamp-3 leading-relaxed">
                       {pick.description}
                     </p>
 

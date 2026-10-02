@@ -21,6 +21,30 @@ export interface ChatResponse {
   error?: string
 }
 
+// The chart spans 1958-2020, so only these decade labels exist in the indices.
+// decades are interpolated into an Algolia filter string, so keep this strict.
+const VALID_DECADES = new Set(['1950s', '1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'])
+const VALID_CHART_POSITIONS = new Set(['top10', 'top40'])
+
+/** Returns an error message when filters are malformed, otherwise null. */
+function validateFilters(filters: unknown): string | null {
+  if (filters === undefined) return null
+  if (typeof filters !== 'object' || filters === null || Array.isArray(filters)) {
+    return 'Invalid filters format'
+  }
+  const { decades, chartPositions, showOnlyNumber1 } = filters as Record<string, unknown>
+  if (decades !== undefined && !(Array.isArray(decades) && decades.length <= VALID_DECADES.size && decades.every((d) => typeof d === 'string' && VALID_DECADES.has(d)))) {
+    return 'Invalid filters.decades: expected an array of decade labels such as "1980s"'
+  }
+  if (chartPositions !== undefined && !(Array.isArray(chartPositions) && chartPositions.length <= VALID_CHART_POSITIONS.size && chartPositions.every((c) => typeof c === 'string' && VALID_CHART_POSITIONS.has(c)))) {
+    return 'Invalid filters.chartPositions: expected "top10" and/or "top40"'
+  }
+  if (showOnlyNumber1 !== undefined && typeof showOnlyNumber1 !== 'boolean') {
+    return 'Invalid filters.showOnlyNumber1: expected a boolean'
+  }
+  return null
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting (async with Redis support)
@@ -75,6 +99,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json<ChatResponse>({
         response: '',
         error: 'Invalid filters format'
+      }, { status: 400 })
+    }
+
+    const filterError = validateFilters(filters)
+    if (filterError) {
+      return NextResponse.json<ChatResponse>({
+        response: '',
+        error: filterError
       }, { status: 400 })
     }
 

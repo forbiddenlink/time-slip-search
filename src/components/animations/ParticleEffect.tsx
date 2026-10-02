@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
 interface Particle {
@@ -19,9 +19,10 @@ interface ParticleEffectProps {
 
 export function ParticleEffect({ isActive = true }: ParticleEffectProps) {
   const [particles, setParticles] = useState<Particle[]>([])
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    if (!isActive) {
+    if (!isActive || reduceMotion) {
       setParticles([])
       return
     }
@@ -66,7 +67,7 @@ export function ParticleEffect({ isActive = true }: ParticleEffectProps) {
     }, 50)
 
     return () => clearInterval(interval)
-  }, [isActive])
+  }, [isActive, reduceMotion])
 
   if (!isActive) return null
 
@@ -116,9 +117,17 @@ export function ParticleBurst({ isActive = false, duration = 1500, onComplete }:
     size: number
   }>>([])
 
+  const reduceMotion = useReducedMotion()
+
   useEffect(() => {
     if (!isActive) {
       setParticles([])
+      return
+    }
+
+    if (reduceMotion) {
+      // No burst under reduced motion, but callers still expect onComplete
+      onComplete?.()
       return
     }
 
@@ -144,7 +153,7 @@ export function ParticleBurst({ isActive = false, duration = 1500, onComplete }:
     }, duration)
 
     return () => clearTimeout(timer)
-  }, [isActive, duration, onComplete])
+  }, [isActive, duration, onComplete, reduceMotion])
 
   if (!isActive || particles.length === 0) return null
 
@@ -181,9 +190,10 @@ export function ParticleBurst({ isActive = false, duration = 1500, onComplete }:
 
 export function ConfettiEffect({ isActive = false, duration = 3000 }: ConfettiEffectProps) {
   const [pieces, setPieces] = useState<Array<{ id: number; x: number; delay: number; color: string }>>([])
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    if (!isActive) {
+    if (!isActive || reduceMotion) {
       setPieces([])
       return
     }
@@ -204,9 +214,9 @@ export function ConfettiEffect({ isActive = false, duration = 3000 }: ConfettiEf
     }, duration)
 
     return () => clearTimeout(timer)
-  }, [isActive, duration])
+  }, [isActive, duration, reduceMotion])
 
-  if (!isActive) return null
+  if (!isActive || reduceMotion) return null
 
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">

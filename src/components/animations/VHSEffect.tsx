@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
 
 interface VHSEffectProps {
@@ -11,18 +11,19 @@ interface VHSEffectProps {
 
 export function VHSEffect({ isActive = false, intensity = 'medium', children }: VHSEffectProps) {
   const [scanlineOffset, setScanlineOffset] = useState(0)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    if (!isActive) return
+    if (!isActive || reduceMotion) return
 
     const interval = setInterval(() => {
       setScanlineOffset((prev) => (prev + 1) % 100)
     }, 50)
 
     return () => clearInterval(interval)
-  }, [isActive])
+  }, [isActive, reduceMotion])
 
-  if (!isActive) {
+  if (!isActive || reduceMotion) {
     return <>{children}</>
   }
 
@@ -163,13 +164,18 @@ interface VHSRewindEffectProps {
 }
 
 export function VHSRewindEffect({ onComplete }: VHSRewindEffectProps) {
+  const reduceMotion = useReducedMotion()
+
   useEffect(() => {
+    // Skip the flashing rewind overlay entirely when reduced motion is requested
     const timer = setTimeout(() => {
       onComplete?.()
-    }, 2000)
+    }, reduceMotion ? 0 : 2000)
 
     return () => clearTimeout(timer)
-  }, [onComplete])
+  }, [onComplete, reduceMotion])
+
+  if (reduceMotion) return null
 
   return (
     <motion.div

@@ -1,7 +1,6 @@
 import withBundleAnalyzerInit from "@next/bundle-analyzer";
 const withBundleAnalyzer = withBundleAnalyzerInit({ enabled: process.env.ANALYZE === "true" });
 
-/* eslint-env node */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
@@ -15,6 +14,11 @@ const nextConfig = {
       },
     ],
     formats: ['image/webp', 'image/avif'],
+  },
+
+  // Browsers request /favicon.ico by default; serve the generated icon route (src/app/icon.tsx)
+  async rewrites() {
+    return [{ source: '/favicon.ico', destination: '/icon' }]
   },
 
   // Security headers
@@ -50,7 +54,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
+            value: 'camera=(), microphone=(self), geolocation=()'
           }
         ],
       },

@@ -34,6 +34,21 @@ describe('Chat API', () => {
     expect(searchAllIndices).not.toHaveBeenCalled()
   })
 
+  it.each([
+    { decades: '1990s' },
+    { decades: ['1990s" OR decade:"1980s'] },
+    { decades: ['1890s'] },
+    { decades: [42] },
+    { decades: { 0: '1990s' } },
+    { chartPositions: ['top5'] },
+    { showOnlyNumber1: 'yes' },
+  ])('rejects invalid filters %j with 400 and never searches', async (filters) => {
+    const response = await POST(request({ message: '1987', filters }))
+    expect(response.status).toBe(400)
+    expect((await response.json()).error).toMatch(/Invalid filters/)
+    expect(searchAllIndices).not.toHaveBeenCalled()
+  })
+
   it('returns formatted search results and forwards filters', async () => {
     const filters = { decades: ['1980s'], showOnlyNumber1: true }
     const response = await POST(request({ message: 'March 15, 1987', filters }))
