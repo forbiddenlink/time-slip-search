@@ -834,7 +834,7 @@ function HomeContent() {
             </p>
             <div className="h-px w-16 bg-crt-light/30" />
           </div>
-          <p className="text-aged-cream/50 text-xs led-text tracking-wider">
+          <p className="text-aged-cream/60 text-xs led-text tracking-wider">
             ALGOLIA AGENT STUDIO CHALLENGE 2026
           </p>
           <div className="flex items-center justify-center gap-4 text-xs led-text tracking-wider text-aged-cream/70">

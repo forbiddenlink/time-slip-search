@@ -24,6 +24,14 @@ updates:
         # (8.69.0 peers ">=4.8.4 <6.1.0"), so grouping it blocks every other major.
         exclude-patterns: ["typescript"]
         update-types: ["major"]
+    ignore:
+      # Stay on Tailwind 3. v4 ignores the v3 directives (@tailwind base/...) and
+      # tailwind.config.js, so utilities silently stop generating (PR #29 broke the
+      # site's styling for months). Moving to v4 is a deliberate migration, not a bump.
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@tailwindcss/*"
+        update-types: ["version-update:semver-major"]
     labels: ["dependencies"]
     commit-message:
       prefix: "chore(deps):"
