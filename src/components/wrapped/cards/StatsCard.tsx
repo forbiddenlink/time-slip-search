@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import type { WrappedStats } from '@/lib/wrapped'
 
@@ -17,8 +17,14 @@ interface AnimatedCounterProps {
 
 function AnimatedCounter({ value, duration = 2000, suffix = '' }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(0)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
+    if (reduceMotion) {
+      setDisplayValue(value)
+      return
+    }
+
     const startTime = Date.now()
     const startValue = 0
 
@@ -38,7 +44,7 @@ function AnimatedCounter({ value, duration = 2000, suffix = '' }: AnimatedCounte
     }
 
     requestAnimationFrame(animate)
-  }, [value, duration])
+  }, [value, duration, reduceMotion])
 
   return (
     <span>

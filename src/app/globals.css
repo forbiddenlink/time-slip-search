@@ -846,6 +846,14 @@ a:focus-visible {
   outline-offset: 4px;
 }
 
+/* Footer links: explicit color so they never fall back to the UA default blue (2.1:1 on black) */
+.footer-link {
+  color: var(--aged-cream);
+}
+.footer-link:hover {
+  color: var(--phosphor-teal);
+}
+
 /* Skip to content link */
 .skip-link {
   position: absolute;

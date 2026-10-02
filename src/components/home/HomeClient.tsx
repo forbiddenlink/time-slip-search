@@ -478,6 +478,7 @@ function HomeContent() {
             </p>
           </div>
         </header>
+        <main>
 
         {comparisonState && (
           <ComparisonPanel
@@ -822,6 +823,8 @@ function HomeContent() {
           </VHSEffect>
         </div>
 
+        </main>
+
         {/* === FOOTER === */}
         <footer className="text-center mt-10 space-y-3">
           <div className="flex items-center justify-center gap-4">
@@ -835,15 +838,15 @@ function HomeContent() {
             ALGOLIA AGENT STUDIO CHALLENGE 2026
           </p>
           <div className="flex items-center justify-center gap-4 text-xs led-text tracking-wider text-aged-cream/70">
-            <Link href="/about" className="hover:text-phosphor-teal transition-colors">
+            <Link href="/about" className="footer-link text-aged-cream/70 hover:text-phosphor-teal transition-colors">
               ABOUT
             </Link>
             <span aria-hidden="true">•</span>
-            <Link href="/contact" className="hover:text-phosphor-teal transition-colors">
+            <Link href="/contact" className="footer-link text-aged-cream/70 hover:text-phosphor-teal transition-colors">
               CONTACT
             </Link>
             <span aria-hidden="true">•</span>
-            <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">
+            <Link href="/privacy-policy" className="footer-link text-aged-cream/70 hover:text-phosphor-teal transition-colors">
               PRIVACY
             </Link>
           </div>

@@ -37,16 +37,20 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
         console.error('Speech recognition error:', event.error)
         setIsListening(false)
         setHasError(true)
-        if (event.error === 'not-allowed') {
-          setErrorMessage('MIC DENIED - ENABLE IN SETTINGS')
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          setErrorMessage('MIC BLOCKED - ALLOW MICROPHONE IN BROWSER SETTINGS')
+        } else if (event.error === 'audio-capture') {
+          setErrorMessage('NO MICROPHONE FOUND')
+        } else if (event.error === 'no-speech') {
+          setErrorMessage('NO SPEECH HEARD - TRY AGAIN')
         } else {
           setErrorMessage('ERR: SIGNAL LOST')
         }
-        // Clear error after 3 seconds
+        // Clear error after 6 seconds so the message can be read
         setTimeout(() => {
           setHasError(false)
           setErrorMessage('')
-        }, 3000)
+        }, 6000)
       }
 
       recognitionInstance.onend = () => {
@@ -107,7 +111,7 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
         {hasError ? (
           <>
             <span className="text-lg">❌</span>
-            <span className="hidden md:inline text-sm">{errorMessage}</span>
+            <span role="alert" className="text-xs md:text-sm">{errorMessage}</span>
           </>
         ) : isListening ? (
           <>
