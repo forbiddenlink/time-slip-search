@@ -181,8 +181,10 @@ export async function searchAllIndices(
 
   // Song-specific filters (chart position only applies to songs)
   let songExtra = ''
+  // chart_position is a numeric attribute, not a facet, in the songs index (scripts/ingest/billboard.ts).
+  // Facet syntax (`chart_position:1`) silently matches nothing; numeric comparison is required.
   if (options?.showOnlyNumber1) {
-    songExtra = ' AND chart_position:1'
+    songExtra = ' AND chart_position = 1'
   } else if (options?.chartPositions && options.chartPositions.length > 0) {
     if (options.chartPositions.includes('top10')) {
       songExtra = ' AND chart_position <= 10'
@@ -206,7 +208,7 @@ export async function searchAllIndices(
           ? {
               indexName: 'timeslip_songs',
               query: '',
-              filters: `${baseFilters} AND chart_position:1`,
+              filters: `${baseFilters} AND chart_position = 1`,
               hitsPerPage: 1000,
               attributesToRetrieve: ['date', 'date_string'],
             }
@@ -274,7 +276,21 @@ export async function searchAllIndices(
         songs = (weekHits as Song[]).sort((a, b) => a.chart_position - b.chart_position)
         chartWeek = week.date_string
       } else {
-        songs = []
+        // No chart week discovered: fall back to de-duplicated songs across the window rather
+        // than returning none, so a discovery miss can never blank out the song results.
+        const fallback = await client.search({
+          requests: [
+            {
+              indexName: 'timeslip_songs',
+              query: '',
+              filters: baseFilters + songExtra,
+              hitsPerPage: 30,
+              attributesToRetrieve: SONG_ATTRIBUTES,
+            },
+          ],
+        })
+        const fallbackHits = (fallback.results as Array<{ hits: unknown[] }>)[0]?.hits ?? []
+        songs = dedupeSongs(fallbackHits as Song[]).slice(0, SONGS_PER_CHART)
       }
     } else {
       songs = dedupeSongs((songsResponse?.hits ?? []) as Song[]).slice(0, SONGS_PER_CHART)

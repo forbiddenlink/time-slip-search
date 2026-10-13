@@ -18,6 +18,32 @@ describe('searchAllIndices songs', () => {
     mockSearch.mockReset()
   })
 
+  it('filters chart position numerically, since chart_position is not a facet in the songs index', async () => {
+    mockSearch
+      .mockResolvedValueOnce({ results: [{ hits: [{ date: ts(1987, 3, 14), date_string: '1987-03-14' }], nbHits: 1 }, { hits: [] }, { hits: [] }, { hits: [] }] })
+      .mockResolvedValueOnce({ results: [{ hits: [song('S', 1, '1987-03-14')] }] })
+    await searchAllIndices(ts(1987, 3, 1), ts(1987, 3, 31), undefined, ts(1987, 3, 15))
+    const discovery = mockSearch.mock.calls[0]![0].requests[0]!.filters as string
+    expect(discovery).toContain('chart_position = 1')
+    expect(discovery).not.toMatch(/chart_position:/)
+  })
+
+  it('uses numeric syntax for the #1-only filter too', async () => {
+    mockSearch.mockResolvedValueOnce({ results: [{ hits: [] }, { hits: [] }, { hits: [] }, { hits: [] }] })
+    await searchAllIndices(ts(1987, 1, 1), ts(1987, 12, 31), { showOnlyNumber1: true })
+    expect(mockSearch.mock.calls[0]![0].requests[0]!.filters).toContain('chart_position = 1')
+  })
+
+  it('falls back to de-duplicated songs when no chart week is found, so songs never silently vanish', async () => {
+    const hits = [song('A', 1, 'w1'), song('A', 1, 'w2'), song('B', 2, 'w1')]
+    mockSearch
+      .mockResolvedValueOnce({ results: [{ hits: [], nbHits: 0 }, { hits: [] }, { hits: [] }, { hits: [] }] })
+      .mockResolvedValueOnce({ results: [{ hits }] })
+    const out = await searchAllIndices(ts(1987, 3, 1), ts(1987, 3, 31), undefined, ts(1987, 3, 15))
+    expect(out.songs.map((s) => s.song_title)).toEqual(['A', 'B'])
+    expect(out.chartWeek).toBeUndefined()
+  })
+
   it('returns one chart week (no repeated #1) and reports which week', async () => {
     const weeks = [
       { date: ts(1987, 3, 7), date_string: '1987-03-07' },
