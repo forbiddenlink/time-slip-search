@@ -136,17 +136,11 @@ export default function Icon() {
               marginTop: '8px',
             }}
           >
-            <span
-              style={{
-                fontFamily: 'monospace',
-                fontSize: '16px',
-                color: '#ffbf00',
-                textShadow: '0 0 6px rgba(255, 191, 0, 0.5)',
-                letterSpacing: '-2px',
-              }}
-            >
-              {'◄◄'}
-            </span>
+            {/* SVG triangles: a glyph forces a dynamic font fetch */}
+            <div style={{ display: 'flex' }}>
+              <svg width="14" height="16" viewBox="0 0 10 10"><polygon points="10,0 0,5 10,10" fill="#ffbf00" /></svg>
+              <svg width="14" height="16" viewBox="0 0 10 10"><polygon points="10,0 0,5 10,10" fill="#ffbf00" /></svg>
+            </div>
             <span
               style={{
                 fontFamily: 'monospace',

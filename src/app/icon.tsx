@@ -90,19 +90,10 @@ export default function Icon() {
             />
           </div>
 
-          {/* Rewind arrows at bottom */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '1px',
-              display: 'flex',
-              fontSize: '5px',
-              color: '#ffbf00',
-              fontFamily: 'monospace',
-              letterSpacing: '-1px',
-            }}
-          >
-            {'◄◄'}
+          {/* Rewind arrows at bottom (SVG triangles: a glyph forces a dynamic font fetch) */}
+          <div style={{ position: 'absolute', bottom: '2px', display: 'flex' }}>
+            <svg width="4" height="5" viewBox="0 0 10 10"><polygon points="10,0 0,5 10,10" fill="#ffbf00" /></svg>
+            <svg width="4" height="5" viewBox="0 0 10 10"><polygon points="10,0 0,5 10,10" fill="#ffbf00" /></svg>
           </div>
         </div>
       </div>
