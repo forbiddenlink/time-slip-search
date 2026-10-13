@@ -47,10 +47,20 @@ export const SongCard = memo(function SongCard({ song, rank }: SongCardProps) {
 interface SongListProps {
   songs: Song[]
   title?: string
+  /** date_string (YYYY-MM-DD) of the Billboard chart week these songs come from */
+  chartWeek?: string
 }
 
-export function SongList({ songs, title = 'Top Music' }: SongListProps) {
+function formatChartWeek(dateString: string): string | null {
+  const [year, month, day] = dateString.split('-').map(Number)
+  if (!year || !month || !day) return null
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+}
+
+export function SongList({ songs, title = 'Top Music', chartWeek }: SongListProps) {
   if (songs.length === 0) return null
+
+  const chartWeekLabel = chartWeek ? formatChartWeek(chartWeek) : null
 
   return (
     <div className="space-y-4">
@@ -66,6 +76,9 @@ export function SongList({ songs, title = 'Top Music' }: SongListProps) {
           <p className="led-text text-phosphor-teal text-xs tracking-widest">
             BILLBOARD HOT 100
           </p>
+          {chartWeekLabel && (
+            <p className="text-aged-cream/70 text-xs mt-0.5">Chart week of {chartWeekLabel}</p>
+          )}
         </div>
       </div>
 

@@ -77,6 +77,8 @@ export interface HistoricalEvent {
 
 export interface SearchResults {
   songs: Song[]
+  /** date_string (YYYY-MM-DD) of the single Billboard chart week the songs come from. Unset when songs span a range. */
+  chartWeek?: string
   movies: Movie[]
   prices: Price[]
   events: HistoricalEvent[]
@@ -104,54 +106,121 @@ const EVENT_ATTRIBUTES = [
   'event_type', 'title', 'description', 'category', 'importance'
 ]
 
+const DAY_SECONDS = 24 * 60 * 60
+const SONGS_PER_CHART = 5
+// Movies only carry a release date, so a +/- 3 day window almost never matches.
+// Show films released in the 4 weeks before the date through the week after.
+const MOVIE_DAYS_BEFORE = 28
+const MOVIE_DAYS_AFTER = 7
+
+/** Chart week (from a list of weekly chart timestamps) nearest to the anchor. */
+export function pickNearestChartWeek(
+  weeks: Array<{ date: number; date_string: string }>,
+  anchor: number
+): { date: number; date_string: string } | undefined {
+  let best: { date: number; date_string: string } | undefined
+  for (const week of weeks) {
+    if (!best || Math.abs(week.date - anchor) < Math.abs(best.date - anchor)) best = week
+  }
+  return best
+}
+
+/** Keep the best-ranked entry per song so one chart-topper cannot fill every slot. */
+export function dedupeSongs(songs: Song[]): Song[] {
+  const seen = new Set<string>()
+  const out: Song[] = []
+  for (const song of [...songs].sort((a, b) => a.chart_position - b.chart_position)) {
+    const key = `${song.song_title}|${song.artist}`.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(song)
+  }
+  return out
+}
+
+/** Window used for the movies index: release date range around the requested date. */
+export function getMovieWindow(
+  startTimestamp: number,
+  endTimestamp: number,
+  anchor?: number,
+  isSingleDay = false
+): { start: number; end: number } {
+  if (isSingleDay && anchor !== undefined) {
+    return { start: anchor - MOVIE_DAYS_BEFORE * DAY_SECONDS, end: anchor + MOVIE_DAYS_AFTER * DAY_SECONDS }
+  }
+  return { start: startTimestamp, end: endTimestamp }
+}
+
 /**
  * Search all TimeSlipSearch indices for a date range with advanced filters
- * Uses batched multi-index search for efficiency (single HTTP request)
+ * Uses batched multi-index search for efficiency.
+ *
+ * `anchor` is the timestamp the user actually asked about. When given, songs come
+ * from the single weekly chart nearest to it (exposed as `chartWeek`). Without it
+ * (date ranges), songs are de-duplicated across weeks instead.
  */
 export async function searchAllIndices(
   startTimestamp: number,
   endTimestamp: number,
-  options?: AdvancedSearchOptions
+  options?: AdvancedSearchOptions,
+  anchor?: number,
+  isSingleDay = false
 ): Promise<SearchResults> {
   let baseFilters = `date >= ${startTimestamp} AND date <= ${endTimestamp}`
 
   // Add decade filters if specified
+  let decadeClause = ''
   if (options?.decades && options.decades.length > 0) {
     const decadeFilters = options.decades.map(d => `decade:"${d}"`).join(' OR ')
-    baseFilters += ` AND (${decadeFilters})`
+    decadeClause = ` AND (${decadeFilters})`
+    baseFilters += decadeClause
   }
 
-  // Build song-specific filters (chart position only applies to songs)
-  let songFilters = baseFilters
+  const movieWindow = getMovieWindow(startTimestamp, endTimestamp, anchor, isSingleDay)
+  const movieFilters = `date >= ${movieWindow.start} AND date <= ${movieWindow.end}${decadeClause}`
+
+  // Song-specific filters (chart position only applies to songs)
+  let songExtra = ''
   if (options?.showOnlyNumber1) {
-    songFilters += ' AND chart_position:1'
+    songExtra = ' AND chart_position:1'
   } else if (options?.chartPositions && options.chartPositions.length > 0) {
     if (options.chartPositions.includes('top10')) {
-      songFilters += ' AND chart_position <= 10'
+      songExtra = ' AND chart_position <= 10'
     } else if (options.chartPositions.includes('top40')) {
-      songFilters += ' AND chart_position <= 40'
+      songExtra = ' AND chart_position <= 40'
     }
   }
+  // Without an anchor or with a #1-only filter, song hits span several weeks: fetch more, then dedupe.
+  const singleWeek = anchor !== undefined && !options?.showOnlyNumber1
 
   console.log('[Algolia] Searching with filters:', baseFilters)
 
   try {
     const client = getClient()
 
-    // Single batched request to all indices (1 HTTP call instead of 4)
+    // Single batched request to all indices. For a single chart week we also ask for
+    // the #1 of every week in the window, to discover which weeks exist.
     const response = await client.search({
       requests: [
-        {
-          indexName: 'timeslip_songs',
-          query: '',
-          filters: songFilters,
-          hitsPerPage: 5,
-          attributesToRetrieve: SONG_ATTRIBUTES,
-        },
+        singleWeek
+          ? {
+              indexName: 'timeslip_songs',
+              query: '',
+              filters: `${baseFilters} AND chart_position:1`,
+              hitsPerPage: 1000,
+              attributesToRetrieve: ['date', 'date_string'],
+            }
+          : {
+              indexName: 'timeslip_songs',
+              query: '',
+              filters: baseFilters + songExtra,
+              hitsPerPage: 30,
+              attributesToRetrieve: SONG_ATTRIBUTES,
+            },
         {
           indexName: 'timeslip_movies',
           query: '',
-          filters: baseFilters,
+          filters: movieFilters,
           hitsPerPage: 3,
           attributesToRetrieve: MOVIE_ATTRIBUTES,
         },
@@ -181,10 +250,39 @@ export async function searchAllIndices(
     console.log('[Algolia] Prices found:', pricesResponse?.nbHits ?? 0)
     console.log('[Algolia] Events found:', eventsResponse?.nbHits ?? 0)
 
+    let songs: Song[]
+    let chartWeek: string | undefined
+
+    if (singleWeek) {
+      const week = pickNearestChartWeek(
+        (songsResponse?.hits ?? []) as Array<{ date: number; date_string: string }>,
+        anchor as number
+      )
+      if (week) {
+        const weekResponse = await client.search({
+          requests: [
+            {
+              indexName: 'timeslip_songs',
+              query: '',
+              filters: `date = ${week.date}${decadeClause}${songExtra}`,
+              hitsPerPage: SONGS_PER_CHART,
+              attributesToRetrieve: SONG_ATTRIBUTES,
+            },
+          ],
+        })
+        const weekHits = (weekResponse.results as Array<{ hits: unknown[] }>)[0]?.hits ?? []
+        songs = (weekHits as Song[]).sort((a, b) => a.chart_position - b.chart_position)
+        chartWeek = week.date_string
+      } else {
+        songs = []
+      }
+    } else {
+      songs = dedupeSongs((songsResponse?.hits ?? []) as Song[]).slice(0, SONGS_PER_CHART)
+    }
+
     return {
-      songs: ((songsResponse?.hits ?? []) as Song[]).sort(
-        (a, b) => a.chart_position - b.chart_position
-      ),
+      songs,
+      ...(chartWeek ? { chartWeek } : {}),
       movies: ((moviesResponse?.hits ?? []) as Movie[]).sort(
         (a, b) => (b.popularity || 0) - (a.popularity || 0)
       ),

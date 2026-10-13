@@ -63,4 +63,42 @@ describe('Date Parser', () => {
       expect(result?.isRange).toBe(true)
     })
   })
+
+  describe('Requested month/day (not the +/- 3 day search window)', () => {
+    it.each([
+      ['July 20 1969', 1969, 7, 20],
+      ['June 5 1985', 1985, 6, 5],
+      ['March 3 2019', 2019, 3, 3],
+      ['January 1, 2000', 2000, 1, 1],
+    ])('%s keeps the day the user typed', (input, year, month, day) => {
+      const result = parseDate(input)
+      expect(result?.year).toBe(year)
+      expect(result?.month).toBe(month)
+      expect(result?.day).toBe(day)
+      // the window itself still starts before the requested day
+      expect(new Date((result?.start ?? 0) * 1000).getDate()).not.toBe(day)
+    })
+
+    it('anchors a specific day at that day, inside the window', () => {
+      const result = parseDate('July 20 1969')
+      const anchor = new Date((result?.anchor ?? 0) * 1000)
+      expect([anchor.getFullYear(), anchor.getMonth() + 1, anchor.getDate()]).toEqual([1969, 7, 20])
+    })
+
+    it('has a month but no day for month-only queries', () => {
+      const result = parseDate('March 1987')
+      expect(result?.month).toBe(3)
+      expect(result?.day).toBeUndefined()
+    })
+
+    it('has neither month nor day for year-only queries', () => {
+      const result = parseDate('1977')
+      expect(result?.month).toBeUndefined()
+      expect(result?.day).toBeUndefined()
+    })
+
+    it('has no anchor for date ranges', () => {
+      expect(parseDate('from 1980 to 1985')?.anchor).toBeUndefined()
+    })
+  })
 })
