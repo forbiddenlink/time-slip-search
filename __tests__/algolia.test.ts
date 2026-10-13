@@ -118,4 +118,17 @@ describe('movie release window', () => {
     const movies = mockSearch.mock.calls[0]![0].requests.find((r) => r.indexName === 'timeslip_movies')!
     expect(movies.filters).toBe(`date >= ${anchor - 28 * DAY} AND date <= ${anchor + 7 * DAY}`)
   })
+
+  it('ranks movies by vote count, not by TMDB popularity (today\'s trending score)', async () => {
+    process.env.NEXT_PUBLIC_ALGOLIA_APP_ID = 'app'
+    process.env.ALGOLIA_SEARCH_API_KEY = 'key'
+    mockSearch.mockReset()
+    const trending = { objectID: 'a', title: 'Cavegirl', popularity: 90, vote_count: 40 }
+    const classic = { objectID: 'b', title: 'Back to the Future', popularity: 20, vote_count: 21000 }
+    mockSearch
+      .mockResolvedValueOnce({ results: [{ hits: [], nbHits: 0 }, { hits: [trending, classic] }, { hits: [] }, { hits: [] }] })
+      .mockResolvedValueOnce({ results: [{ hits: [] }] })
+    const out = await searchAllIndices(ts(1985, 1, 1), ts(1985, 12, 31))
+    expect(out.movies.map((m) => m.title)).toEqual(['Back to the Future', 'Cavegirl'])
+  })
 })

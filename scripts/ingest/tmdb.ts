@@ -254,7 +254,9 @@ async function main() {
         'filterOnly(category)',
         'genres',
       ],
-      customRanking: ['desc(popularity)', 'desc(vote_average)', 'desc(vote_count)'],
+      // vote_count, not popularity: TMDB popularity is current trending, so it ranked
+      // obscure re-trending titles above each era's real hits.
+      customRanking: ['desc(vote_count)', 'desc(vote_average)'],
     },
   })
 

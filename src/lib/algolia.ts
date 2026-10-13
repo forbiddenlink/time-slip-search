@@ -42,6 +42,7 @@ export interface Movie {
   genres?: string[]
   poster_url?: string
   vote_average: number
+  vote_count?: number
   popularity?: number
   category: 'movies'
 }
@@ -98,7 +99,7 @@ const SONG_ATTRIBUTES = [
 
 const MOVIE_ATTRIBUTES = [
   'objectID', 'tmdb_id', 'date', 'date_string', 'year', 'decade',
-  'title', 'overview', 'genres', 'poster_url', 'vote_average', 'popularity', 'category'
+  'title', 'overview', 'genres', 'poster_url', 'vote_average', 'vote_count', 'popularity', 'category'
 ]
 
 const EVENT_ATTRIBUTES = [
@@ -299,8 +300,9 @@ export async function searchAllIndices(
     return {
       songs,
       ...(chartWeek ? { chartWeek } : {}),
+      // vote_count tracks how widely a film was seen; TMDB popularity is today's trending score.
       movies: ((moviesResponse?.hits ?? []) as Movie[]).sort(
-        (a, b) => (b.popularity || 0) - (a.popularity || 0)
+        (a, b) => (b.vote_count || 0) - (a.vote_count || 0)
       ),
       prices: (pricesResponse?.hits ?? []) as Price[],
       events: (eventsResponse?.hits ?? []) as HistoricalEvent[],
