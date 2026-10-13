@@ -54,7 +54,7 @@ export function createCacheKey(
         n1: filters.showOnlyNumber1,
       })
     : ''
-  return `search:${startTimestamp}:${endTimestamp}:${filterStr}`
+  return `search:v2:${startTimestamp}:${endTimestamp}:${filterStr}`
 }
 
 /**

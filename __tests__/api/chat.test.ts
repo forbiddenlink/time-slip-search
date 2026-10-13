@@ -55,7 +55,7 @@ describe('Chat API', () => {
     const body = await response.json()
     const date = parseDate('March 15, 1987')!
     expect(response.status).toBe(200)
-    expect(searchAllIndices).toHaveBeenCalledWith(date.start, date.end, { ...filters, chartPositions: undefined })
+    expect(searchAllIndices).toHaveBeenCalledWith(date.start, date.end, { ...filters, chartPositions: undefined }, date.anchor, true)
     expect(body.response).toContain('#1: "Lean on Me" by Club Nouveau')
     expect(body.structured.results).toEqual(results)
     expect(body.structured.suggestions).toContain('Explore more of the 1980s')
@@ -105,4 +105,35 @@ describe('Chat API', () => {
     })
   })
 
+})
+
+describe('Chat API requested date', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    jest.mocked(checkRateLimit).mockResolvedValue({ allowed: true, remaining: 29, resetAt: 2000000000000 })
+    jest.mocked(searchAllIndices).mockResolvedValue(results as never)
+    jest.mocked(getCache).mockResolvedValue(null)
+  })
+
+  it.each([
+    ['July 20 1969', 1969, 7, 20],
+    ['June 5 1985', 1985, 6, 5],
+    ['March 3 2019', 2019, 3, 3],
+  ])('returns the day the user asked for in structured output: %s', async (message, year, month, day) => {
+    const body = await (await POST(request({ message }))).json()
+    expect(body.structured).toMatchObject({ year, month, day })
+  })
+
+  it('passes the requested day as the search anchor', async () => {
+    await POST(request({ message: 'July 20 1969' }))
+    const [, , , anchor, isSingleDay] = jest.mocked(searchAllIndices).mock.calls[0] as unknown[]
+    const d = new Date((anchor as number) * 1000)
+    expect([d.getFullYear(), d.getMonth() + 1, d.getDate()]).toEqual([1969, 7, 20])
+    expect(isSingleDay).toBe(true)
+  })
+
+  it('omits the day for a year-only query so no famous date is matched', async () => {
+    const body = await (await POST(request({ message: '2000' }))).json()
+    expect(body.structured.day).toBeUndefined()
+  })
 })

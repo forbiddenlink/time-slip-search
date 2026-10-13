@@ -5,6 +5,12 @@ export interface DateRange {
   end: number; // Unix timestamp
   display: string;
   year: number;
+  /** Month (1-12) the user asked about, independent of the search window. Unset for year-only or season queries. */
+  month?: number;
+  /** Day of month the user asked about, independent of the search window. Set only for a specific day. */
+  day?: number;
+  /** Timestamp the results should be closest to (the requested day, or the window midpoint). Unset for ranges. */
+  anchor?: number;
   isRange?: boolean; // Flag for date range queries
   isComparison?: boolean; // Flag for explicit comparisons
   compareTarget?: DateRange; // The second date in a comparison
@@ -95,6 +101,7 @@ export function parseDate(input: string): DateRange | null {
       end: getTimestamp(year, 8, 31),
       display: `Summer of ${year}`,
       year,
+      anchor: midpoint(getTimestamp(year, 6, 1), getTimestamp(year, 8, 31)),
     };
   }
 
@@ -107,6 +114,7 @@ export function parseDate(input: string): DateRange | null {
       end: getTimestamp(year, 2, 28),
       display: `Winter of ${year}`,
       year,
+      anchor: midpoint(getTimestamp(year - 1, 12, 1), getTimestamp(year, 2, 28)),
     };
   }
 
@@ -120,6 +128,7 @@ export function parseDate(input: string): DateRange | null {
       end: getTimestamp(year + 9, 12, 31),
       display: `the ${year}s`,
       year,
+      anchor: midpoint(getTimestamp(year, 1, 1), getTimestamp(year + 9, 12, 31)),
     };
   }
 
@@ -133,6 +142,7 @@ export function parseDate(input: string): DateRange | null {
       end: getTimestamp(year, 12, 31),
       display: year.toString(),
       year,
+      anchor: midpoint(getTimestamp(year, 1, 1), getTimestamp(year, 12, 31)),
     };
   }
 
@@ -153,10 +163,13 @@ export function parseDate(input: string): DateRange | null {
         end: getTimestamp(year, month, lastDay),
         display: formatMonthYear(month, year),
         year,
+        month,
+        anchor: midpoint(getTimestamp(year, month, 1), getTimestamp(year, month, lastDay)),
       };
     }
 
-    // Specific date: expand to +/- 3 days for better results
+    // Specific date: expand to +/- 3 days for better results. The window start/end
+    // are NOT the user's date, so carry the original month/day/anchor separately.
     // IMPORTANT: Set to start of day (midnight) to avoid timezone issues
     const start = new Date(startDate);
     start.setHours(0, 0, 0, 0);
@@ -170,6 +183,9 @@ export function parseDate(input: string): DateRange | null {
       end: Math.floor(end.getTime() / 1000),
       display: formatDate(startDate),
       year,
+      month: startDate.getMonth() + 1,
+      day: startDate.getDate(),
+      anchor: getTimestamp(year, startDate.getMonth() + 1, startDate.getDate()),
     };
   }
 
@@ -182,6 +198,10 @@ function normalizeYear(yearStr: string): number {
     return year < 30 ? 2000 + year : 1900 + year;
   }
   return year;
+}
+
+function midpoint(start: number, end: number): number {
+  return Math.floor((start + end) / 2);
 }
 
 function getTimestamp(year: number, month: number, day: number): number {

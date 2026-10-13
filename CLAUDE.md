@@ -14,8 +14,7 @@ and it assembles a cultural snapshot: Billboard #1 song, movies in theaters, his
 - Background jobs: Trigger.dev
 - Observability: Sentry, Axiom (`next-axiom`), Langfuse
 - Analytics: Vercel Analytics + Speed Insights
-- Testing: Jest (jsdom) + Testing Library + MSW; `vitest.config.ts` and `vitest-setup.ts` also
-  exist, but no package.json script invokes vitest, so it is unused in practice
+- Testing: Jest (jsdom) + Testing Library
 - Package manager: pnpm (`packageManager: pnpm@10.34.5` in package.json)
 - Deploy: Vercel (`vercel.json` pins region `iad1`, framework `nextjs`)
 
@@ -69,8 +68,7 @@ lint and type-check steps are `continue-on-error: true` and jest is not run in C
 ## Env vars (names only, see `src/env.ts`)
 
 Server: `ALGOLIA_ADMIN_API_KEY`, `ALGOLIA_SEARCH_API_KEY` (required), `ALGOLIA_APP_ID`,
-`AXIOM_TOKEN` (optional), `FRED_API_KEY`, `TMDB_API_KEY`, `GROQ_API_KEY`, `MINIMAX_API_KEY`
-(required), `MINIMAX_GROUP_ID` (optional).
+`AXIOM_TOKEN` (optional), `FRED_API_KEY`, `TMDB_API_KEY` (required), `MINIMAX_GROUP_ID` (optional).
 Client: `NEXT_PUBLIC_ALGOLIA_APP_ID`, `NEXT_PUBLIC_AXIOM_DATASET` (optional),
 `NEXT_PUBLIC_POSTHOG_HOST` (optional), `NEXT_PUBLIC_POSTHOG_KEY` (required).
 `SKIP_ENV_VALIDATION=true` bypasses the schema (used in CI's build step).
@@ -79,10 +77,6 @@ Client: `NEXT_PUBLIC_ALGOLIA_APP_ID`, `NEXT_PUBLIC_AXIOM_DATASET` (optional),
 
 - `biome.json` exists at repo root but Biome is not a dependency, not in the lockfile, and
   nothing runs it - `pnpm lint` uses ESLint/`next lint`. Treat the Biome config as dead.
-- `src/env.ts` requires `GROQ_API_KEY`, `MINIMAX_API_KEY`, and `NEXT_PUBLIC_POSTHOG_KEY`, but
-  none of the three appear anywhere else in `src/` or `scripts/`, and the README's "required
-  environment variables" list omits all three. Validation will fail without them unless
-  `SKIP_ENV_VALIDATION` is set.
 - Root-level `lib/wikimedia.ts` duplicates the Wikimedia integration but is not imported by
   anything in `src/` or `scripts/`; the live path is `scripts/ingest/wikimedia.ts`.
 - `pnpm build` uses `next build --webpack` explicitly, not Next 16's default Turbopack build.

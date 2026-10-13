@@ -67,7 +67,6 @@ Set these in `.env.local` (validated in `src/env.ts`; the app fails to start wit
 unless `SKIP_ENV_VALIDATION=true`):
 
 - `NEXT_PUBLIC_ALGOLIA_APP_ID`, `ALGOLIA_SEARCH_API_KEY`, `ALGOLIA_ADMIN_API_KEY` - Algolia project (search)
-- `GROQ_API_KEY`, `MINIMAX_API_KEY` - required by `src/env.ts`
 - `NEXT_PUBLIC_POSTHOG_KEY` - required by `src/env.ts`
 
 Required only to run the data-ingest scripts:

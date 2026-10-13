@@ -203,7 +203,7 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Left Column - Music & Prices */}
         <div className="space-y-6 section-reveal" style={{ animationDelay: '0.1s' }}>
-          <SongList songs={results.songs} />
+          <SongList songs={results.songs} chartWeek={results.chartWeek} />
           {results.prices.length > 0 && results.prices[0] && (
             <>
               <PriceCard price={results.prices[0]} />

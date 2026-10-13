@@ -139,11 +139,12 @@ export async function POST(request: NextRequest) {
       fromCache = true
     } else {
       // Execute primary search
-      results = await searchAllIndices(dateInfo.start, dateInfo.end, searchOptions)
+      results = await searchAllIndices(dateInfo.start, dateInfo.end, searchOptions, dateInfo.anchor, dateInfo.day !== undefined)
 
       // Execute secondary search if comparison
       if (dateInfo.isComparison && dateInfo.compareTarget) {
-        comparisonResults = await searchAllIndices(dateInfo.compareTarget.start, dateInfo.compareTarget.end, searchOptions)
+        const target = dateInfo.compareTarget
+        comparisonResults = await searchAllIndices(target.start, target.end, searchOptions, target.anchor, target.day !== undefined)
       }
 
       // Cache results for 1 hour (only caching primary for now to keep it simple)
@@ -162,10 +163,9 @@ export async function POST(request: NextRequest) {
       response = `Comparing ${dateInfo.display}:\n\n` + response
     }
 
-    // Extract month and day from the start timestamp for famous date matching
-    const startDate = new Date(dateInfo.start * 1000)
-    const month = startDate.getMonth() + 1
-    const day = startDate.getDate()
+    // Month and day come from what the user asked for, never from the search window
+    // (which starts days before the requested date). Unset for year-only queries.
+    const { month, day } = dateInfo
 
     // Prepare structured data for comparison if valid
     let comparisonData = undefined
@@ -173,8 +173,8 @@ export async function POST(request: NextRequest) {
       comparisonData = {
         dateDisplay: dateInfo.compareTarget.display,
         year: dateInfo.compareTarget.year,
-        month: new Date(dateInfo.compareTarget.start * 1000).getMonth() + 1,
-        day: new Date(dateInfo.compareTarget.start * 1000).getDate(),
+        month: dateInfo.compareTarget.month,
+        day: dateInfo.compareTarget.day,
         results: comparisonResults
       }
     }
