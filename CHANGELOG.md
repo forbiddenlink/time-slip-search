@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.6...v1.0.7) (2026-10-21)
+
+
+### Bug Fixes
+
+* **deps:** bump postcss-selector-parser to patched 7.1.7 ([#122](https://github.com/forbiddenlink/time-slip-search/issues/122)) ([7c900f7](https://github.com/forbiddenlink/time-slip-search/commit/7c900f7dd816c87b67ea6ea641bc9ca406ad9c44))
+
 ## [1.0.6](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.5...v1.0.6) (2026-10-13)
 
 
