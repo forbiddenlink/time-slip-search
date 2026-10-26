@@ -64,7 +64,7 @@
     "@types/jest": "30.0.0",
     "@vitejs/plugin-react": "6.1.2",
     "babel-jest": "30.5.2",
-    "eslint": "10.12.0",
+    "eslint": "10.13.0",
     "eslint-config-next": "16.4.2",
     "identity-obj-proxy": "3.0.0",
     "jest": "30.5.2",
@@ -73,7 +73,7 @@
     "msw": "2.15.0",
     "next-sitemap": "4.2.3",
     "tsx": "4.23.15",
-    "vite": "8.2.4",
+    "vite": "8.3.5",
     "vitest": "4.1.12"
   },
   "license": "MIT",
