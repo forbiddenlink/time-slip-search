@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.8](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.7...v1.0.8) (2026-10-27)
+
+
+### Bug Fixes
+
+* **deps:** raise transitive override floors to patched versions ([#128](https://github.com/forbiddenlink/time-slip-search/issues/128)) ([d41128f](https://github.com/forbiddenlink/time-slip-search/commit/d41128f715b38e58d2302bf25f334673c19d3d44))
+
 ## [1.0.7](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.6...v1.0.7) (2026-10-21)
 
 
