@@ -1,6 +1,7 @@
 // Updated for deployment verification
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { InfoPageHeader, InfoPanel } from '@/components/layout/InfoPage'
 import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
@@ -39,8 +40,10 @@ export default async function AboutPage() {
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
       <div className="container mx-auto max-w-3xl px-4 py-12 space-y-8">
+        <InfoPageHeader />
+        <InfoPanel>
         <header className="space-y-3">
-          <h1 className="font-display text-5xl tracking-tight">About TimeSlipSearch</h1>
+          <h1 className="font-display text-4xl md:text-5xl tracking-tight">About TimeSlipSearch</h1>
           <p className="text-aged-cream/75">
             TimeSlipSearch is a date-first cultural search experience that helps you explore what the world looked like on a specific day between 1958 and 2020.
           </p>
@@ -83,6 +86,7 @@ export default async function AboutPage() {
           <Link href="/contact" className="hover:text-phosphor-teal transition-colors">CONTACT</Link>
           <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
         </footer>
+        </InfoPanel>
       </div>
       <script
         nonce={nonce}
