@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.9](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.8...v1.0.9) (2026-11-04)
+
+
+### Bug Fixes
+
+* **ui:** bring about/contact/privacy pages onto the homepage design system ([#133](https://github.com/forbiddenlink/time-slip-search/issues/133)) ([2fb4487](https://github.com/forbiddenlink/time-slip-search/commit/2fb4487cb2afdeedd15423dc588e65d8303fe14c))
+
 ## [1.0.8](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.7...v1.0.8) (2026-10-27)
 
 
