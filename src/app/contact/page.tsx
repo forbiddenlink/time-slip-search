@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { InfoPageHeader, InfoPanel } from '@/components/layout/InfoPage'
 import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
@@ -38,8 +39,10 @@ export default async function ContactPage() {
   return (
     <main className="min-h-screen bg-crt-black text-aged-cream">
       <div className="container mx-auto max-w-3xl px-4 py-12 space-y-8">
+        <InfoPageHeader />
+        <InfoPanel>
         <header className="space-y-3">
-          <h1 className="font-display text-5xl tracking-tight">Contact</h1>
+          <h1 className="font-display text-4xl md:text-5xl tracking-tight">Contact</h1>
           <p className="text-aged-cream/75">
             Questions, bug reports, and partnership inquiries are welcome.
           </p>
@@ -95,6 +98,7 @@ export default async function ContactPage() {
           <Link href="/about" className="hover:text-phosphor-teal transition-colors">ABOUT</Link>
           <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
         </footer>
+        </InfoPanel>
       </div>
       <script
         nonce={nonce}
