@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.10](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.9...v1.0.10) (2026-11-11)
+
+
+### Bug Fixes
+
+* **observability:** move Langfuse tracing to SDK v6 before v4 cutover ([#135](https://github.com/forbiddenlink/time-slip-search/issues/135)) ([11902d7](https://github.com/forbiddenlink/time-slip-search/commit/11902d7438e4272d63c90427e5b07414a7fd7193))
+
 ## [1.0.9](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.8...v1.0.9) (2026-11-04)
 
 
