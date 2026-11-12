@@ -612,7 +612,7 @@ function HomeContent() {
 
         {/* === PRESSROOM: results === */}
         {hasResults && (
-          <section id="results" aria-label="Results" className="mt-10 scroll-mt-4">
+          <section id="results" aria-label="Results" className="relative mt-10 scroll-mt-4">
             <VHSEffect isActive={showVHSEffect} intensity="low">
               <ParticleEffect isActive={showParticles && hasResults} />
               <div className="relative z-20 space-y-8">
