@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { SearchResults } from '@/lib/algolia'
 import { FavoriteButton } from '@/components/memory/FavoriteButton'
 import { extractShareData, copyShareLink, shareNative, generateTimeCapsuleSummary } from '@/lib/share'
@@ -9,14 +9,12 @@ import { createShareableURL } from '@/lib/url-state'
 import { getFamousDate } from '@/lib/famous-dates'
 import { generateEmotionalNarrative } from '@/lib/ai-insights'
 import { FamousDateBanner } from './FamousDateBanner'
-import { Confetti } from '@/components/animations/Confetti'
+import { SongList } from './SongCard'
+import { MovieList } from './MovieCard'
+import { PriceCard, PriceComparison } from './PriceCard'
+import { EventList } from './EventCard'
 
-// Dynamic imports - these components only render after API response (bundle-dynamic-imports)
-const SongList = dynamic(() => import('./SongCard').then(m => ({ default: m.SongList })))
-const MovieList = dynamic(() => import('./MovieCard').then(m => ({ default: m.MovieList })))
-const PriceCard = dynamic(() => import('./PriceCard').then(m => ({ default: m.PriceCard })))
-const PriceComparison = dynamic(() => import('./PriceCard').then(m => ({ default: m.PriceComparison })))
-const EventList = dynamic(() => import('./EventCard').then(m => ({ default: m.EventList })))
+// Only the chart bundle is lazy; the text sections are static so a printed edition never renders blank.
 const ChartInsights = dynamic(() => import('../visualizations/ChartInsights').then(m => ({ default: m.ChartInsights })))
 const decadePresets = [1960, 1970, 1980, 1990, 2000, 2010, 2020] as const
 
@@ -37,18 +35,12 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
   const [shareMessage, setShareMessage] = useState('')
   const [actionMessage, setActionMessage] = useState('')
   const [compareYearInput, setCompareYearInput] = useState('')
-  const [showConfetti, setShowConfetti] = useState(true)
   const famousDate = (month && day) ? getFamousDate(month, day, year) : null
   const emotionalNarrative = generateEmotionalNarrative(year, month, results)
   const topSong = results.songs[0]
   const topMovie = results.movies[0]
   const compareForwardYear = Math.min(year + 10, 2020)
   const compareBackwardYear = Math.max(year - 10, 1958)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowConfetti(false), 3000)
-    return () => clearTimeout(timer)
-  }, [])
 
   const showTransientActionMessage = (message: string) => {
     setActionMessage(message)
@@ -137,216 +129,168 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
     const isOutOfRange = year < 1958 || year > 2020
 
     return (
-      <div className="bg-crt-dark border border-crt-light/30 rounded p-6 text-center">
-        <div className="led-text text-vhs-red text-sm tracking-widest mb-3">
-          NO SIGNAL
-        </div>
-        <p className="text-aged-cream/80">
+      <div className="px-5 py-10 text-center md:px-10">
+        <p className="ed-label text-edition">No edition on file</p>
+        <h2 className="mt-3 font-display text-3xl italic text-balance md:text-4xl">{dateDisplay}</h2>
+        <div className="mx-auto mt-4 h-[7px] max-w-md border-b border-t-[3px] border-ink" aria-hidden="true" />
+        <p className="mt-4 font-body text-lg text-pretty">
           {isOutOfRange
-            ? `${dateDisplay} is outside my coverage period.`
-            : `I don't have data indexed for ${dateDisplay} yet.`
-          }
+            ? `${dateDisplay} is outside the archive.`
+            : `Nothing is indexed for ${dateDisplay} yet.`}
         </p>
-        <p className="text-sm text-aged-cream/60 mt-2 led-text">
-          {isOutOfRange
-            ? 'TRY A DATE BETWEEN 1958 AND 2020'
-            : 'DATABASE MAY NEED POPULATION - SEE SETUP.MD'
-          }
+        <p className="mt-2 ed-label text-faded">
+          {isOutOfRange ? 'Try a date between 1958 and 2020' : 'Try a nearby date or another year'}
         </p>
       </div>
     )
   }
 
+  const hasSongs = results.songs.length > 0
+  const hasPrices = results.prices.length > 0 && Boolean(results.prices[0])
+  const hasMovies = results.movies.length > 0
+  const hasEvents = results.events.length > 0
+  const hasInsights = Boolean(insights && insights.length > 0)
+
   return (
-    <div className="space-y-6">
-      {/* === TIME CAPSULE HEADER === */}
-      <div className="relative">
-        {/* VHS label style header */}
-        <div className="bg-gradient-to-r from-crt-medium via-crt-dark to-crt-medium border border-crt-light/40 rounded p-4 cascade-in">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
-              <span className="led-text text-vhs-red text-xs tracking-widest">PLAYBACK</span>
-            </div>
-            <span className="led-text text-phosphor-amber text-xs">{year}</span>
-          </div>
-
-          <h2 className="font-display text-3xl md:text-4xl text-aged-cream text-center">
-            {dateDisplay}
-          </h2>
-
-          <p className="text-aged-cream/70 text-center mt-2 italic font-body max-w-lg mx-auto">
-            {emotionalNarrative}
-          </p>
-
-          {/* Tape counter decoration */}
-          <div className="flex justify-center mt-4 gap-1">
-            {String(year).split('').map((digit, i) => (
-              <div
-                key={i}
-                className="led-display px-2 py-1 text-phosphor-teal text-lg"
-              >
-                {digit}
-              </div>
-            ))}
-          </div>
+    <div className="text-ink">
+      {/* === MASTHEAD: the edition date === */}
+      <header className="px-5 pt-5 md:px-10 md:pt-6">
+        <div className="flex items-center justify-between ed-label text-faded">
+          <span>Edition of {year}</span>
+          <span>As printed on your date</span>
         </div>
+        <h2 className="mt-3 text-center font-display text-[clamp(2.25rem,6vw,4.5rem)] italic leading-tight text-balance">
+          {dateDisplay}
+        </h2>
+        <div className="mt-3 h-[7px] border-b border-t-[3px] border-ink" aria-hidden="true" />
+        <p className="mx-auto mt-3 max-w-2xl text-center font-display text-lg italic text-balance md:text-xl">
+          {emotionalNarrative}
+        </p>
+      </header>
 
-        {/* CRT phosphor confetti celebration */}
-        <Confetti isActive={showConfetti} variant="celebration" />
-      </div>
-
-      {/* === FAMOUS DATE EASTER EGG === */}
-      {famousDate && <FamousDateBanner famousDate={famousDate} />}
-
-      {/* === CONTENT GRID === */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Left Column - Music & Prices */}
-        <div className="space-y-6 section-reveal" style={{ animationDelay: '0.1s' }}>
-          <SongList songs={results.songs} chartWeek={results.chartWeek} />
-          {results.prices.length > 0 && results.prices[0] && (
-            <>
-              <PriceCard price={results.prices[0]} />
-              <PriceComparison oldPrice={results.prices[0]} />
-            </>
-          )}
-        </div>
-
-        {/* Right Column - Movies & Events */}
-        <div className="space-y-6 section-reveal" style={{ animationDelay: '0.3s' }}>
-          <MovieList movies={results.movies} />
-          <EventList events={results.events} />
-        </div>
-      </div>
-
-      {/* === AI INSIGHTS === */}
-      {insights && insights.length > 0 && (
-        <div className="glass-card border border-phosphor-teal/30 rounded p-4 cascade-in stagger-5">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="led-text text-phosphor-teal text-xs tracking-widest">AI INSIGHTS</span>
-          </div>
-          <div className="space-y-2">
-            {insights.map((insight, i) => (
-              <div
-                key={i}
-                className="text-aged-cream/90 text-sm flex items-start gap-2 animate-slide-in-right"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <span className="text-phosphor-teal shrink-0">&bull;</span>
-                <span>{insight}</span>
-              </div>
-            ))}
-          </div>
+      {/* === FAMOUS DATE === */}
+      {famousDate && (
+        <div className="px-5 pt-6 md:px-10">
+          <FamousDateBanner famousDate={famousDate} />
         </div>
       )}
 
-      {/* === QUICK ACTIONS === */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="h-px bg-crt-light/30 flex-1" />
-          <div className="text-aged-cream/50 text-xs led-text tracking-widest">TRY THESE</div>
-          <div className="h-px bg-crt-light/30 flex-1" />
-        </div>
+      {/* === FRONT PAGE: song lead, cost of living, movies, events === */}
+      <div className="mt-6 border-t-[3px] border-ink">
+        {(hasSongs || hasPrices) && (
+          <div className="grid md:grid-cols-12">
+            {hasSongs && (
+              <div className={`px-5 py-6 md:px-10 md:py-8 ${hasPrices ? 'md:col-span-8 md:border-r md:border-ink' : 'md:col-span-12'}`}>
+                <SongList songs={results.songs} chartWeek={results.chartWeek} />
+              </div>
+            )}
+            {hasPrices && results.prices[0] && (
+              <div className={`px-5 py-6 md:px-8 md:py-8 ${hasSongs ? 'border-t border-ink md:col-span-4 md:border-t-0' : 'md:col-span-12'}`}>
+                <PriceCard price={results.prices[0]} />
+                <PriceComparison oldPrice={results.prices[0]} />
+              </div>
+            )}
+          </div>
+        )}
+        {(hasMovies || hasEvents) && (
+          <div className={`grid border-t border-ink ${hasMovies && hasEvents ? 'md:grid-cols-2' : ''}`}>
+            {hasMovies && (
+              <div className={`px-5 py-6 md:px-10 ${hasEvents ? 'md:border-r md:border-ink' : ''}`}>
+                <MovieList movies={results.movies} />
+              </div>
+            )}
+            {hasEvents && (
+              <div className={`px-5 py-6 md:px-10 ${hasMovies ? 'border-t border-ink md:border-t-0' : ''}`}>
+                <EventList events={results.events} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
-        <div className="flex gap-3 flex-wrap justify-center">
+      {/* === EDITOR'S NOTES === */}
+      {hasInsights && insights && (
+        <section aria-labelledby="sec-notes" className="border-t border-ink px-5 py-6 md:px-10">
+          <h3 id="sec-notes" className="ed-label border-b-2 border-ink pb-2">Editor&apos;s notes</h3>
+          <ul className="mt-3 space-y-2 font-body text-base">
+            {insights.map((insight, i) => (
+              <li key={i} className="flex gap-3">
+                <span aria-hidden="true">&bull;</span>
+                <span className="text-pretty">{insight.replace(/\p{Extended_Pictographic}\uFE0F?\s*/gu, '')}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* === FURTHER READING: actions on this edition === */}
+      <section aria-labelledby="sec-further" className="border-t-[3px] border-ink px-5 py-6 md:px-10">
+        <h3 id="sec-further" className="ed-label text-faded">Further reading</h3>
+
+        <div className="mt-4 flex flex-wrap gap-3">
           {onCompare && (
-            <div className="flex gap-2 w-full md:w-auto justify-center">
+            <>
               <button
+                type="button"
                 onClick={() => onCompare(compareForwardYear)}
                 disabled={compareForwardYear === year}
-                className="px-4 py-2.5 bg-crt-dark border border-phosphor-teal/30
-                         rounded-lg hover:border-phosphor-teal hover:shadow-glow-teal
-                         text-aged-cream text-sm transition-all hover-lift led-text tracking-wide
-                         disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                className="ed-btn"
               >
-                <span>Compare {compareForwardYear}</span>
-                <span className="text-phosphor-teal">→</span>
+                Compare {compareForwardYear}
               </button>
               <button
+                type="button"
                 onClick={() => onCompare(compareBackwardYear)}
                 disabled={compareBackwardYear === year}
-                className="px-4 py-2.5 bg-crt-dark border border-phosphor-amber/30
-                         rounded-lg hover:border-phosphor-amber hover:shadow-glow-amber
-                         text-aged-cream text-sm transition-all hover-lift led-text tracking-wide
-                         disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                className="ed-btn"
               >
-                <span className="text-phosphor-amber">←</span>
-                <span>See {compareBackwardYear}</span>
+                See {compareBackwardYear}
               </button>
-            </div>
+            </>
           )}
-
           {onRandom && (
-            <button
-              onClick={onRandom}
-              className="px-4 py-2.5 bg-crt-dark border border-phosphor-green/30
-                       rounded-lg hover:border-phosphor-green hover:shadow-glow-green
-                       text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
-            >
-              <span>🎲</span> Random Date
+            <button type="button" onClick={onRandom} className="ed-btn">
+              Random date
             </button>
           )}
-
-          {/* Favorite Button */}
-          <FavoriteButton
-            dateDisplay={dateDisplay}
-            year={year}
-            results={results}
-            query={query}
-          />
-
-          {/* Enhanced Share Button */}
-          <button
-            onClick={handleShare}
-            className="px-4 py-2.5 bg-crt-dark border border-vinyl-label/40
-                     rounded-lg hover:border-vinyl-label hover:shadow-glow-amber
-                     text-aged-cream text-sm transition-all hover-lift led-text tracking-wide relative flex items-center gap-2"
-          >
-            <span>📤</span> Share
+          <FavoriteButton dateDisplay={dateDisplay} year={year} results={results} query={query} />
+          <span className="relative inline-flex">
+            <button type="button" onClick={handleShare} className="ed-btn">
+              Share
+            </button>
             {shareMessage && (
-              <span className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap
-                             bg-crt-black border border-phosphor-teal px-3 py-1.5 rounded text-xs shadow-lg animate-fade-in z-50">
+              <span
+                role="status"
+                className="absolute -top-11 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap bg-ink px-3 py-1.5 ed-label text-newsprint"
+              >
                 {shareMessage}
               </span>
             )}
+          </span>
+          <button type="button" onClick={handleCopyRecap} className="ed-btn">
+            Copy recap
           </button>
-
-          <button
-            onClick={handleCopyRecap}
-            className="px-4 py-2.5 bg-crt-dark border border-phosphor-teal/30
-                     rounded-lg hover:border-phosphor-teal hover:shadow-glow-teal
-                     text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
-          >
-            <span>📋</span> Recap
+          <button type="button" onClick={handleDownloadSnapshot} className="ed-btn">
+            Download JSON
           </button>
-
-          <button
-            onClick={handleDownloadSnapshot}
-            className="px-4 py-2.5 bg-crt-dark border border-phosphor-green/30
-                     rounded-lg hover:border-phosphor-green hover:shadow-glow-green
-                     text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
-          >
-            <span>💾</span> JSON
-          </button>
-
           {topSong && (
             <a
               href={`https://open.spotify.com/search/${encodeURIComponent(`${topSong.song_title} ${topSong.artist}`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2.5 bg-crt-dark border border-[#1DB954]/40
-                       rounded-lg hover:border-[#1DB954] hover:shadow-[0_0_15px_rgba(29,185,84,0.3)]
-                       text-aged-cream text-sm transition-all hover-lift led-text tracking-wide flex items-center gap-2"
+              className="ed-btn inline-flex items-center"
             >
-              <span className="text-[#1DB954]">♪</span> Spotify
+              Find on Spotify
             </a>
           )}
         </div>
 
         {onCompare && (
-          <div className="flex gap-3 flex-wrap items-center justify-center mt-6 pt-4 border-t border-crt-light/20">
-            <div className="relative group">
+          <div className="mt-6 flex flex-wrap items-end gap-4 border-t border-ink/25 pt-4">
+            <div>
+              <label htmlFor="compare-year" className="ed-label text-faded">Jump to a year</label>
               <input
+                id="compare-year"
                 type="number"
                 min={1958}
                 max={2020}
@@ -358,32 +302,26 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
                     handleCompareJump()
                   }
                 }}
-                placeholder="YEAR (1958-2020)"
+                placeholder="1958 to 2020"
                 aria-label="Jump to a year to compare"
-                className="bg-crt-black/80 border border-crt-light/40 rounded-lg px-4 py-2.5 text-sm text-aged-cream placeholder-aged-cream/30 w-full md:w-48 led-text tracking-widest focus:border-phosphor-amber focus:shadow-glow-amber focus:outline-none transition-all text-center"
+                className="mt-1 block w-44 border-0 border-b-2 border-ink bg-transparent py-1 font-display text-xl placeholder:text-ink/45 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
               />
             </div>
-
-            <button
-              onClick={handleCompareJump}
-              className="px-5 py-2.5 bg-phosphor-amber/10 border border-phosphor-amber/40
-                       rounded-lg hover:bg-phosphor-amber/20 hover:border-phosphor-amber hover:shadow-glow-amber
-                       text-phosphor-amber text-sm transition-all hover-lift led-text tracking-wide font-semibold"
-            >
-              JUMP TO YEAR
+            <button type="button" onClick={handleCompareJump} className="ed-btn">
+              Jump to year
             </button>
           </div>
         )}
 
         {onExploreDecade && (
-          <div className="flex gap-2 flex-wrap justify-center mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1">
+            <span className="ed-label text-faded">Back issues</span>
             {decadePresets.map((decadeStart) => (
               <button
                 key={decadeStart}
+                type="button"
                 onClick={() => onExploreDecade(decadeStart)}
-                className="px-3 py-1.5 bg-crt-dark border border-crt-light/30 rounded
-                         hover:border-phosphor-green hover:shadow-glow-green hover:text-phosphor-green
-                         text-aged-cream/70 text-xs transition-all led-text tracking-widest"
+                className="min-h-11 font-display text-lg underline-offset-4 hover:underline"
               >
                 {decadeStart}s
               </button>
@@ -392,16 +330,14 @@ export function TimeCapsule({ results, dateDisplay, year, month, day, insights, 
         )}
 
         {actionMessage && (
-          <p className="text-xs text-phosphor-teal led-text tracking-wider">
+          <p role="status" className="mt-3 ed-label text-edition">
             {actionMessage}
           </p>
         )}
-      </div>
+      </section>
 
-      {/* Data Visualizations */}
-      <div className="cascade-in stagger-6">
-        <ChartInsights results={results} year={year} />
-      </div>
+      {/* === DATA INSIGHTS === */}
+      <ChartInsights results={results} year={year} />
     </div>
   )
 }

@@ -48,13 +48,13 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
         label: data.label,
         data: data.values,
         borderColor: data.color,
-        backgroundColor: `${data.color}33`, // 20% opacity
+        backgroundColor: `${data.color}22`,
         borderWidth: 2,
         fill: type === 'line',
         tension: 0.4, // Smooth curves for line charts
         pointBackgroundColor: data.color,
-        pointBorderColor: '#1a1a1a',
-        pointHoverBackgroundColor: '#fff',
+        pointBorderColor: '#EFE6D2',
+        pointHoverBackgroundColor: '#EFE6D2',
         pointHoverBorderColor: data.color,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -66,10 +66,9 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
     responsive: true,
     maintainAspectRatio: false,
     animation: {
-      duration: 1500,
+      duration: 600,
       easing: 'easeOutQuart' as const,
-      delay: (context: { dataIndex: number }) => context.dataIndex * 100,
-    },
+          },
     plugins: {
       legend: {
         display: false,
@@ -78,9 +77,9 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
         display: false,
       },
       tooltip: {
-        backgroundColor: '#1a1a1a',
-        titleColor: '#e0d5c7',
-        bodyColor: '#e0d5c7',
+        backgroundColor: '#17140F',
+        titleColor: '#EFE6D2',
+        bodyColor: '#EFE6D2',
         borderColor: data.color,
         borderWidth: 1,
         padding: 12,
@@ -95,13 +94,13 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
       y: {
         beginAtZero: true,
         grid: {
-          color: '#2a2a2a',
+          color: 'rgba(23,20,15,0.15)',
           drawBorder: false,
         },
         ticks: {
-          color: '#e0d5c788',
+          color: '#5A5144',
           font: {
-            family: 'monospace',
+            family: 'Libre Franklin, Arial, sans-serif',
             size: 10,
           },
         },
@@ -112,9 +111,9 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
           drawBorder: false,
         },
         ticks: {
-          color: '#e0d5c788',
+          color: '#5A5144',
           font: {
-            family: 'monospace',
+            family: 'Libre Franklin, Arial, sans-serif',
             size: 10,
           },
           maxRotation: 45,
@@ -125,22 +124,16 @@ export function DataVisualization({ data, type = 'line', title }: Readonly<DataV
   }
 
   return (
-    <div className="glass-card p-6 border border-crt-light/20">
-      <div className="flex items-center gap-3 mb-4">
-        <span className="text-xl">📊</span>
-        <h3 className="text-aged-cream text-lg led-text tracking-wide">{title}</h3>
-      </div>
-      <div className="h-[250px] relative">
+    <figure>
+      <figcaption className="font-display text-lg">{title}</figcaption>
+      <div className="relative mt-3 h-[250px]">
         {type === 'line' ? (
-          <Line data={chartData} options={options} />
+          <Line data={chartData} options={options} aria-label={title} role="img" />
         ) : (
-          <Bar data={chartData} options={options} />
+          <Bar data={chartData} options={options} aria-label={title} role="img" />
         )}
       </div>
-      <div className="mt-3 flex items-center justify-between text-xs text-aged-cream/60 led-text">
-        <span>{data.labels.length} data points</span>
-        <span className="text-phosphor-teal">{data.label}</span>
-      </div>
-    </div>
+      <p className="mt-2 ed-label text-faded">{data.label}</p>
+    </figure>
   )
 }

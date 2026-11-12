@@ -56,14 +56,14 @@ export default async function ContactPage() {
         <section className="space-y-4 text-aged-cream/80 leading-relaxed">
           <p>
             For support, feedback, or corrections to historical data, email us at{' '}
-            <a className="underline hover:text-phosphor-teal" href="mailto:purplegumdropz@gmail.com">
+            <a className="underline hover:text-white" href="mailto:purplegumdropz@gmail.com">
               purplegumdropz@gmail.com
             </a>
             . Please include the date you searched and a short description of what you expected to see.
           </p>
           <p>
             You can also follow project updates and open issues through the public repository at{' '}
-            <a className="underline hover:text-phosphor-teal" href="https://github.com/forbiddenlink/TimeSlipSearch" target="_blank" rel="noopener noreferrer">
+            <a className="underline hover:text-white" href="https://github.com/forbiddenlink/TimeSlipSearch" target="_blank" rel="noopener noreferrer">
               github.com/forbiddenlink/TimeSlipSearch
             </a>
             .
@@ -79,7 +79,7 @@ export default async function ContactPage() {
           </p>
           <p>
             Security disclosures can be sent by email and should include a clear reproduction path, impacted endpoint or page, and potential severity. We follow a coordinated disclosure approach and appreciate responsible reporting. You can also review standard disclosure guidance from{' '}
-            <a className="underline hover:text-phosphor-teal" href="https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">
+            <a className="underline hover:text-white" href="https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">
               OWASP
             </a>{' '}
             before submitting.
@@ -96,9 +96,9 @@ export default async function ContactPage() {
         </section>
 
         <footer className="flex gap-5 text-sm led-text tracking-wider">
-          <Link href="/" className="hover:text-phosphor-teal transition-colors">HOME</Link>
-          <Link href="/about" className="hover:text-phosphor-teal transition-colors">ABOUT</Link>
-          <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
+          <Link href="/" className="hover:text-white transition-colors">HOME</Link>
+          <Link href="/about" className="hover:text-white transition-colors">ABOUT</Link>
+          <Link href="/privacy-policy" className="hover:text-white transition-colors">PRIVACY POLICY</Link>
         </footer>
         </InfoPanel>
       </div>

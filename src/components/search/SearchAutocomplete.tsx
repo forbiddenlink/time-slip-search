@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { getAutocompleteSuggestions, getSuggestionIcon, AutocompleteSuggestion } from '@/lib/autocomplete-suggestions'
+import { getAutocompleteSuggestions, AutocompleteSuggestion } from '@/lib/autocomplete-suggestions'
 import { SearchHistory } from '@/lib/agent-memory'
 
 interface SearchAutocompleteProps {
@@ -70,38 +70,35 @@ export function SearchAutocomplete({ query, onSelect, isVisible, onClose }: Read
   return (
     <div
       ref={containerRef}
-      className="absolute z-50 w-full mt-2 bg-crt-black border-2 border-crt-light/40 rounded shadow-crt overflow-hidden animate-slide-in-down"
+      className="absolute z-50 mt-2 w-full overflow-hidden border-2 border-ink bg-newsprint text-ink"
     >
-      <div className="max-h-[400px] overflow-y-auto retro-scroll">
+      <div className="max-h-[400px] overflow-y-auto">
         {suggestions.map((suggestion, index) => (
           <button
             key={`${suggestion.category}-${suggestion.text}-${index}`}
             onClick={() => onSelect(suggestion.text)}
             onMouseEnter={() => setSelectedIndex(index)}
-            className={`w-full text-left px-4 py-3 border-b border-crt-light/20 last:border-b-0 transition-all
+            className={`w-full border-b border-ink/25 px-4 py-3 text-left last:border-b-0
               ${
                 index === selectedIndex
-                  ? 'bg-phosphor-teal/20 border-l-4 border-l-phosphor-teal'
-                  : 'bg-crt-dark hover:bg-crt-medium'
+                  ? 'border-l-4 border-l-edition bg-ink/10'
+                  : 'hover:bg-ink/5'
               }`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-lg shrink-0">
-                {getSuggestionIcon(suggestion.category)}
-              </span>
               <div className="flex-1 min-w-0">
-                <div className={`text-sm led-text ${index === selectedIndex ? 'text-phosphor-teal' : 'text-aged-cream'}`}>
+                <div className={`font-display text-base`}>
                   {suggestion.text}
                 </div>
                 {suggestion.description && (
-                  <div className="text-xs text-aged-cream/60 mt-0.5 truncate">
+                  <div className="mt-0.5 truncate font-body text-xs text-faded">
                     {suggestion.description}
                   </div>
                 )}
               </div>
               {index === selectedIndex && (
-                <span className="text-phosphor-teal text-xs led-text shrink-0">
-                  ↵ ENTER
+                <span className="ed-label shrink-0 text-edition">
+                  Enter
                 </span>
               )}
             </div>
@@ -109,12 +106,12 @@ export function SearchAutocomplete({ query, onSelect, isVisible, onClose }: Read
         ))}
       </div>
       
-      <div className="px-4 py-2 bg-crt-medium border-t border-crt-light/20 flex items-center justify-between">
-        <span className="text-aged-cream/60 text-xs led-text tracking-wide">
-          ↑↓ NAVIGATE · ↵ SELECT · ESC CLOSE
+      <div className="flex items-center justify-between border-t border-ink bg-ink/5 px-4 py-2">
+        <span className="ed-label text-faded">
+          Arrows to move, Enter to pick, Esc to close
         </span>
-        <span className="text-aged-cream/30 text-xs led-text">
-          {suggestions.length} SUGGESTIONS
+        <span className="ed-label text-faded">
+          {suggestions.length} suggestions
         </span>
       </div>
     </div>

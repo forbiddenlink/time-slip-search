@@ -5,55 +5,31 @@ interface EventCardProps {
   event: HistoricalEvent
 }
 
-function getEventIcon(eventType?: string): { icon: string; color: string } {
+function getEventKind(eventType?: string): string | null {
   switch (eventType) {
     case 'birth':
-      return { icon: '★', color: 'text-phosphor-green' }
+      return 'Born'
     case 'death':
-      return { icon: '†', color: 'text-aged-cream/50' }
-    case 'selected':
-      return { icon: '◆', color: 'text-phosphor-amber' }
+      return 'Died'
     default:
-      return { icon: '•', color: 'text-phosphor-teal' }
+      return null
   }
 }
 
 export const EventCard = memo(function EventCard({ event }: EventCardProps) {
-  const { icon, color } = getEventIcon(event.event_type)
+  const kind = getEventKind(event.event_type)
 
   return (
-    <div className="aged-paper rounded p-3 hover:shadow-lg transition-shadow group relative overflow-hidden">
-      {/* Torn paper edge effect */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-aged-sepia/30 to-transparent" />
-
-      <div className="relative z-10 flex items-start gap-3">
-        {/* Event type indicator */}
-        <span className={`text-lg flex-shrink-0 ${color} font-serif`}>
-          {icon}
-        </span>
-
-        <div className="flex-1 min-w-0">
-          {/* Title - typewriter style */}
-          <h4 className="font-display text-base text-crt-dark leading-snug">
-            {event.title}
-          </h4>
-
-          {/* Description */}
-          {event.description && event.description !== event.title && (
-            <p className="text-sm text-crt-medium mt-1 line-clamp-2 font-body italic">
-              {event.description}
-            </p>
-          )}
-        </div>
-
-        {/* Year stamp */}
-        <div className="flex-shrink-0">
-          <span className="led-text text-crt-dark/60 text-xs px-2 py-0.5 bg-aged-sepia/20 rounded">
-            {event.year}
-          </span>
-        </div>
+    <li className="flex gap-4 border-t border-ink/25 py-4">
+      <span className="ed-label w-12 shrink-0 pt-1 text-faded">{event.year}</span>
+      <div className="min-w-0 flex-1">
+        {kind && <p className="ed-label text-edition">{kind}</p>}
+        <p className="font-display text-lg leading-snug text-balance">{event.title}</p>
+        {event.description && event.description !== event.title && (
+          <p className="mt-1 line-clamp-2 font-body text-sm italic text-faded">{event.description}</p>
+        )}
       </div>
-    </div>
+    </li>
   )
 })
 
@@ -62,7 +38,7 @@ interface EventListProps {
   title?: string
 }
 
-export function EventList({ events, title = 'What Happened' }: EventListProps) {
+export function EventList({ events, title = 'On this day' }: EventListProps) {
   if (events.length === 0) return null
 
   // Prioritize "selected" events
@@ -73,37 +49,13 @@ export function EventList({ events, title = 'What Happened' }: EventListProps) {
   })
 
   return (
-    <div className="space-y-3">
-      {/* Section header - newspaper headline style */}
-      <div className="flex items-center gap-3 pb-2 border-b border-crt-light/20">
-        <div className="aged-paper px-2 py-1 rounded">
-          <span className="text-crt-dark text-lg font-display">◆</span>
-        </div>
-        <div>
-          <h3 className="font-display text-xl text-aged-cream">
-            {title}
-          </h3>
-          <p className="led-text text-phosphor-teal text-xs tracking-widest">
-            HEADLINES
-          </p>
-        </div>
-      </div>
-
-      {/* Event list - newspaper clipping stack */}
-      <div className="space-y-2">
-        {sortedEvents.slice(0, 4).map((event, index) => (
-          <div
-            key={event.objectID}
-            className="transform transition-transform hover:-translate-y-0.5 cascade-in"
-            style={{
-              animationDelay: `${0.4 + index * 0.1}s`,
-              marginLeft: `${index * 2}px`,
-            }}
-          >
-            <EventCard event={event} />
-          </div>
+    <section aria-labelledby="sec-events">
+      <h3 id="sec-events" className="ed-label border-b-2 border-ink pb-2">{title}</h3>
+      <ul>
+        {sortedEvents.slice(0, 4).map((event) => (
+          <EventCard key={event.objectID} event={event} />
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   )
 }

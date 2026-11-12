@@ -452,6 +452,12 @@ function HomeContent() {
             <label htmlFor="date-input" className="ed-label text-faded">Edition for</label>
             <div className="mt-1 flex flex-col gap-4 md:flex-row md:items-end">
               <div className="relative flex-1">
+                <span
+                  aria-hidden="true"
+                  className={`ed-label block h-4 text-faded ${query === '' ? '' : 'invisible'}`}
+                >
+                  For example
+                </span>
                 <input
                   id="date-input"
                   type="text"
@@ -461,7 +467,7 @@ function HomeContent() {
                   placeholder="March 15, 1987"
                   autoComplete="off"
                   aria-label="Enter a date to search, like your birthday or a year"
-                  className="ed-focus w-full bg-transparent py-1 font-display text-[clamp(2.25rem,7vw,5.5rem)] italic leading-tight text-ink placeholder:text-faded focus:outline-none disabled:opacity-60"
+                  className="ed-focus w-full bg-transparent py-1 font-display text-[clamp(2.25rem,7vw,5.5rem)] italic leading-tight text-ink placeholder:text-ink/40 focus:outline-none disabled:opacity-60"
                   disabled={isLoading}
                 />
                 <div className="ed-roller" aria-hidden="true" />
@@ -492,10 +498,10 @@ function HomeContent() {
         </div>
 
         {/* Tools */}
-        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1 ed-label text-newsprint">
+        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-0 border-y border-newsprint/30 ed-label text-muted">
           <button
             type="button"
-            className="min-h-11 hover:underline underline-offset-4"
+            className="min-h-11 hover:text-newsprint hover:underline underline-offset-4"
             onClick={() => {
               setWrappedStats(getWrappedStats())
               setShowWrapped(true)
@@ -503,7 +509,7 @@ function HomeContent() {
           >
             Wrapped
           </button>
-          <button type="button" className="min-h-11 hover:underline underline-offset-4" onClick={() => setShowAchievements(true)}>
+          <button type="button" className="min-h-11 hover:text-newsprint hover:underline underline-offset-4" onClick={() => setShowAchievements(true)}>
             Badges
           </button>
           <button
@@ -522,10 +528,10 @@ function HomeContent() {
           >
             Era particles {showParticles ? 'on' : 'off'}
           </button>
-          <button type="button" className="min-h-11 hover:underline underline-offset-4" onClick={() => setShowTimeline((prev) => !prev)}>
+          <button type="button" className="min-h-11 hover:text-newsprint hover:underline underline-offset-4" onClick={() => setShowTimeline((prev) => !prev)}>
             Timeline
           </button>
-          <button type="button" className="min-h-11 hover:underline underline-offset-4" onClick={() => setShowShortcuts(true)}>
+          <button type="button" className="min-h-11 hover:text-newsprint hover:underline underline-offset-4" onClick={() => setShowShortcuts(true)}>
             Shortcuts
           </button>
         </div>
@@ -624,7 +630,7 @@ function HomeContent() {
                         Edition requested: <span className="text-newsprint">{message.content}</span>
                       </p>
                     ) : (
-                      <div className="ed-out">
+                      <div className={message.structured ? 'ed-out ed-sheet' : 'ed-out'}>
                         {message.structured ? (
                           <ErrorBoundary>
                             <TimeCapsule
@@ -643,9 +649,9 @@ function HomeContent() {
                             />
                           </ErrorBoundary>
                         ) : (
-                          <div className="border border-newsprint/30 bg-crt-dark px-4 py-3">
-                            <p className="ed-label text-muted">Notice</p>
-                            <p className="whitespace-pre-wrap">{message.content}</p>
+                          <div className="ed-sheet px-5 py-6 md:px-10">
+                            <p className="ed-label text-edition">Notice</p>
+                            <p className="mt-2 whitespace-pre-wrap font-body text-lg">{message.content}</p>
                           </div>
                         )}
                       </div>

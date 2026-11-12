@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Old_Standard_TT, Source_Serif_4, VT323, Special_Elite, UnifrakturMaguntia, Libre_Franklin } from 'next/font/google'
+import { Old_Standard_TT, Source_Serif_4, UnifrakturMaguntia, Libre_Franklin } from 'next/font/google'
 import './globals.css'
 import { Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
@@ -30,20 +30,6 @@ const libreFranklin = Libre_Franklin({
 const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
   variable: '--font-body',
-  display: 'swap',
-})
-
-const vt323 = VT323({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-led',
-  display: 'swap',
-})
-
-const specialElite = Special_Elite({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-typewriter',
   display: 'swap',
 })
 
@@ -94,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${oldStandard.variable} ${unifraktur.variable} ${libreFranklin.variable} ${sourceSerif.variable} ${vt323.variable} ${specialElite.variable}`}>
+    <html lang="en" className={`${oldStandard.variable} ${unifraktur.variable} ${libreFranklin.variable} ${sourceSerif.variable}`}>
       <head>
         <meta httpEquiv="content-type" content="text/html; charset=utf-8" />
       </head>

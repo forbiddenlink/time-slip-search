@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo } from 'react'
-import { SparklesIcon } from '@/components/icons/Icons'
 
 interface QuickActionChipsProps {
   onSelect: (query: string) => void
@@ -11,7 +10,6 @@ interface QuickActionChipsProps {
 interface ChipConfig {
   label: string
   getQuery: () => string
-  icon: string
 }
 
 export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChipsProps>) {
@@ -29,7 +27,6 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
       {
         label: 'This Day in History',
         getQuery: () => `${currentMonth} ${currentDay}, ${1960 + (dayOfYear % 50)}`,
-        icon: '📅',
       },
       {
         label: `Random ${randomDecade}`,
@@ -47,12 +44,10 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
           const month = Math.floor(Math.random() * 12) + 1
           return `${month}/${Math.floor(Math.random() * 28) + 1}/${year}`
         },
-        icon: '🎲',
       },
       {
         label: 'Summer of Love',
         getQuery: () => 'Summer of 1967',
-        icon: '☮️',
       },
       {
         label: 'MTV Era',
@@ -60,7 +55,6 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
           const year = 1981 + Math.floor(Math.random() * 10)
           return `August ${year}`
         },
-        icon: '📺',
       },
     ]
   }, [])
@@ -68,31 +62,21 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
   if (!visible) return null
 
   return (
-    <div className="flex flex-wrap gap-2 justify-center mb-6 animate-fade-in">
-      <div className="w-full text-center mb-2">
-        <span className="text-aged-cream/60 text-xs led-text tracking-wider flex items-center justify-center gap-2">
-          <SparklesIcon size={12} className="text-phosphor-teal" />
-          QUICK JUMPS
-          <SparklesIcon size={12} className="text-phosphor-teal" />
-        </span>
-      </div>
-      {chips.map((chip, index) => (
-        <button
-          key={chip.label}
-          onClick={() => onSelect(chip.getQuery())}
-          className={`
-            px-4 py-2 bg-crt-dark border border-crt-light/30 rounded-full
-            text-aged-cream/80 text-sm led-text tracking-wider
-            hover:border-phosphor-teal hover:text-phosphor-teal hover:shadow-glow-teal
-            transition-all duration-300 hover:scale-105
-            cascade-in stagger-${index + 1}
-            flex items-center gap-2
-          `}
-        >
-          <span>{chip.icon}</span>
-          <span>{chip.label}</span>
-        </button>
-      ))}
+    <div className="mb-6">
+      <p className="ed-label text-muted">Quick jumps</p>
+      <ul className="mt-2 flex flex-wrap gap-x-6 gap-y-1 border-y border-newsprint/40 py-1">
+        {chips.map((chip) => (
+          <li key={chip.label}>
+            <button
+              type="button"
+              onClick={() => onSelect(chip.getQuery())}
+              className="min-h-11 font-display text-lg underline-offset-4 hover:text-white hover:underline"
+            >
+              {chip.label}
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

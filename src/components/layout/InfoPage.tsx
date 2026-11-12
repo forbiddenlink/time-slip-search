@@ -18,7 +18,7 @@ export function InfoPageHeader() {
 
 export function InfoPanel({ children }: { children: ReactNode }) {
   return (
-    <div className="border border-newsprint/30 bg-crt-dark p-6 md:p-10 space-y-8">
+    <div className="ed-sheet p-6 md:p-10 space-y-8">
       {children}
     </div>
   )

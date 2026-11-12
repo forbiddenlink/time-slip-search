@@ -69,11 +69,11 @@ export default async function AboutPage() {
           </p>
           <p>
             If you are curious about how this kind of timeline data is commonly structured, documentation from{' '}
-            <a className="underline hover:text-phosphor-teal" href="https://developer.themoviedb.org/docs" target="_blank" rel="noopener noreferrer">
+            <a className="underline hover:text-white" href="https://developer.themoviedb.org/docs" target="_blank" rel="noopener noreferrer">
               The Movie Database API
             </a>{' '}
             and the{' '}
-            <a className="underline hover:text-phosphor-teal" href="https://fred.stlouisfed.org/docs/api/fred/" target="_blank" rel="noopener noreferrer">
+            <a className="underline hover:text-white" href="https://fred.stlouisfed.org/docs/api/fred/" target="_blank" rel="noopener noreferrer">
               FRED API
             </a>{' '}
             are useful references. TimeSlipSearch builds a user-facing layer over these raw historical inputs so people can explore dates naturally.
@@ -84,9 +84,9 @@ export default async function AboutPage() {
         </section>
 
         <footer className="flex gap-5 text-sm led-text tracking-wider">
-          <Link href="/" className="hover:text-phosphor-teal transition-colors">HOME</Link>
-          <Link href="/contact" className="hover:text-phosphor-teal transition-colors">CONTACT</Link>
-          <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
+          <Link href="/" className="hover:text-white transition-colors">HOME</Link>
+          <Link href="/contact" className="hover:text-white transition-colors">CONTACT</Link>
+          <Link href="/privacy-policy" className="hover:text-white transition-colors">PRIVACY POLICY</Link>
         </footer>
         </InfoPanel>
       </div>

@@ -95,14 +95,9 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
       type="button"
       onClick={toggleListening}
       disabled={isDisabled}
-      className={`px-4 py-3 rounded border-2 transition-all led-text
-        ${hasError
-          ? 'bg-vhs-red/20 border-vhs-red text-vhs-red animate-flicker'
-          : isListening
-            ? 'bg-vhs-red/20 border-vhs-red text-vhs-red animate-pulse'
-            : 'bg-crt-dark border-crt-light/40 text-aged-cream hover:border-phosphor-teal hover:shadow-glow-teal'
-        }
-        ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover-lift'}
+      className={`ed-btn
+        ${hasError || isListening ? '!border-edition !text-edition' : ''}
+        ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
       aria-label={isListening ? 'Stop voice input' : hasError ? 'Microphone error' : 'Start voice input'}
       title={hasError ? errorMessage : isListening ? 'Listening... Click to stop' : 'Search by voice'}
@@ -110,18 +105,16 @@ export function VoiceInput({ onTranscript, isDisabled = false }: Readonly<VoiceI
       <span className="flex items-center gap-2">
         {hasError ? (
           <>
-            <span className="text-lg">❌</span>
-            <span role="alert" className="text-xs md:text-sm">{errorMessage}</span>
+                        <span role="alert" className="text-xs md:text-sm">{errorMessage}</span>
           </>
         ) : isListening ? (
           <>
-            <span className="inline-block w-2 h-2 bg-vhs-red rounded-full animate-pulse" />
-            <span className="text-sm">LISTENING...</span>
+            <span className="inline-block h-2 w-2 rounded-full bg-edition" />
+            <span>Listening</span>
           </>
         ) : (
           <>
-            <span className="text-lg">🎤</span>
-            <span className="hidden md:inline text-sm">VOICE</span>
+            <span>Voice</span>
           </>
         )}
       </span>

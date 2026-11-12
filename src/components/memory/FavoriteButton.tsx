@@ -46,23 +46,17 @@ export function FavoriteButton({ dateDisplay, year, results, query }: FavoriteBu
     <div className="relative">
       <button
         onClick={handleToggleFavorite}
-        className={`px-4 py-2 border rounded transition-all hover-lift led-text text-sm
-          ${
-            isFavorited
-              ? 'bg-vinyl-label/20 border-vinyl-label text-vinyl-label hover:bg-vinyl-label/30'
-              : 'bg-crt-dark border-crt-light/30 text-aged-cream/60 hover:border-vinyl-label/50 hover:text-vinyl-label'
-          }`}
+        aria-pressed={isFavorited}
+        className={`ed-btn ${isFavorited ? '!border-edition !text-edition' : ''}`}
         title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
       >
-        {isFavorited ? '❤️ SAVED' : '🤍 SAVE'}
+        {isFavorited ? 'Saved' : 'Save'}
       </button>
 
       {/* Animation overlay */}
       {showAnimation && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="text-vinyl-label text-3xl animate-scale-in">
-            ❤️
-          </div>
+          <div className="ed-label text-edition">Saved</div>
         </div>
       )}
     </div>

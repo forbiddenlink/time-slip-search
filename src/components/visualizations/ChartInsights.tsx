@@ -30,7 +30,7 @@ export function ChartInsights({ results, year }: Readonly<ChartInsightsProps>) {
     }),
     values: topSongsByWeeks.map(song => song.weeks_on_chart || 0),
     label: 'Weeks on Chart',
-    color: '#00d9ff', // phosphor-teal
+    color: '#17140F', // ink
   }
 
   // Chart positions distribution (only if we have position data)
@@ -58,7 +58,7 @@ export function ChartInsights({ results, year }: Readonly<ChartInsightsProps>) {
       labels: distribution.map(d => d.label),
       values: distribution.map(d => d.count),
       label: 'Songs',
-      color: '#ffa500', // phosphor-amber
+      color: '#B3261E', // edition red
     }
   }
 
@@ -71,14 +71,10 @@ export function ChartInsights({ results, year }: Readonly<ChartInsightsProps>) {
   }
 
   return (
-    <div className="mt-8 space-y-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="h-px flex-1 bg-crt-light/20" />
-        <h2 className="text-phosphor-amber text-xl led-text tracking-widest">DATA INSIGHTS</h2>
-        <div className="h-px flex-1 bg-crt-light/20" />
-      </div>
+    <section aria-labelledby="sec-data" className="border-t-[3px] border-ink px-5 py-6 md:px-10">
+      <h3 id="sec-data" className="ed-label border-b-2 border-ink pb-2">By the numbers</h3>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Weeks on Chart */}
         {weeksChartData.values.length > 0 && (
           <DataVisualization
@@ -98,9 +94,7 @@ export function ChartInsights({ results, year }: Readonly<ChartInsightsProps>) {
         )}
       </div>
 
-      <div className="text-center text-aged-cream/60 text-xs led-text mt-4">
-        📈 VISUALIZATIONS POWERED BY BILLBOARD CHART DATA
-      </div>
-    </div>
+      <p className="mt-6 ed-label text-faded">Source: Billboard chart data</p>
+    </section>
   )
 }

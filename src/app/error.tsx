@@ -8,8 +8,8 @@ interface ErrorProps {
 }
 
 /**
- * Root error boundary for the application
- * Catches errors in page components and displays a retro-styled error screen
+ * Root error boundary for the application.
+ * Catches errors in page components and shows a correction notice on the same paper as the home page.
  */
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
@@ -18,80 +18,32 @@ export default function Error({ error, reset }: ErrorProps) {
   }, [error])
 
   return (
-    <div className="min-h-screen bg-crt-black flex items-center justify-center p-4">
-      <div className="crt-screen p-8 max-w-lg w-full border-2 border-vhs-red/50">
-        {/* Error Header */}
-        <div className="text-center space-y-4">
-          {/* VHS Error indicator */}
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-3 h-3 rounded-full bg-vhs-red animate-pulse" />
-            <span className="led-text text-vhs-red text-sm tracking-widest">
-              TRACKING ERROR
-            </span>
+    <main className="flex min-h-screen items-center justify-center p-4">
+      <div className="ed-sheet w-full max-w-xl px-5 py-10 text-center md:px-10">
+        <p className="ed-label text-edition">Correction</p>
+        <h1 className="mt-3 font-display text-4xl italic text-balance md:text-5xl">This edition did not print</h1>
+        <div className="mt-4 h-[7px] border-b border-t-[3px] border-ink" aria-hidden="true" />
+        <p className="mt-4 font-body text-lg text-pretty">
+          Something went wrong on our side. Try again, or go back to the start.
+        </p>
+
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 border border-ink/40 p-3 text-left">
+            <p className="ed-label text-faded">Error details</p>
+            <p className="break-all font-mono text-xs">{error.message}</p>
+            {error.digest && <p className="mt-1 font-mono text-xs text-faded">Digest: {error.digest}</p>}
           </div>
+        )}
 
-          {/* Error icon */}
-          <div className="text-6xl mb-4">
-            <span className="animate-flicker inline-block">
-              &#x26A0;
-            </span>
-          </div>
-
-          {/* Error title */}
-          <h1 className="font-display text-2xl text-aged-cream">
-            Signal Lost
-          </h1>
-
-          {/* Error description */}
-          <p className="text-aged-cream/70 text-sm max-w-sm mx-auto">
-            The time machine encountered an unexpected temporal disturbance.
-            Please adjust your tracking and try again.
-          </p>
-
-          {/* Technical details (in dev mode) */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-4 p-3 bg-crt-dark border border-crt-light/20 rounded text-left">
-              <p className="text-phosphor-amber text-xs font-mono mb-1">ERROR DETAILS:</p>
-              <p className="text-aged-cream/60 text-xs font-mono break-all">
-                {error.message}
-              </p>
-              {error.digest && (
-                <p className="text-aged-cream/40 text-xs font-mono mt-1">
-                  Digest: {error.digest}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Action buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-          <button
-            onClick={reset}
-            className="retro-btn px-6 py-3 bg-crt-medium border-2 border-phosphor-teal text-phosphor-teal
-                       hover:bg-phosphor-teal hover:text-crt-black transition-all duration-200
-                       focus:outline-none focus:ring-2 focus:ring-phosphor-teal focus:ring-offset-2 focus:ring-offset-crt-black"
-          >
-            <span className="led-text text-sm tracking-wider">TRY AGAIN</span>
+        <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+          <button type="button" onClick={reset} className="ed-btn">
+            Try again
           </button>
-
-          <a
-            href="/"
-            className="retro-btn px-6 py-3 bg-crt-dark border-2 border-crt-light/40 text-aged-cream
-                       hover:border-aged-cream/60 transition-all duration-200 text-center
-                       focus:outline-none focus:ring-2 focus:ring-aged-cream focus:ring-offset-2 focus:ring-offset-crt-black"
-          >
-            <span className="led-text text-sm tracking-wider">BACK TO START</span>
+          <a href="/" className="ed-btn inline-flex items-center justify-center">
+            Back to start
           </a>
         </div>
-
-        {/* Decorative element */}
-        <div className="mt-8 flex items-center gap-2 justify-center text-crt-light/40 text-xs">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-crt-light/20" />
-          <span className="font-mono">ERR_TEMPORAL_FLUX</span>
-          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-crt-light/20" />
-        </div>
       </div>
-    </div>
+    </main>
   )
 }
