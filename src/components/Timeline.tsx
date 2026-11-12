@@ -149,7 +149,7 @@ export function Timeline({
           return (
             <div key={year} className="group/marker absolute bottom-0 top-0" style={{ left: `${position}%` }}>
               <div className="h-full w-px bg-ink/50" />
-              <span className="absolute -top-5 left-0 -translate-x-1/2 whitespace-nowrap ed-label !text-[0.6rem] text-faded">
+              <span className="absolute hidden lg:block -top-5 left-0 -translate-x-1/2 whitespace-nowrap ed-label !text-[0.6rem] text-faded">
                 {label}
               </span>
             </div>
