@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { InfoPageHeader, InfoPanel } from '@/components/layout/InfoPage'
+import { SiteFooter } from '@/components/layout/SiteChrome'
 import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
@@ -37,7 +38,8 @@ export default async function ContactPage() {
   }
 
   return (
-    <main className="min-h-screen bg-crt-black text-aged-cream">
+    <div className="bg-ink">
+    <main className="min-h-[70vh] bg-ink text-aged-cream">
       <div className="container mx-auto max-w-3xl px-4 py-12 space-y-8">
         <InfoPageHeader />
         <InfoPanel>
@@ -106,6 +108,8 @@ export default async function ContactPage() {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
-    </main >
+    </main>
+    <SiteFooter />
+    </div>
   )
 }

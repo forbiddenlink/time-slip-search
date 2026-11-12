@@ -13,8 +13,14 @@ module.exports = {
     extend: {
       colors: {
         // Retro-Analog palette - Enhanced v2.0
+        // Edition palette (front-page concept)
+        'ink': '#17140F',
+        'newsprint': '#EFE6D2',
+        'faded': '#5A5144',
+        'muted': '#A89C86',
+        'edition': '#B3261E',
         'crt': {
-          black: '#0a0908',
+          black: '#17140F',
           dark: '#1a1815',
           medium: '#2d2a26',
           light: '#3d3a35',
@@ -50,7 +56,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        'display': ['Playfair Display', 'Georgia', 'serif'],
+        'display': ['var(--font-display)', 'Old Standard TT', 'Georgia', 'serif'],
+        'nameplate': ['var(--font-nameplate)', 'UnifrakturMaguntia', 'Georgia', 'serif'],
+        'label': ['var(--font-label)', 'Libre Franklin', 'Arial', 'sans-serif'],
         'mono': ['VT323', 'Courier New', 'monospace'],
         'body': ['Source Serif 4', 'Georgia', 'serif'],
       },

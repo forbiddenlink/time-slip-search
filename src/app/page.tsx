@@ -8,42 +8,18 @@ const modifiedDate = '2026-02-07'
 
 function HomeSeoFallback() {
   return (
-    <main className="min-h-screen bg-crt-black text-aged-cream">
+    <main className="min-h-screen bg-ink text-newsprint">
       <div className="container mx-auto max-w-4xl px-4 py-10 space-y-8">
-        <header className="mb-12">
-          {/* Top control strip match */}
-          <div className="flex items-center justify-between mb-6 px-2">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-vhs-red opacity-80" />
-              <span className="led-text text-vhs-red text-sm tracking-widest">REC</span>
-            </div>
-            <div className="led-display">
-              <span className="text-phosphor-amber text-lg tracking-wider">
-                --:--
-              </span>
-            </div>
-          </div>
-
-          <div className="text-center space-y-4">
-            <h1 className="font-display text-5xl md:text-8xl lg:text-9xl tracking-tight leading-none">
-              <span className="text-phosphor-teal inline-block">Time</span>
-              <span className="text-phosphor-amber inline-block ml-1">Slip</span>
-            </h1>
-            <div className="flex items-center justify-center gap-4">
-              <div className="h-px flex-1 max-w-[120px] bg-gradient-to-r from-transparent via-phosphor-teal/40 to-transparent" />
-              <p className="led-text text-phosphor-amber text-2xl tracking-[0.4em] uppercase">
-                Search
-              </p>
-              <div className="h-px flex-1 max-w-[120px] bg-gradient-to-l from-transparent via-phosphor-teal/40 to-transparent" />
-            </div>
-            <p className="text-aged-cream/70 text-lg italic font-body max-w-md mx-auto">
-              Your cultural time machine — see the #1 song, the movies, the prices, and the headlines from any date
-            </p>
-          </div>
+        <header className="ed-sheet px-5 py-6 text-center md:px-10">
+          <h1 className="font-nameplate text-[clamp(3rem,10vw,7rem)] leading-none">TimeSlip Search</h1>
+          <div className="mt-3 h-[7px] border-b border-t-[3px] border-ink" aria-hidden="true" />
+          <p className="mt-3 font-display text-lg italic">
+            The #1 song, the movies, the prices and the headlines from any day you pick.
+          </p>
         </header>
 
         <div className="sr-only">
-          <article className="space-y-4 text-aged-cream/80 leading-relaxed">
+          <article className="space-y-4 text-newsprint/90 leading-relaxed">
             <p>
               TimeSlipSearch is a date-based history and culture explorer built for people who want to reconnect with a specific moment in time. You can enter a birthday, a graduation date, a major news date, or even a broad era like the summer of 1969. The app then assembles an instant snapshot from that date, combining music charts, films, economic context, and notable events so you can understand what daily life and pop culture looked like at that exact point in history.
             </p>
@@ -55,11 +31,11 @@ function HomeSeoFallback() {
             </p>
             <p>
               Data sources include public references such as the{' '}
-              <a className="underline hover:text-phosphor-teal" href="https://www.billboard.com/charts/hot-100/" target="_blank" rel="noopener noreferrer">
+              <a className="underline hover:text-white" href="https://www.billboard.com/charts/hot-100/" target="_blank" rel="noopener noreferrer">
                 Billboard Hot 100
               </a>{' '}
               and the{' '}
-              <a className="underline hover:text-phosphor-teal" href="https://api.wikimedia.org/wiki/Feed_API/Reference/On_this_day" target="_blank" rel="noopener noreferrer">
+              <a className="underline hover:text-white" href="https://api.wikimedia.org/wiki/Feed_API/Reference/On_this_day" target="_blank" rel="noopener noreferrer">
                 Wikimedia On This Day feed
               </a>
               .
@@ -70,18 +46,7 @@ function HomeSeoFallback() {
           </article>
         </div>
 
-        {/* Visual Skeleton to match HomeClient */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-32 bg-crt-dark border border-crt-light/20 rounded opacity-50" />
-          ))}
-        </div>
-
-        <div className="border-4 border-crt-medium h-[500px] bg-crt-black relative opacity-50">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="led-text text-phosphor-teal animate-pulse">LOADING SYSTEM...</span>
-          </div>
-        </div>
+        <div className="ed-sheet h-64 opacity-60" aria-hidden="true" />
       </div>
     </main>
   )

@@ -6,7 +6,7 @@
 
 :root {
   /* Core palette - Enhanced for better depth */
-  --crt-black: #0a0908;
+  --crt-black: #17140f;
   --crt-dark: #1a1815;
   --crt-medium: #2d2a26;
   --crt-light: #3d3a35;
@@ -1403,4 +1403,85 @@ a:focus-visible {
 
 .spine-tab:last-child {
   border-right: 0;
+}
+
+/* === EDITION (front-page concept) === */
+
+.ed-sheet {
+  background: #efe6d2;
+  color: #17140f;
+  box-shadow: 1px 1px 0 #a89c86, 6px 8px 0 rgba(0, 0, 0, 0.35);
+}
+
+.ed-label {
+  font-family: var(--font-label), Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ed-leader {
+  flex: 1;
+  align-self: flex-end;
+  margin: 0 0.5rem 0.35em;
+  border-bottom: 2px dotted currentColor;
+  opacity: 0.55;
+  min-width: 1.5rem;
+}
+
+.ed-skeleton-line {
+  height: 0.5rem;
+  background: repeating-linear-gradient(90deg, #5a5144 0 6px, transparent 6px 9px);
+  opacity: 0.45;
+}
+
+.ed-roller {
+  height: 6px;
+  background: #b3261e;
+}
+
+.ed-printing .ed-roller {
+  background: repeating-linear-gradient(90deg, #b3261e 0 14px, #17140f 14px 28px);
+  background-size: 56px 100%;
+  animation: ed-roller 0.6s linear infinite;
+}
+
+.ed-printing .ed-skeleton-line {
+  animation: ed-wipe 1.2s ease-in-out infinite;
+}
+
+.ed-out {
+  animation: ed-press-out 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ed-roller {
+  to { background-position: 56px 0; }
+}
+
+@keyframes ed-wipe {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes ed-press-out {
+  from { transform: translateY(24px); clip-path: inset(0 0 100% 0); opacity: 0.4; }
+  to { transform: translateY(0); clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+@media (max-width: 640px) {
+  .ed-out { animation-name: ed-press-out-short; }
+  @keyframes ed-press-out-short {
+    from { transform: translateY(12px); clip-path: inset(0 0 100% 0); opacity: 0.4; }
+    to { transform: translateY(0); clip-path: inset(0 0 0 0); opacity: 1; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-out, .ed-printing .ed-roller, .ed-printing .ed-skeleton-line { animation: none; }
+}
+
+.ed-focus:focus-visible {
+  outline: 3px solid #17140f;
+  outline-offset: 3px;
 }
