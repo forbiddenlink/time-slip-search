@@ -101,4 +101,15 @@ describe('Date Parser', () => {
       expect(parseDate('from 1980 to 1985')?.anchor).toBeUndefined()
     })
   })
+
+  describe('Compare button query', () => {
+    it('treats "Year 1997" like the bare year 1997', () => {
+      const result = parseDate('Year 1997')
+      expect(result).not.toBeNull()
+      expect(result?.year).toBe(1997)
+      expect(result?.month).toBeUndefined()
+      expect(result?.display).toBe('1997')
+      expect(result?.anchor).toBe(parseDate('1997')?.anchor)
+    })
+  })
 })

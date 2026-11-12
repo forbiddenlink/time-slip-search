@@ -132,8 +132,8 @@ export function parseDate(input: string): DateRange | null {
     };
   }
 
-  // Plain year like "1980"
-  const yearMatch = cleanedInput.match(/^(\d{4})$/);
+  // Plain year like "1980", or "Year 1980" (the Compare button's query)
+  const yearMatch = cleanedInput.match(/^(?:year\s+)?(\d{4})$/);
   if (yearMatch && yearMatch[1]) {
     const year = parseInt(yearMatch[1]);
     // Return result for ANY year, let the API handle out-of-range messaging
