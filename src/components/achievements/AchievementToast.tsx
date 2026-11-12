@@ -37,12 +37,12 @@ export function AchievementToast({ achievement, onDismiss }: AchievementToastPro
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}
           transition={{ duration: 0.25 }}
-          className="fixed bottom-4 right-4 z-50 w-[calc(100%-2rem)] max-w-sm border-2 border-ink bg-newsprint p-4 text-ink shadow-[4px_4px_0_0_#17140F]"
+          className="fixed bottom-3 right-3 z-50 w-[calc(100%-1.5rem)] max-w-sm border-2 border-ink bg-newsprint p-3 sm:bottom-4 sm:right-4 sm:p-4 text-ink shadow-[4px_4px_0_0_#17140F]"
         >
           <p className="ed-label text-edition">Badge earned / {getRarityLabel(achievement.rarity)}</p>
           <h3 className="mt-1 pr-8 font-display text-xl">{achievement.title}</h3>
-          <p className="mt-1 font-body text-sm">{achievement.description}</p>
-          <p className="mt-2 ed-label text-faded">+{achievement.points} points</p>
+          <p className="mt-1 hidden font-body text-sm sm:block">{achievement.description}</p>
+          <p className="mt-2 hidden ed-label text-faded sm:block">+{achievement.points} points</p>
           <button
             type="button"
             onClick={() => {

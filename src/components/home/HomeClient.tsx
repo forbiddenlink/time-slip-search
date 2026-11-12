@@ -192,7 +192,6 @@ function HomeContent() {
     setComparisonState(null)
     setShowAutocomplete(false)
     const userMessage = query.trim()
-    setQuery('')
     setMessages(prev => [...prev, { role: 'user', content: userMessage }])
     setIsLoading(true)
     requestAnimationFrame(() => {
@@ -435,7 +434,7 @@ function HomeContent() {
         {/* === HERO: the front page. The dateline is the search field. === */}
         <div className={`ed-sheet ${isLoading ? 'ed-printing' : ''}`}>
           <div className="px-5 pt-5 md:px-10 md:pt-6">
-            <div className="flex items-center justify-between ed-label text-faded">
+            <div className="flex flex-col items-center gap-1 text-center ed-label text-faded sm:flex-row sm:justify-between">
               <span>Editions 1958 to 2020</span>
               <span>Search any date</span>
             </div>
@@ -452,22 +451,16 @@ function HomeContent() {
             <label htmlFor="date-input" className="ed-label text-faded">Edition for</label>
             <div className="mt-1 flex flex-col gap-4 md:flex-row md:items-end">
               <div className="relative flex-1">
-                <span
-                  aria-hidden="true"
-                  className={`ed-label block h-4 text-faded ${query === '' ? '' : 'invisible'}`}
-                >
-                  For example
-                </span>
                 <input
                   id="date-input"
                   type="text"
                   value={query}
                   onChange={(e) => handleQueryChange(e.target.value)}
                   onFocus={() => query.length > 0 && setShowAutocomplete(true)}
-                  placeholder="March 15, 1987"
+                  placeholder="e.g. March 15, 1987"
                   autoComplete="off"
                   aria-label="Enter a date to search, like your birthday or a year"
-                  className="ed-focus w-full bg-transparent py-1 font-display text-[clamp(2.25rem,7vw,5.5rem)] italic leading-tight text-ink placeholder:text-ink/40 focus:outline-none disabled:opacity-60"
+                  className="ed-focus w-full bg-transparent py-1 font-display text-[clamp(1.75rem,7vw,5.5rem)] italic leading-tight text-ink placeholder:text-ink/40 focus:outline-none disabled:opacity-60"
                   disabled={isLoading}
                 />
                 <div className="ed-roller" aria-hidden="true" />
