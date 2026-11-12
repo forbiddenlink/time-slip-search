@@ -1,6 +1,9 @@
 import Link from 'next/link'
 import { SiteHeader, SiteFooter } from '@/components/layout/SiteChrome'
 
+// Dynamic so the CSP nonce from proxy.ts is applied to its scripts; a static 404 renders blank under that CSP.
+export const dynamic = 'force-dynamic'
+
 export default function NotFound() {
   return (
     <div className="min-h-screen">
