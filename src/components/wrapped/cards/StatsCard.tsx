@@ -58,25 +58,21 @@ export function StatsCard({ stats, onNext }: Readonly<StatsCardProps>) {
     {
       label: 'Time Travels',
       value: stats.totalSearches,
-      icon: '🔍',
       delay: 0.2,
     },
     {
       label: 'Years Explored',
       value: stats.yearsExplored.length,
-      icon: '📅',
       delay: 0.4,
     },
     {
       label: 'Songs Discovered',
       value: stats.discoveries.totalSongs,
-      icon: '🎵',
       delay: 0.6,
     },
     {
       label: 'Movies Found',
       value: stats.discoveries.totalMovies,
-      icon: '🎬',
       delay: 0.8,
     },
   ]
@@ -86,56 +82,31 @@ export function StatsCard({ stats, onNext }: Readonly<StatsCardProps>) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center min-h-[500px] p-8"
+      className="flex min-h-[500px] flex-col items-center justify-center px-6 pb-16 pt-8"
     >
-      {/* Header */}
-      <motion.h2
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="font-display text-4xl md:text-5xl mb-8 text-center"
-      >
-        <span className="title-glow-teal">Your Numbers</span>
-      </motion.h2>
+      <h2 className="text-center font-display text-4xl italic md:text-5xl">Your numbers</h2>
+      <p className="mt-1 ed-label text-faded">By the figures</p>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-6 w-full max-w-md mb-8">
+      <dl className="mt-8 grid w-full max-w-md grid-cols-2 border-y-2 border-ink">
         {statItems.map((stat, index) => (
           <motion.div
             key={stat.label}
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: stat.delay, duration: 0.5 }}
-            className="bg-crt-dark border border-crt-light/40 rounded-lg p-6 text-center"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: stat.delay, duration: 0.4 }}
+            className={`px-4 py-5 text-center ${index % 2 === 0 ? 'border-r border-ink' : ''} ${index > 1 ? 'border-t border-ink' : ''}`}
           >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: stat.delay + 0.2, type: 'spring' }}
-              className="text-3xl mb-2"
-            >
-              {stat.icon}
-            </motion.div>
-            <div className="text-4xl font-bold mb-1 led-text text-phosphor-teal">
+            <dd className="font-display text-4xl">
               <AnimatedCounter value={stat.value} duration={2000 + index * 300} />
-            </div>
-            <div className="text-sm text-aged-cream/50 led-text tracking-wider">
-              {stat.label}
-            </div>
+            </dd>
+            <dt className="mt-1 ed-label text-faded">{stat.label}</dt>
           </motion.div>
         ))}
-      </div>
+      </dl>
 
-      {/* Continue hint */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        onClick={onNext}
-        className="text-phosphor-teal/60 hover:text-phosphor-teal led-text text-sm tracking-wider
-                   transition-colors flex items-center gap-2"
-      >
-        TAP TO CONTINUE →
-      </motion.button>
+      <button type="button" onClick={onNext} className="ed-btn mt-8">
+        Next page
+      </button>
     </motion.div>
   )
 }

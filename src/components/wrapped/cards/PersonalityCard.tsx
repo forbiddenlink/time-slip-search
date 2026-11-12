@@ -20,90 +20,23 @@ export function PersonalityCard({ stats, onNext }: Readonly<PersonalityCardProps
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center min-h-[500px] p-8 text-center"
+      className="flex min-h-[500px] flex-col items-center justify-center px-6 pb-16 pt-8 text-center"
     >
-      {/* Emoji reveal with dramatic animation */}
-      <motion.div
-        initial={{ scale: 0, rotate: -180 }}
-        animate={{ scale: 1, rotate: 0 }}
-        transition={{
-          type: 'spring',
-          stiffness: 200,
-          damping: 15,
-          delay: 0.2,
-        }}
-        className="relative mb-6"
-      >
-        {/* Glow effect */}
-        <motion.div
-          className="absolute inset-0 text-9xl blur-2xl"
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          {personality.emoji}
-        </motion.div>
-        <span className="text-9xl relative z-10">{personality.emoji}</span>
-      </motion.div>
+      <p className="ed-label text-edition">Profile of the reader</p>
+      <h2 className="mt-3 font-display text-4xl italic text-balance md:text-5xl">{personality.title}</h2>
+      <p className="mt-4 max-w-md font-body text-lg text-pretty">{personality.description}</p>
 
-      {/* Personality type */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="mb-4"
-      >
-        <span className="text-phosphor-amber/60 text-sm led-text tracking-widest">
-          YOU ARE A
-        </span>
-      </motion.div>
-
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-        className="font-display text-4xl md:text-5xl mb-4 text-phosphor-teal"
-      >
-        {personality.title}
-      </motion.h2>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="text-aged-cream/70 text-lg font-body italic max-w-md mb-8"
-      >
-        {personality.description}
-      </motion.p>
-
-      {/* Era Affinity */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
-        className="bg-crt-dark border border-phosphor-amber/30 rounded-lg p-6 mb-8"
-      >
-        <div className="text-phosphor-amber/60 text-sm led-text tracking-widest mb-2">
-          YOUR ERA
-        </div>
-        <div className="font-display text-5xl text-phosphor-amber">
-          {eraAffinity}
-        </div>
-        <div className="text-aged-cream/60 text-sm mt-2 font-body italic max-w-xs mx-auto">
+      <div className="mt-8 w-full max-w-xs border-y-2 border-ink py-5">
+        <div className="ed-label text-faded">Your era</div>
+        <div className="mt-1 font-display text-5xl">{eraAffinity}</div>
+        <div className="mx-auto mt-2 max-w-xs font-body text-sm italic text-faded">
           {eraAffinityData.reason}
         </div>
-      </motion.div>
+      </div>
 
-      {/* Continue */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        onClick={onNext}
-        className="text-phosphor-teal/60 hover:text-phosphor-teal led-text text-sm tracking-wider
-                   transition-colors flex items-center gap-2"
-      >
-        TAP TO CONTINUE →
-      </motion.button>
+      <button type="button" onClick={onNext} className="ed-btn mt-8">
+        Next page
+      </button>
     </motion.div>
   )
 }
