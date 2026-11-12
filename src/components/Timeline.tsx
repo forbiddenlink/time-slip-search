@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { getEra, DECADE_CHAPTERS } from '@/lib/archive'
+import { getEra, clampToArchive, DECADE_CHAPTERS, ARCHIVE_MIN_YEAR, ARCHIVE_MAX_YEAR } from '@/lib/archive'
 import type { TimelineDensityResponse } from '@/app/api/timeline/density/route'
 
 interface TimelineProps {
@@ -19,17 +19,18 @@ function syntheticDensity(year: number, minYear: number, maxYear: number): numbe
 }
 
 export function Timeline({
-  currentYear,
+  currentYear: selectedYear,
   onYearSelect,
-  minYear = 1958,
-  maxYear = 2020,
+  minYear = ARCHIVE_MIN_YEAR,
+  maxYear = ARCHIVE_MAX_YEAR,
 }: TimelineProps) {
   const [hoveredYear, setHoveredYear] = useState<number | null>(null)
   const [density, setDensity] = useState<Record<number, number> | null>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
 
+  const currentYear = clampToArchive(selectedYear, minYear, maxYear)
   const yearRange = maxYear - minYear
-  const currentPosition = Math.min(100, Math.max(0, ((currentYear - minYear) / yearRange) * 100))
+  const currentPosition = ((currentYear - minYear) / yearRange) * 100
 
   // Era follows the cursor while scrubbing, otherwise the selected year.
   const activeYear = hoveredYear ?? currentYear
