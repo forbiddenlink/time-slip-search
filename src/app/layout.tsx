@@ -1,34 +1,35 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Source_Serif_4, VT323, Special_Elite } from 'next/font/google'
+import { Old_Standard_TT, Source_Serif_4, UnifrakturMaguntia, Libre_Franklin } from 'next/font/google'
 import './globals.css'
 import { Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { RetroAudioProvider } from '@/components/layout/RetroAudioProvider'
 
-const playfair = Playfair_Display({
+const oldStandard = Old_Standard_TT({
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
   subsets: ['latin'],
   variable: '--font-display',
+  display: 'swap',
+})
+
+const unifraktur = UnifrakturMaguntia({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-nameplate',
+  display: 'swap',
+})
+
+const libreFranklin = Libre_Franklin({
+  subsets: ['latin'],
+  variable: '--font-label',
   display: 'swap',
 })
 
 const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
   variable: '--font-body',
-  display: 'swap',
-})
-
-const vt323 = VT323({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-led',
-  display: 'swap',
-})
-
-const specialElite = Special_Elite({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-typewriter',
   display: 'swap',
 })
 
@@ -79,7 +80,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${sourceSerif.variable} ${vt323.variable} ${specialElite.variable}`}>
+    <html lang="en" className={`${oldStandard.variable} ${unifraktur.variable} ${libreFranklin.variable} ${sourceSerif.variable}`}>
       <head>
         <meta httpEquiv="content-type" content="text/html; charset=utf-8" />
       </head>

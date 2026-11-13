@@ -1,26 +1,35 @@
 import Link from 'next/link'
+import { SiteHeader, SiteFooter } from '@/components/layout/SiteChrome'
+
+// Dynamic so the CSP nonce from proxy.ts is applied to its scripts; a static 404 renders blank under that CSP.
+export const dynamic = 'force-dynamic'
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-crt-black text-aged-cream">
-      <div className="container mx-auto max-w-2xl px-4 py-20 text-center space-y-6">
-        <p className="led-text text-phosphor-amber text-sm tracking-[0.2em]">404</p>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight">Tape Not Found</h1>
-        <p className="text-aged-cream/80">
-          The page you requested is missing or may have moved.
-        </p>
-        <div className="flex justify-center gap-4 text-sm led-text tracking-wider">
-          <Link href="/" className="hover:text-phosphor-teal transition-colors">
-            HOME
-          </Link>
-          <Link href="/about" className="hover:text-phosphor-teal transition-colors">
-            ABOUT
-          </Link>
-          <Link href="/contact" className="hover:text-phosphor-teal transition-colors">
-            CONTACT
-          </Link>
+    <div className="min-h-screen">
+      <SiteHeader />
+      <main className="mx-auto max-w-3xl px-4 py-12 md:py-16">
+        <div className="ed-sheet px-5 py-10 text-center md:px-10">
+          <p className="ed-label text-edition">Error 404</p>
+          <h1 className="mt-3 font-display text-5xl italic text-balance md:text-6xl">Page not found</h1>
+          <div className="mx-auto mt-4 h-[7px] max-w-md border-b border-t-[3px] border-ink" aria-hidden="true" />
+          <p className="mt-4 font-body text-lg text-pretty">
+            This page is not in the archive. It may have moved, or the address may have a typo.
+          </p>
+          <nav aria-label="Other pages" className="mt-6 flex flex-wrap justify-center gap-x-6">
+            <Link href="/" className="ed-label inline-flex min-h-11 items-center underline underline-offset-4 hover:text-edition">
+              Home
+            </Link>
+            <Link href="/about" className="ed-label inline-flex min-h-11 items-center underline underline-offset-4 hover:text-edition">
+              About
+            </Link>
+            <Link href="/contact" className="ed-label inline-flex min-h-11 items-center underline underline-offset-4 hover:text-edition">
+              Contact
+            </Link>
+          </nav>
         </div>
-      </div>
-    </main>
+      </main>
+      <SiteFooter />
+    </div>
   )
 }

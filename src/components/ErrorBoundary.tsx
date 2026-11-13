@@ -35,16 +35,14 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="p-6 text-center border rounded bg-crt-dark border-vhs-red/50">
-          <div className="mb-3 text-sm tracking-widest led-text text-vhs-red">
-            ERROR
-          </div>
-          <p className="mb-4 text-aged-cream/80">
+        <div role="alert" className="border-y-2 border-edition p-6 text-center text-ink">
+          <p className="mb-3 ed-label text-edition">Correction</p>
+          <p className="mb-4 font-body text-base">
             Something went wrong displaying this content.
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: undefined })}
-            className="px-4 py-2 text-sm transition-all border rounded bg-crt-dark border-phosphor-teal/30 hover:border-phosphor-teal hover:shadow-glow-teal text-aged-cream hover-lift led-text"
+            className="ed-btn"
           >
             Try Again
           </button>
@@ -61,8 +59,8 @@ export function VisualizationErrorBoundary({ children }: { children: ReactNode }
   return (
     <ErrorBoundary
       fallback={
-        <div className="p-4 text-center border rounded bg-crt-dark border-crt-light/30">
-          <p className="text-sm text-aged-cream/60">Unable to load visualization</p>
+        <div className="border-y border-ink/40 p-4 text-center">
+          <p className="font-body text-sm text-faded">Unable to load visualization</p>
         </div>
       }
     >

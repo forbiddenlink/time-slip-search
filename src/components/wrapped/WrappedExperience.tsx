@@ -9,7 +9,6 @@ import { PersonalityCard } from './cards/PersonalityCard'
 import { TopItemsCard } from './cards/TopItemsCard'
 import { HeatMapCard } from './cards/HeatMapCard'
 import { ShareCard } from './cards/ShareCard'
-import { XIcon } from '@/components/icons/Icons'
 
 type CardState = 'intro' | 'stats' | 'personality' | 'topItems' | 'heatMap' | 'share'
 
@@ -138,38 +137,36 @@ export function WrappedExperience({ stats, onClose }: Readonly<WrappedExperience
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Your Wrapped special edition"
+      className="fixed inset-0 z-50 overflow-y-auto bg-ink/95"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-50 p-2 text-aged-cream/50 hover:text-phosphor-teal
-                   bg-crt-black/50 hover:bg-crt-black rounded-full transition-colors"
-        aria-label="Close"
-      >
-        <XIcon size={24} />
-      </button>
-
       {/* Card container */}
-      <div className="flex items-center justify-center min-h-screen p-4">
+      <div className="flex min-h-screen items-center justify-center p-4">
         <div className="relative w-full max-w-2xl">
-          {/* VHS Border decoration */}
-          <div className="absolute inset-0 bg-crt-dark border-4 border-crt-medium rounded-2xl -z-10" />
-
-          {/* Main card area */}
-          <div className="relative bg-crt-dark rounded-2xl overflow-hidden border border-crt-light/40 min-h-[600px]">
-            {/* VHS Label Strip */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-crt-light/20">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-vhs-red animate-pulse" />
-                <span className="led-text text-vhs-red text-xs tracking-widest">WRAPPED</span>
+          {/* The sheet */}
+          <div className="ed-sheet relative min-h-[600px] overflow-hidden text-ink">
+            {/* Masthead strip */}
+            <div className="px-5 pt-4 md:px-8">
+              <div className="flex items-center justify-between gap-3 ed-label text-faded">
+                <span>Special edition: Wrapped</span>
+                <span>
+                  Page {currentIndex + 1} of {CARD_ORDER.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="ed-btn !min-h-11 !px-3 text-ink"
+                  aria-label="Close"
+                >
+                  Close
+                </button>
               </div>
-              <span className="led-text text-aged-cream/60 text-xs">
-                {currentIndex + 1} / {CARD_ORDER.length}
-              </span>
+              <div className="mt-3 h-[7px] border-b border-t-[3px] border-ink" aria-hidden="true" />
             </div>
 
             {/* Card content */}
@@ -188,21 +185,21 @@ export function WrappedExperience({ stats, onClose }: Readonly<WrappedExperience
               </motion.div>
             </AnimatePresence>
 
-            {/* Navigation dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {/* Page index */}
+            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1">
               {CARD_ORDER.map((_, index) => (
                 <button
                   key={index}
+                  type="button"
                   onClick={() => goToCard(index)}
-                  className={`
-                    w-2 h-2 rounded-full transition-all duration-300
-                    ${index === currentIndex
-                      ? 'bg-phosphor-teal w-6'
-                      : 'bg-crt-light/40 hover:bg-phosphor-teal/60'
-                    }
-                  `}
-                  aria-label={`Go to card ${index + 1}`}
-                />
+                  aria-current={index === currentIndex ? 'page' : undefined}
+                  className="flex h-11 w-8 items-center justify-center"
+                  aria-label={`Go to page ${index + 1}`}
+                >
+                  <span
+                    className={`block h-[3px] w-full ${index === currentIndex ? 'bg-edition' : 'bg-ink/30'}`}
+                  />
+                </button>
               ))}
             </div>
           </div>
@@ -210,9 +207,7 @@ export function WrappedExperience({ stats, onClose }: Readonly<WrappedExperience
       </div>
 
       {/* Navigation hints */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-aged-cream/40 text-xs led-text tracking-wider">
-        ← → ARROWS &bull; SWIPE &bull; ESC TO CLOSE
-      </div>
+      <p className="pb-6 text-center ed-label text-muted">Arrow keys or swipe to turn the page. Esc to close.</p>
     </motion.div>
   )
 }

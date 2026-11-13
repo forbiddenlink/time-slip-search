@@ -96,119 +96,50 @@ Generated at timeslipsearch.vercel.app`
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center min-h-[500px] p-8 text-center"
+      className="flex min-h-[500px] flex-col items-center justify-center px-6 pb-16 pt-8 text-center"
     >
-      {/* Celebration */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-        className="text-7xl mb-6"
-      >
-        🎉
-      </motion.div>
+      <h2 className="font-display text-4xl italic md:text-5xl">That&apos;s a wrap</h2>
+      <p className="mt-2 max-w-md font-body text-lg">Send your edition to a friend.</p>
 
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="font-display text-4xl md:text-5xl mb-4"
-      >
-        <span className="title-glow-teal">That&apos;s a Wrap!</span>
-      </motion.h2>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-aged-cream/70 text-lg font-body italic mb-8 max-w-md"
-      >
-        Share your time-traveling adventures with friends
-      </motion.p>
-
-      {/* Share Buttons */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
-        className="flex flex-wrap justify-center gap-4 mb-8"
-      >
-        <button
-          onClick={handleShare}
-          className="px-6 py-3 bg-crt-dark border border-phosphor-teal rounded-lg
-                     led-text tracking-wider transition-all flex items-center gap-2
-                     hover:border-phosphor-teal hover:shadow-glow-teal hover:scale-105
-                     text-phosphor-teal"
-        >
-          <ShareIcon size={18} />
+      <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <button type="button" onClick={handleShare} className="ed-btn flex items-center gap-2">
+          <ShareIcon size={16} />
           Share
         </button>
-
-        <button
-          onClick={handleCopyStats}
-          className="px-6 py-3 bg-crt-dark border border-phosphor-amber/60 rounded-lg
-                     led-text tracking-wider transition-all flex items-center gap-2
-                     hover:border-phosphor-amber hover:shadow-glow-amber hover:scale-105
-                     text-phosphor-amber"
-        >
-          <CopyIcon size={18} />
-          Copy Stats
+        <button type="button" onClick={handleCopyStats} className="ed-btn flex items-center gap-2">
+          <CopyIcon size={16} />
+          Copy stats
         </button>
-
-        <button
-          onClick={handleDownload}
-          className="px-6 py-3 bg-crt-dark border border-aged-cream/40 rounded-lg
-                     led-text tracking-wider transition-all flex items-center gap-2
-                     hover:border-aged-cream hover:scale-105
-                     text-aged-cream/80"
-        >
-          <DownloadIcon size={18} />
+        <button type="button" onClick={handleDownload} className="ed-btn flex items-center gap-2">
+          <DownloadIcon size={16} />
           Download
         </button>
-      </motion.div>
+      </div>
 
-      {/* Mini Summary */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
-        className="bg-crt-dark border border-crt-light/30 rounded-lg p-6 max-w-sm w-full"
-      >
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-4xl">{personality.emoji}</span>
-          <div className="text-left">
-            <div className="font-display text-lg text-phosphor-teal">{personality.title}</div>
-            <div className="text-sm text-phosphor-amber led-text">{stats.topDecade} Era</div>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <div>
-            <div className="text-xl font-bold text-aged-cream">{stats.totalSearches}</div>
-            <div className="text-xs text-aged-cream/50 led-text">searches</div>
-          </div>
-          <div>
-            <div className="text-xl font-bold text-aged-cream">{stats.yearsExplored.length}</div>
-            <div className="text-xs text-aged-cream/50 led-text">years</div>
-          </div>
-          <div>
-            <div className="text-xl font-bold text-aged-cream">{stats.discoveries.totalSongs}</div>
-            <div className="text-xs text-aged-cream/50 led-text">songs</div>
-          </div>
-        </div>
-      </motion.div>
+      <div className="mt-8 w-full max-w-sm border-y-2 border-ink py-4 text-left">
+        <div className="font-display text-xl">{personality.title}</div>
+        <div className="ed-label text-edition">{stats.topDecade} era</div>
+        <dl className="mt-3 grid grid-cols-3 gap-2 text-center">
+          {[
+            [stats.totalSearches, 'searches'],
+            [stats.yearsExplored.length, 'years'],
+            [stats.discoveries.totalSongs, 'songs'],
+          ].map(([n, label]) => (
+            <div key={label}>
+              <dd className="font-display text-2xl">{n}</dd>
+              <dt className="ed-label text-faded">{label}</dt>
+            </div>
+          ))}
+        </dl>
+      </div>
 
-      {/* Close Button */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
+      <button
+        type="button"
         onClick={onClose}
-        className="mt-8 px-8 py-3 bg-phosphor-teal/20 border border-phosphor-teal rounded-lg
-                   text-phosphor-teal led-text tracking-widest
-                   hover:bg-phosphor-teal/30 transition-all"
+        className="ed-label mt-8 min-h-12 bg-edition px-8 py-3 text-sm text-[#fff8ea] hover:bg-[#9e1f18]"
       >
-        CLOSE
-      </motion.button>
+        Close
+      </button>
     </motion.div>
   )
 }

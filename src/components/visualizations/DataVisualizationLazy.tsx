@@ -27,20 +27,9 @@ interface DataVisualizationLazyProps {
 
 function DataVisualizationSkeleton() {
   return (
-    <div className="glass-card p-6 border border-crt-light/20 animate-pulse">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-6 h-6 bg-aged-cream/10 rounded" />
-        <div className="h-5 w-48 bg-aged-cream/10 rounded" />
-      </div>
-      <div className="h-[250px] relative bg-aged-cream/5 rounded flex items-center justify-center">
-        <div className="text-aged-cream/40 led-text text-sm">
-          Loading visualization...
-        </div>
-      </div>
-      <div className="mt-3 flex items-center justify-between">
-        <div className="h-3 w-24 bg-aged-cream/10 rounded" />
-        <div className="h-3 w-32 bg-aged-cream/10 rounded" />
-      </div>
+    <div className="border-y border-ink/40 py-4">
+      <div className="ed-skeleton-line h-4 w-48" />
+      <p className="mt-6 flex h-[250px] items-center justify-center ed-label text-faded">Loading chart</p>
     </div>
   )
 }

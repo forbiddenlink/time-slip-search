@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { InfoPageHeader, InfoPanel } from '@/components/layout/InfoPage'
+import { SiteFooter } from '@/components/layout/SiteChrome'
 import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
@@ -38,7 +39,8 @@ export default async function PrivacyPolicyPage() {
   }
 
   return (
-    <main className="min-h-screen bg-crt-black text-aged-cream">
+    <div className="bg-ink">
+    <main className="min-h-[70vh] bg-ink text-aged-cream">
       <div className="container mx-auto max-w-3xl px-4 py-12 space-y-8">
         <InfoPageHeader />
         <InfoPanel>
@@ -68,18 +70,18 @@ export default async function PrivacyPolicyPage() {
           </p>
           <p>
             You can request deletion of data associated with your messages by contacting{' '}
-            <a className="underline hover:text-phosphor-teal" href="mailto:hello@timeslipsearch.com">
+            <a className="underline hover:text-white" href="mailto:hello@timeslipsearch.com">
               hello@timeslipsearch.com
             </a>
             . We will review and handle valid requests in line with applicable law, including CCPA and GDPR requirements where relevant.
           </p>
           <p>
             For additional background on privacy rights and legal standards, refer to public regulatory resources such as the{' '}
-            <a className="underline hover:text-phosphor-teal" href="https://oag.ca.gov/privacy/ccpa" target="_blank" rel="noopener noreferrer">
+            <a className="underline hover:text-white" href="https://oag.ca.gov/privacy/ccpa" target="_blank" rel="noopener noreferrer">
               California CCPA guidance
             </a>{' '}
             and the{' '}
-            <a className="underline hover:text-phosphor-teal" href="https://commission.europa.eu/law/law-topic/data-protection_en" target="_blank" rel="noopener noreferrer">
+            <a className="underline hover:text-white" href="https://commission.europa.eu/law/law-topic/data-protection_en" target="_blank" rel="noopener noreferrer">
               European Commission GDPR overview
             </a>
             .
@@ -93,10 +95,10 @@ export default async function PrivacyPolicyPage() {
         </section>
 
         <footer className="flex gap-5 text-sm led-text tracking-wider">
-          <Link href="/" className="hover:text-phosphor-teal transition-colors">HOME</Link>
-          <Link href="/about" className="hover:text-phosphor-teal transition-colors">ABOUT</Link>
-          <Link href="/contact" className="hover:text-phosphor-teal transition-colors">CONTACT</Link>
-          <Link href="/privacy-policy" className="hover:text-phosphor-teal transition-colors">PRIVACY POLICY</Link>
+          <Link href="/" className="hover:text-white transition-colors">HOME</Link>
+          <Link href="/about" className="hover:text-white transition-colors">ABOUT</Link>
+          <Link href="/contact" className="hover:text-white transition-colors">CONTACT</Link>
+          <Link href="/privacy-policy" className="hover:text-white transition-colors">PRIVACY POLICY</Link>
         </footer>
         </InfoPanel>
       </div>
@@ -107,5 +109,7 @@ export default async function PrivacyPolicyPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
     </main>
+    <SiteFooter />
+    </div>
   )
 }

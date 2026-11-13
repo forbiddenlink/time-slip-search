@@ -1,7 +1,4 @@
 import type { Price } from '@/lib/algolia'
-import { AnimatedNumber } from '@/components/animations/AnimatedNumber'
-import { DollarIcon, FilmIcon } from '@/components/icons/Icons'
-import { TiltCard } from '@/components/ui/TiltCard'
 
 interface PriceCardProps {
   price: Price
@@ -9,77 +6,27 @@ interface PriceCardProps {
 
 export function PriceCard({ price }: PriceCardProps) {
   const items = [
-    {
-      label: 'GAS',
-      value: price.gas_price_gallon,
-      unit: '/gal',
-      icon: <span className="text-2xl">⛽</span>, // Keep emoji for gas as it's distinct
-    },
-    {
-      label: 'WAGE',
-      value: price.minimum_wage,
-      unit: '/hr',
-      icon: <DollarIcon size={24} />,
-    },
-    {
-      label: 'MOVIE',
-      value: price.movie_ticket_price,
-      unit: '',
-      icon: <FilmIcon size={24} />,
-    },
+    { label: 'Gas, per gallon', value: price.gas_price_gallon },
+    { label: 'Minimum wage, per hour', value: price.minimum_wage },
+    { label: 'Movie ticket', value: price.movie_ticket_price },
   ].filter((item) => item.value != null)
 
   if (items.length === 0) return null
 
   return (
-    <div className="space-y-4">
-      {/* Section header - gas station sign style */}
-      <div className="flex items-center gap-3 pb-2 border-b border-crt-light/20">
-        <div className="led-display px-2 py-1 bg-crt-dark/50 border-phosphor-green/30">
-          <DollarIcon size={20} className="text-phosphor-green" />
-        </div>
-        <div>
-          <h3 className="font-display text-xl text-aged-cream">
-            Price Check
-          </h3>
-          <p className="led-text text-phosphor-green text-xs tracking-widest">
-            {price.year} PRICES
-          </p>
-        </div>
-      </div>
-
-      {/* Price grid - LED display style like old gas station signs */}
-      <div className="grid grid-cols-3 gap-3">
-        {items.map((item, index) => (
-          <TiltCard
-            key={item.label}
-            className="glass-card p-3 text-center border border-crt-light/20 rounded-lg hover:border-phosphor-green/50 transition-all duration-300 group cascade-in hover:shadow-[0_0_15px_rgba(57,255,20,0.15)]"
-            style={{ animationDelay: `${0.3 + index * 0.15}s` }}
-          >
-            {/* Icon */}
-            <div className="mb-2 text-phosphor-amber group-hover:animate-pulse flex justify-center h-8 items-center">
-              {item.icon}
-            </div>
-
-            {/* Price - LED segment display style */}
-            <div className="led-display inline-block px-3 py-2 mb-2 bg-black/40 w-full">
-              <AnimatedNumber
-                value={item.value!}
-                prefix="$"
-                suffix={item.unit}
-                decimals={2}
-                className="led-text text-phosphor-green text-lg tracking-widest"
-              />
-            </div>
-
-            {/* Label */}
-            <div className="led-text text-aged-cream/50 text-sm tracking-widest">
-              {item.label}
-            </div>
-          </TiltCard>
+    <section aria-labelledby="sec-prices">
+      <h3 id="sec-prices" className="ed-label text-faded">Cost of living</h3>
+      <p className="mt-1 ed-label text-faded">{price.year} prices</p>
+      <ul className="mt-4 space-y-3">
+        {items.map((item) => (
+          <li key={item.label} className="flex items-end font-display text-base">
+            <span>{item.label}</span>
+            <span className="ed-leader" aria-hidden="true" />
+            <span className="font-display text-xl font-bold">${item.value!.toFixed(2)}</span>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   )
 }
 
@@ -97,21 +44,11 @@ export function PriceComparison({ oldPrice, currentYear = 2024 }: PriceCompariso
   const adjustedGas = oldPrice.gas_price_gallon * inflationMultiplier
 
   return (
-    <div className="bg-gradient-to-r from-crt-dark via-crt-medium/50 to-crt-dark border border-crt-light/30 rounded p-4">
-      <div className="flex items-start gap-3">
-        {/* Ticker tape style indicator */}
-        <div className="w-2 h-2 rounded-full bg-phosphor-green animate-pulse mt-2 flex-shrink-0" />
-
-        <div>
-          <p className="led-text text-phosphor-green text-xs tracking-widest mb-2">
-            INFLATION ADJUSTMENT
-          </p>
-          <p className="text-aged-cream/80 text-sm font-body">
-            Gas at <AnimatedNumber value={oldPrice.gas_price_gallon} prefix="$" decimals={2} className="text-phosphor-amber font-bold" /> in {oldPrice.year} would be about{' '}
-            <AnimatedNumber value={adjustedGas} prefix="$" decimals={2} className="text-phosphor-green font-bold" /> today
-          </p>
-        </div>
-      </div>
-    </div>
+    <p className="mt-6 border-t border-ink pt-4 font-body text-sm text-pretty">
+      <span className="ed-label block text-faded">Adjusted for inflation</span>
+      <span className="mt-1 block">
+        Gas at ${oldPrice.gas_price_gallon.toFixed(2)} in {oldPrice.year} would be about ${adjustedGas.toFixed(2)} today.
+      </span>
+    </p>
   )
 }

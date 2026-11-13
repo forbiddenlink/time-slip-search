@@ -72,7 +72,7 @@ export function ParticleEffect({ isActive = true }: ParticleEffectProps) {
   if (!isActive) return null
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute inset-0 -z-0 pointer-events-none overflow-hidden motion-reduce:hidden" aria-hidden="true">
       {particles.map((particle) => (
         <motion.div
           key={particle.id}

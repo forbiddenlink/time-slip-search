@@ -96,62 +96,53 @@ export function ComparisonPanel({ base, compare, onClose, onSwap }: ComparisonPa
     setTimeout(() => setStatus(''), 3000)
   }
 
+  const lines = (snap: ComparisonSnapshot) => [
+    ['Song', formatSong(snap.results)],
+    ['Movie', formatMovie(snap.results)],
+    ['Gas', formatGas(snap.results)],
+    ['Event', formatEvent(snap.results)],
+  ] as const
+
   return (
-    <section className="mb-8 glass-card border border-phosphor-teal/30 rounded p-4 md:p-5">
-      <div className="flex items-center justify-between gap-3 mb-4">
+    <section aria-label="Comparison" className="ed-sheet mb-8 px-5 py-6 md:px-10">
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b-[3px] border-ink pb-4">
         <div>
-          <p className="led-text text-phosphor-teal text-xs tracking-[0.25em]">COMPARE MODE</p>
-          <h3 className="font-display text-2xl text-aged-cream">
+          <p className="ed-label text-edition">Side by side</p>
+          <h3 className="font-display text-3xl italic">
             {base.year} vs {compare.year}
           </h3>
-          <p className="text-aged-cream/60 text-sm">Year gap: {yearGap} years</p>
+          <p className="ed-label text-faded">{yearGap} years apart</p>
         </div>
-        <div className="flex gap-2">
-          <button
-            onClick={onSwap}
-            className="px-3 py-2 text-sm led-text tracking-wider bg-crt-dark border border-phosphor-amber/40 rounded hover:border-phosphor-amber"
-          >
-            Swap
-          </button>
-          <button
-            onClick={handleCopyComparison}
-            className="px-3 py-2 text-sm led-text tracking-wider bg-crt-dark border border-phosphor-teal/40 rounded hover:border-phosphor-teal"
-          >
-            Copy
-          </button>
-          <button
-            onClick={onClose}
-            className="px-3 py-2 text-sm led-text tracking-wider bg-crt-dark border border-crt-light/40 rounded hover:border-crt-light"
-          >
-            Close
-          </button>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={onSwap} className="ed-btn">Swap</button>
+          <button type="button" onClick={handleCopyComparison} className="ed-btn">Copy</button>
+          <button type="button" onClick={onClose} className="ed-btn">Close</button>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <article className="bg-crt-dark border border-phosphor-teal/25 rounded p-3 space-y-2">
-          <p className="led-text text-phosphor-teal text-xs tracking-widest">{base.dateDisplay}</p>
-          <p className="text-aged-cream text-sm">Song: {formatSong(base.results)}</p>
-          <p className="text-aged-cream text-sm">Movie: {formatMovie(base.results)}</p>
-          <p className="text-aged-cream text-sm">Gas: {formatGas(base.results)}</p>
-          <p className="text-aged-cream text-sm">Event: {formatEvent(base.results)}</p>
-        </article>
-        <article className="bg-crt-dark border border-phosphor-amber/25 rounded p-3 space-y-2">
-          <p className="led-text text-phosphor-amber text-xs tracking-widest">{compare.dateDisplay}</p>
-          <p className="text-aged-cream text-sm">Song: {formatSong(compare.results)}</p>
-          <p className="text-aged-cream text-sm">Movie: {formatMovie(compare.results)}</p>
-          <p className="text-aged-cream text-sm">Gas: {formatGas(compare.results)}</p>
-          <p className="text-aged-cream text-sm">Event: {formatEvent(compare.results)}</p>
-        </article>
+      <div className="grid md:grid-cols-2">
+        {[base, compare].map((snap, i) => (
+          <article key={snap.dateDisplay + i} className={`py-4 ${i === 0 ? 'md:border-r md:border-ink md:pr-8' : 'border-t border-ink md:border-t-0 md:pl-8'}`}>
+            <h4 className="ed-label border-b-2 border-ink pb-2">{snap.dateDisplay}</h4>
+            <dl>
+              {lines(snap).map(([k, v]) => (
+                <div key={k} className="border-b border-ink/25 py-2">
+                  <dt className="ed-label text-faded">{k}</dt>
+                  <dd className="font-display text-lg">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </article>
+        ))}
       </div>
 
-      <div className="mt-4 space-y-1 text-sm text-aged-cream/80">
+      <div className="space-y-1 border-t border-ink pt-4 font-body text-base">
         {gasDelta && <p>{gasDelta}</p>}
         {movieDelta && <p>{movieDelta}</p>}
       </div>
 
       {status && (
-        <p className="mt-3 text-xs text-phosphor-teal led-text tracking-wider">{status}</p>
+        <p role="status" className="mt-3 ed-label text-edition">{status}</p>
       )}
     </section>
   )

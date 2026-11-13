@@ -1,46 +1,28 @@
 import { memo } from 'react'
 import type { Song } from '@/lib/algolia'
-import { MusicIcon } from '@/components/icons/Icons'
-import { TiltCard } from '@/components/ui/TiltCard'
 
 interface SongCardProps {
   song: Song
   rank?: number
 }
 
+/** One ranked row of the chart, set like a printed chart listing. */
 export const SongCard = memo(function SongCard({ song, rank }: SongCardProps) {
   const position = rank ?? song.chart_position
 
   return (
-    <TiltCard className="flex items-center gap-4 p-3 glass-card border border-crt-light/20 rounded-lg hover:border-vinyl-label/50 transition-all duration-300 group hover:bg-crt-dark/60">
-      {/* Vinyl record style rank indicator */}
-      <div className="relative flex-shrink-0">
-        <div className="w-12 h-12 vinyl-record flex items-center justify-center group-hover:animate-vinyl-spin shadow-md">
-          <span className="led-text text-aged-cream text-lg font-bold relative z-10">
-            {position}
-          </span>
-        </div>
+    <li className="flex items-baseline gap-4 border-t border-ink/25 py-3">
+      <span className="ed-label w-6 shrink-0 text-faded" aria-label={`Number ${position}`}>
+        {position}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="font-display text-lg leading-snug text-balance">{song.song_title}</p>
+        <p className="font-body text-sm italic text-faded">{song.artist}</p>
       </div>
-
-      {/* Song info */}
-      <div className="flex-1 min-w-0">
-        <h4 className="font-display text-lg text-aged-cream truncate group-hover:text-phosphor-teal transition-colors drop-shadow-sm">
-          {song.song_title}
-        </h4>
-        <p className="text-sm text-aged-cream/60 truncate font-body italic">
-          {song.artist}
-        </p>
-      </div>
-
-      {/* Weeks on chart */}
-      {song.weeks_on_chart && (
-        <div className="flex-shrink-0 led-display px-2 py-1 bg-black/40 border-crt-light/20">
-          <span className="led-text text-phosphor-amber text-sm tracking-wider">
-            {song.weeks_on_chart}w
-          </span>
-        </div>
-      )}
-    </TiltCard>
+      {song.weeks_on_chart ? (
+        <span className="ed-label shrink-0 text-faded">{song.weeks_on_chart} wks</span>
+      ) : null}
+    </li>
   )
 })
 
@@ -57,43 +39,35 @@ function formatChartWeek(dateString: string): string | null {
   return new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
-export function SongList({ songs, title = 'Top Music', chartWeek }: SongListProps) {
-  if (songs.length === 0) return null
+export function SongList({ songs, title = 'No. 1 song', chartWeek }: SongListProps) {
+  const [lead, ...rest] = songs.slice(0, 5)
+  if (!lead) return null
 
   const chartWeekLabel = chartWeek ? formatChartWeek(chartWeek) : null
 
   return (
-    <div className="space-y-4">
-      {/* Section header - vinyl/jukebox style */}
-      <div className="flex items-center gap-3 pb-2 border-b border-crt-light/20">
-        <div className="w-10 h-10 vinyl-record flex-shrink-0 animate-vinyl-spin flex items-center justify-center border border-crt-light/20" style={{ animationDuration: '8s' }}>
-          <MusicIcon size={16} className="text-aged-cream/80" />
-        </div>
-        <div>
-          <h3 className="font-display text-xl text-aged-cream">
-            {title}
-          </h3>
-          <p className="led-text text-phosphor-teal text-xs tracking-widest">
-            BILLBOARD HOT 100
-          </p>
-          {chartWeekLabel && (
-            <p className="text-aged-cream/70 text-xs mt-0.5">Chart week of {chartWeekLabel}</p>
-          )}
-        </div>
-      </div>
+    <section aria-labelledby="sec-song">
+      <h3 id="sec-song" className="ed-label text-faded">{title}</h3>
+      <p className="mt-4 font-display text-[clamp(2rem,4.5vw,3.5rem)] font-bold leading-[1.05] text-balance">
+        {lead.song_title}
+      </p>
+      <p className="mt-2 font-display text-xl italic md:text-2xl">{lead.artist}</p>
+      <p className="mt-3 ed-label text-faded">
+        Billboard Hot 100
+        {chartWeekLabel ? ` / Chart week of ${chartWeekLabel}` : ''}
+        {lead.weeks_on_chart ? ` / ${lead.weeks_on_chart} weeks on the chart` : ''}
+      </p>
 
-      {/* Song list */}
-      <div className="space-y-2">
-        {songs.slice(0, 5).map((song, index) => (
-          <div
-            key={song.objectID}
-            className={`cascade-in ${index === 0 ? 'number-one-song rounded' : ''}`}
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <SongCard song={song} rank={index + 1} />
-          </div>
-        ))}
-      </div>
-    </div>
+      {rest.length > 0 && (
+        <div className="mt-6">
+          <h4 className="ed-label border-b-2 border-ink pb-2">Also on the chart</h4>
+          <ol>
+            {rest.map((song, index) => (
+              <SongCard key={song.objectID} song={song} rank={index + 2} />
+            ))}
+          </ol>
+        </div>
+      )}
+    </section>
   )
 }

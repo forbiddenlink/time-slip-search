@@ -89,9 +89,17 @@ const ERAS: Record<number, Era> = {
   },
 }
 
+export const ARCHIVE_MIN_YEAR = 1958
+export const ARCHIVE_MAX_YEAR = 2020
+
+/** Clamp a year into the archive's real span. */
+export function clampToArchive(year: number, min = ARCHIVE_MIN_YEAR, max = ARCHIVE_MAX_YEAR): number {
+  return Math.min(max, Math.max(min, year))
+}
+
 /** Resolve the era for a given year (clamped to the archive's real span). */
 export function getEra(year: number): Era {
-  const clamped = Math.min(2020, Math.max(1958, year))
+  const clamped = clampToArchive(year)
   const decade = Math.floor(clamped / 10) * 10
   return ERAS[decade] ?? ERAS[1960]!
 }

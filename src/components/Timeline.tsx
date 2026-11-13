@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { motion, useReducedMotion } from 'motion/react'
-import { getEra, DECADE_CHAPTERS } from '@/lib/archive'
+import { getEra, clampToArchive, DECADE_CHAPTERS, ARCHIVE_MIN_YEAR, ARCHIVE_MAX_YEAR } from '@/lib/archive'
 import type { TimelineDensityResponse } from '@/app/api/timeline/density/route'
 
 interface TimelineProps {
@@ -20,23 +19,22 @@ function syntheticDensity(year: number, minYear: number, maxYear: number): numbe
 }
 
 export function Timeline({
-  currentYear,
+  currentYear: selectedYear,
   onYearSelect,
-  minYear = 1958,
-  maxYear = 2020,
+  minYear = ARCHIVE_MIN_YEAR,
+  maxYear = ARCHIVE_MAX_YEAR,
 }: TimelineProps) {
   const [hoveredYear, setHoveredYear] = useState<number | null>(null)
   const [density, setDensity] = useState<Record<number, number> | null>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
-  const prefersReducedMotion = useReducedMotion()
 
+  const currentYear = clampToArchive(selectedYear, minYear, maxYear)
   const yearRange = maxYear - minYear
   const currentPosition = ((currentYear - minYear) / yearRange) * 100
 
   // Era follows the cursor while scrubbing, otherwise the selected year.
   const activeYear = hoveredYear ?? currentYear
   const era = getEra(activeYear)
-  const crossfade = prefersReducedMotion ? { duration: 0 } : { duration: 0.6, ease: 'easeInOut' as const }
 
   // Fetch real records-per-year density from Algolia facets (read-only, cached).
   useEffect(() => {
@@ -92,18 +90,24 @@ export function Timeline({
 
   // Notable events markers
   const notableYears = [
-    { year: 1969, label: '🌙 Moon Landing', color: 'phosphor-amber' },
-    { year: 1989, label: '🧱 Berlin Wall', color: 'phosphor-teal' },
-    { year: 1984, label: '🎮 Gaming Era', color: 'phosphor-green' },
-    { year: 2000, label: '💻 Y2K', color: 'vinyl-label' },
+    { year: 1969, label: 'Moon landing' },
+    { year: 1984, label: 'Gaming era' },
+    { year: 1989, label: 'Berlin Wall' },
+    { year: 2000, label: 'Y2K' },
   ]
 
   const activeDecade = Math.floor(currentYear / 10) * 10
 
   return (
-    <div className="space-y-4">
-      {/* === DECADE SPINE: chaptered quick-nav (book-spine tabs) === */}
-      <div className="reading-room-spine flex items-stretch gap-px rounded overflow-hidden border border-crt-light/30">
+    <section aria-label="Timeline" className="ed-sheet px-5 py-6 md:px-10">
+      <div className="border-b-[3px] border-ink pb-3">
+        <p className="ed-label text-edition">Index of editions</p>
+        <h2 className="font-display text-3xl italic">{minYear} to {maxYear}</h2>
+        <p className="ed-label text-faded">{era.medium}</p>
+      </div>
+
+      {/* Decade index */}
+      <div className="mt-4 grid grid-cols-4 border-y border-ink sm:grid-cols-8">
         {DECADE_CHAPTERS.map((chapter) => {
           const isActive = Math.floor(chapter.start / 10) * 10 === activeDecade
           return (
@@ -112,147 +116,95 @@ export function Timeline({
               type="button"
               onClick={() => onYearSelect(chapter.start)}
               aria-pressed={isActive}
-              aria-label={`Jump to the ${chapter.label} — ${chapter.medium} era`}
+              aria-label={`Jump to the ${chapter.label}, ${chapter.medium} era`}
               title={`${chapter.label} · ${chapter.medium}`}
-              className={`spine-tab flex-1 min-w-0 px-1 py-2 text-center transition-colors ${
-                isActive
-                  ? 'bg-crt-medium text-phosphor-teal shadow-glow-teal'
-                  : 'bg-crt-dark text-aged-cream/60 hover:text-phosphor-teal hover:bg-crt-medium/60'
+              className={`min-h-11 min-w-0 border-r border-ink/30 px-1 py-2 text-center last:border-r-0 ${
+                isActive ? 'bg-ink text-newsprint' : 'hover:bg-ink/10'
               }`}
             >
-              <span className="led-text text-sm tracking-widest block">{chapter.label}</span>
-              <span className="text-[9px] uppercase tracking-wider text-aged-cream/40 hidden sm:block truncate">
-                {chapter.medium}
-              </span>
+              <span className="block font-display text-lg">{chapter.label}</span>
+              <span className="hidden truncate ed-label !text-[0.6rem] sm:block">{chapter.medium}</span>
             </button>
           )
         })}
       </div>
 
-      <div className="flex items-center justify-between px-2">
-        <span className="led-text text-phosphor-amber text-sm">{minYear}</span>
-        <motion.span
-          className="led-text text-xs tracking-widest"
-          animate={{ color: era.ink }}
-          transition={crossfade}
-          style={{ fontFamily: era.font }}
-        >
-          READING ROOM · {era.medium.toUpperCase()}
-        </motion.span>
-        <span className="led-text text-phosphor-amber text-sm">{maxYear}</span>
-      </div>
-
       <div
         ref={timelineRef}
-        className="relative h-16 bg-crt-dark border-2 border-crt-light/30 rounded cursor-pointer group hover:border-phosphor-teal/50 transition-colors overflow-hidden"
+        className="relative mt-6 h-24 cursor-pointer border-b-2 border-ink"
         onClick={handleTimelineClick}
         onMouseMove={handleTimelineHover}
         onMouseLeave={() => setHoveredYear(null)}
+        role="presentation"
       >
         {/* Density-weighted bars (records-per-year) */}
-        <div className="absolute inset-0 flex items-end pointer-events-none" aria-hidden="true">
+        <div className="absolute inset-0 flex items-end gap-px overflow-hidden" aria-hidden="true">
           {bars.map((bar) => (
-            <div
-              key={bar.year}
-              className="flex-1 bg-gradient-to-t from-phosphor-teal/40 to-phosphor-teal/5"
-              style={{ height: `${bar.height}%` }}
-            />
+            <div key={bar.year} className="flex-1 bg-ink/45" style={{ height: `${bar.height}%` }} />
           ))}
         </div>
 
-        {/* Era color-temperature wash (crossfades on scrub) */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none mix-blend-screen"
-          animate={{ backgroundColor: era.tint }}
-          transition={crossfade}
-          aria-hidden="true"
-        />
-
-        {/* Decade markers */}
-        {Array.from({ length: Math.floor(yearRange / 10) + 1 }, (_, i) => {
-          const year = minYear + i * 10
-          const position = ((year - minYear) / yearRange) * 100
-
-          return (
-            <div
-              key={year}
-              className="absolute top-0 bottom-0 border-l border-crt-light/20 pointer-events-none"
-              style={{ left: `${position}%` }}
-            >
-              <span className="absolute -bottom-5 -left-4 text-aged-cream/60 text-xs led-text">
-                {year}
-              </span>
-            </div>
-          )
-        })}
-
         {/* Notable events */}
-        {notableYears.map(({ year, label, color }) => {
+        {notableYears.map(({ year, label }) => {
           const position = ((year - minYear) / yearRange) * 100
           return (
-            <div
-              key={year}
-              className="absolute top-1/2 -translate-y-1/2 group/marker"
-              style={{ left: `${position}%` }}
-            >
-              <div className={`w-3 h-3 rounded-full bg-${color} border-2 border-crt-dark animate-pulse`} />
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap z-30">
-                <div className="bg-crt-dark border border-crt-light/50 rounded px-2 py-1">
-                  <span className="text-aged-cream text-xs">{label}</span>
-                </div>
-              </div>
+            <div key={year} className="group/marker absolute bottom-0 top-0" style={{ left: `${position}%` }}>
+              <div className="h-full w-px bg-ink/50" />
+              <span className="absolute hidden lg:block -top-5 left-0 -translate-x-1/2 whitespace-nowrap ed-label !text-[0.6rem] text-faded">
+                {label}
+              </span>
             </div>
           )
         })}
 
         {/* Current year indicator */}
         <div
-          className="absolute top-0 bottom-0 w-1 bg-phosphor-teal shadow-glow-teal transition-all duration-300"
+          className="absolute -top-1 bottom-0 w-[3px] bg-edition transition-all duration-300"
           style={{ left: `${currentPosition}%` }}
-        >
-          <div className="absolute -top-2 left-1/2 -translate-x-1/2">
-            <div className="w-4 h-4 rotate-45 bg-phosphor-teal border-2 border-crt-dark" />
-          </div>
-          <motion.div
-            className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap"
-            animate={{ color: era.ink }}
-            transition={crossfade}
-          >
-            <span className="led-text text-sm font-bold" style={{ fontFamily: era.font }}>
-              {currentYear}
-            </span>
-          </motion.div>
-        </div>
+        />
 
         {/* Hover indicator */}
         {hoveredYear && hoveredYear !== currentYear && (
           <div
-            className="absolute top-0 bottom-0 w-px bg-aged-cream/50"
+            className="pointer-events-none absolute bottom-0 top-0 w-px bg-ink"
             style={{ left: `${((hoveredYear - minYear) / yearRange) * 100}%` }}
           >
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
-              <span className="text-aged-cream/70 text-xs led-text">
-                {hoveredYear}
-                {(() => {
-                  const c = density?.[hoveredYear]
-                  return c ? ` · ${c.toLocaleString()} recs` : ''
-                })()}
-              </span>
-            </div>
+            <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap bg-ink px-2 py-0.5 ed-label text-newsprint">
+              {hoveredYear}
+              {(() => {
+                const c = density?.[hoveredYear]
+                return c ? `, ${c.toLocaleString()} records` : ''
+              })()}
+            </span>
           </div>
         )}
-
-        {/* Gradient overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-t from-crt-black/30 to-transparent pointer-events-none" />
       </div>
 
-      <div className="text-center">
-        <p className="text-aged-cream/50 text-xs led-text">
+      {/* Axis */}
+      <div className="relative mt-1 h-5">
+        {Array.from({ length: Math.floor(yearRange / 10) + 1 }, (_, i) => {
+          const year = minYear + i * 10
+          const position = ((year - minYear) / yearRange) * 100
+          return (
+            <span
+              key={year}
+              className={`absolute font-display text-xs text-faded ${i === 0 ? '' : '-translate-x-1/2'}`}
+              style={{ left: `${position}%` }}
+            >
+              {year}
+            </span>
+          )
+        })}
+      </div>
+
+      <p className="mt-6 flex items-baseline justify-between gap-4 ed-label text-faded">
+        <span>
           {density
-            ? 'BAR HEIGHT = RECORDS ON FILE PER YEAR · CLICK TO OPEN THAT YEAR'
-            : 'CLICK ANYWHERE ON THE TIMELINE TO EXPLORE THAT YEAR'}
-        </p>
-      </div>
-    </div>
+            ? 'Bar height shows records on file per year. Click to open that year.'
+            : 'Click anywhere on the timeline to open that year.'}
+        </span>
+        <span className="text-ink">Selected: {currentYear}</span>
+      </p>
+    </section>
   )
 }

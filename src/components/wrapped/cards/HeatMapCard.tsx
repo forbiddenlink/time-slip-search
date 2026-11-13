@@ -27,21 +27,19 @@ export function HeatMapCard({ stats, onNext }: Readonly<HeatMapCardProps>) {
     return 1
   }
 
-  // Color classes based on intensity
+  // Ink density by intensity: paper to solid ink
   const getColorClass = (intensity: number): string => {
     switch (intensity) {
-      case 0:
-        return 'bg-crt-dark border-crt-light/20'
       case 1:
-        return 'bg-phosphor-teal/20 border-phosphor-teal/30'
+        return 'bg-ink/10 text-ink'
       case 2:
-        return 'bg-phosphor-teal/40 border-phosphor-teal/50'
+        return 'bg-ink/25 text-ink'
       case 3:
-        return 'bg-phosphor-teal/60 border-phosphor-teal/70'
+        return 'bg-ink/60 text-newsprint'
       case 4:
-        return 'bg-phosphor-teal/80 border-phosphor-teal shadow-glow-teal'
+        return 'bg-ink text-newsprint'
       default:
-        return 'bg-crt-dark border-crt-light/20'
+        return 'bg-transparent text-faded'
     }
   }
 
@@ -50,119 +48,55 @@ export function HeatMapCard({ stats, onNext }: Readonly<HeatMapCardProps>) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex flex-col items-center justify-center min-h-[500px] p-8"
+      className="flex min-h-[500px] flex-col items-center justify-center px-6 pb-16 pt-8"
     >
-      {/* Header */}
-      <motion.h2
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="font-display text-4xl md:text-5xl mb-4 text-center"
-      >
-        <span className="title-glow-teal">Your Time Map</span>
-      </motion.h2>
+      <h2 className="text-center font-display text-4xl italic md:text-5xl">Your time map</h2>
+      <p className="mt-1 ed-label text-faded">Where you looked, by decade</p>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="text-aged-cream/60 text-sm led-text tracking-wider mb-8"
-      >
-        WHERE YOU&apos;VE TRAVELED THROUGH TIME
-      </motion.p>
-
-      {/* Heat Map Grid */}
-      <div className="grid grid-cols-4 gap-3 mb-8 w-full max-w-md">
+      <div className="mt-6 grid w-full max-w-md grid-cols-4 gap-2">
         {DECADES.map((decade, index) => {
           const count = decadeHeatMap[decade] || 0
           const intensity = getIntensity(count)
+          const isTop = stats.topDecade === decade && count > 0
 
           return (
             <motion.div
               key={decade}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 + index * 0.1 }}
-              className={`
-                relative p-4 rounded-lg border transition-all
-                ${getColorClass(intensity)}
-              `}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 + index * 0.06 }}
+              className={`border border-ink p-3 text-center ${getColorClass(intensity)} ${isTop ? 'outline outline-2 outline-offset-2 outline-edition' : ''}`}
             >
-              <div className="text-center">
-                <div className="text-lg font-bold text-aged-cream led-text">
-                  {decade.replace('s', "'s")}
-                </div>
-                <div className={`text-2xl font-bold mt-1 ${count > 0 ? 'text-phosphor-teal' : 'text-aged-cream/30'}`}>
-                  {count}
-                </div>
-                <div className="text-xs text-aged-cream/50 mt-1">
-                  {count === 1 ? 'visit' : 'visits'}
-                </div>
-              </div>
-
-              {/* Top decade indicator */}
-              {stats.topDecade === decade && count > 0 && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.8 + index * 0.1, type: 'spring' }}
-                  className="absolute -top-2 -right-2 w-6 h-6 bg-phosphor-amber rounded-full flex items-center justify-center"
-                >
-                  <span className="text-xs">⭐</span>
-                </motion.div>
-              )}
+              <div className="font-display text-base">{decade.replace('s', "'s")}</div>
+              <div className="font-display text-2xl">{count}</div>
+              <div className="ed-label !text-[0.65rem]">{count === 1 ? 'visit' : 'visits'}</div>
             </motion.div>
           )
         })}
       </div>
 
-      {/* Legend */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
-        className="flex items-center gap-2 mb-8"
-      >
-        <span className="text-xs text-aged-cream/50 led-text">LESS</span>
-        {[0, 1, 2, 3, 4].map(level => (
-          <div
-            key={level}
-            className={`w-4 h-4 rounded ${getColorClass(level)} border`}
-          />
+      <p className="mt-4 flex items-center gap-2 ed-label text-faded">
+        Less
+        {[0, 1, 2, 3, 4].map((level) => (
+          <span key={level} className={`inline-block h-4 w-4 border border-ink ${getColorClass(level)}`} />
         ))}
-        <span className="text-xs text-aged-cream/50 led-text">MORE</span>
-      </motion.div>
-
-      {/* Session stats if available */}
-      {stats.longestSession && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4 }}
-          className="bg-crt-dark border border-crt-light/30 rounded-lg p-4 text-center mb-6"
-        >
-          <div className="text-phosphor-amber/60 text-xs led-text tracking-widest mb-1">
-            LONGEST SESSION
-          </div>
-          <div className="text-2xl font-bold text-phosphor-amber">
-            {stats.longestSession.searches} searches
-          </div>
-          <div className="text-xs text-aged-cream/50 mt-1">
-            {stats.longestSession.date}
-          </div>
-        </motion.div>
+        More
+      </p>
+      {stats.topDecade && (
+        <p className="mt-2 ed-label text-edition">Red outline marks your most visited decade</p>
       )}
 
-      {/* Continue */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6 }}
-        onClick={onNext}
-        className="text-phosphor-teal/60 hover:text-phosphor-teal led-text text-sm tracking-wider
-                   transition-colors flex items-center gap-2"
-      >
-        TAP TO CONTINUE →
-      </motion.button>
+      {stats.longestSession && (
+        <p className="mt-6 border-y border-ink py-3 text-center font-body">
+          <span className="ed-label text-faded">Longest session </span>
+          <span className="font-display text-xl">{stats.longestSession.searches} searches</span>
+          <span className="text-faded">, {stats.longestSession.date}</span>
+        </p>
+      )}
+
+      <button type="button" onClick={onNext} className="ed-btn mt-8">
+        Next page
+      </button>
     </motion.div>
   )
 }
