@@ -92,6 +92,9 @@ export function splitDateRange(
       year: chunkStart.getFullYear(),
     })
 
+    // The final chunk already includes the endpoint. Advancing to that same
+    // endpoint would repeat forever because the loop uses an inclusive bound.
+    if (chunkEnd >= endDate) break
     current = chunkEnd
   }
 
