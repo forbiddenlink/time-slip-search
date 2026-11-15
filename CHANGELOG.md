@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.10...v1.1.0) (2026-11-14)
+
+
+### Features
+
+* **home:** newspaper front page redesign with date-first search ([#138](https://github.com/forbiddenlink/time-slip-search/issues/138)) ([e0b69b5](https://github.com/forbiddenlink/time-slip-search/commit/e0b69b5d444b172569edb9229e22ec810ab4c8ee))
+
+
+### Bug Fixes
+
+* **deps:** bump next to 16.4.5 (security) ([#137](https://github.com/forbiddenlink/time-slip-search/issues/137)) ([cd76469](https://github.com/forbiddenlink/time-slip-search/commit/cd764698af8e40e4ef6a4e8497992aca9f69b733))
+* **deps:** lift glob/minimatch to patched majors ([#140](https://github.com/forbiddenlink/time-slip-search/issues/140)) ([bbc8ee0](https://github.com/forbiddenlink/time-slip-search/commit/bbc8ee06f4a429df829fb973314379c0345a2344))
+
 ## [1.0.10](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.9...v1.0.10) (2026-11-11)
 
 
