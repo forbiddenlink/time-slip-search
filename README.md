@@ -1,4 +1,4 @@
-# ⏱️ TimeSlipSearch
+# TimeSlipSearch
 
 > A conversational cultural time machine - search any date from 1958-2020 and instantly see the #1 song, top movies, historical prices, and major events from that day.
 
@@ -7,11 +7,13 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
 
-## 🔮 What It Does
+TimeSlipSearch was built for the Algolia Agent Studio Challenge and won it. See the [winners announcement](https://dev.to/devteam/congrats-to-the-algolia-agent-studio-challenge-winners-3ocn).
+
+## What it does
 
 Type a date, a birthday, or a loose phrase like "summer of 69" and TimeSlipSearch assembles a cultural snapshot of that moment in history: the Billboard #1 song, what was playing in theaters, what gas and minimum wage cost, and what made the news. It's built around a retro, VHS/CRT-styled UI and a natural-language date parser rather than a traditional search form.
 
-## ✨ Features
+## Features
 
 - **Natural language date parsing** - handles exact dates, birthdays, ranges ("from 1980 to 1985"), eras ("the entire 80s"), and comparisons between two dates (`src/lib/date-parser.ts`, `chrono-node`)
 - **Conversational search API** (`/api/chat`) - returns both a formatted text reply and structured results (songs, movies, prices, events) with rate limiting and response caching
@@ -28,7 +30,7 @@ Type a date, a birthday, or a loose phrase like "summer of 69" and TimeSlipSearc
 - **Data visualizations** (Chart.js) and era narratives/insights generated from the search results
 - Accessible by design: ARIA labels, focus management, print stylesheet, CSP/HSTS/X-Frame-Options headers
 
-## 🛠️ Tech Stack
+## Tech stack
 
 - **Framework:** Next.js 16 (App Router), React 19, TypeScript
 - **Styling:** Tailwind CSS
@@ -40,7 +42,7 @@ Type a date, a birthday, or a loose phrase like "summer of 69" and TimeSlipSearc
 - **Testing:** Jest, Testing Library, MSW
 - **Package manager:** pnpm
 
-## 📦 Data Sources (ingest scripts)
+## Data sources (ingest scripts)
 
 Historical data is fetched and indexed into Algolia via standalone ingest scripts in `scripts/ingest/`:
 
@@ -51,7 +53,9 @@ Historical data is fetched and indexed into Algolia via standalone ingest script
 | `pnpm ingest:fred` | [FRED (Federal Reserve Economic Data)](https://fred.stlouisfed.org) - gas prices, CPI, minimum wage | 1938-present (varies by series) |
 | `pnpm ingest:wikimedia` | [Wikimedia "On This Day" feed](https://api.wikimedia.org/wiki/Feed_API/Reference/On_this_day) | all historical dates |
 
-## 🚀 Getting Started
+## Getting started
+
+Prerequisites: Node.js 20 or newer and pnpm (`pnpm@10.34.8` in `packageManager`).
 
 ```bash
 git clone https://github.com/forbiddenlink/time-slip-search
@@ -61,24 +65,20 @@ cp .env.local.example .env.local   # fill in the keys below
 pnpm dev
 ```
 
-### Required environment variables
+### Environment variables
 
-Set these in `.env.local` (validated in `src/env.ts`; the app fails to start without them
-unless `SKIP_ENV_VALIDATION=true`):
+Set these in `.env.local` (validated in `src/env.ts`; the app fails to start without the required ones unless `SKIP_ENV_VALIDATION=true`):
 
-- `NEXT_PUBLIC_ALGOLIA_APP_ID`, `ALGOLIA_SEARCH_API_KEY`, `ALGOLIA_ADMIN_API_KEY` - Algolia project (search)
-- `NEXT_PUBLIC_POSTHOG_KEY` - required by `src/env.ts`
+Required by `src/env.ts`:
 
-Required only to run the data-ingest scripts:
-
-- `TMDB_API_KEY` - movie ingest
-- `FRED_API_KEY` - price ingest
+- `NEXT_PUBLIC_ALGOLIA_APP_ID`, `ALGOLIA_SEARCH_API_KEY`, `ALGOLIA_ADMIN_API_KEY`: Algolia project (search)
+- `TMDB_API_KEY`, `FRED_API_KEY`: also used by the ingest scripts for movies and prices
 
 Optional:
 
-- `NEXT_PUBLIC_SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` - playlist export from discovered songs
-- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` - production-grade rate limiting/caching (without these it falls back to in-memory)
-- `ALGOLIA_APP_ID`, `AXIOM_TOKEN`, `NEXT_PUBLIC_AXIOM_DATASET`, `NEXT_PUBLIC_POSTHOG_HOST`, `MINIMAX_GROUP_ID`
+- `NEXT_PUBLIC_SPOTIFY_CLIENT_ID`: playlist export from discovered songs
+- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`: production-grade rate limiting and caching (without these it falls back to in-memory)
+- `ALGOLIA_APP_ID`, `AXIOM_TOKEN`, `NEXT_PUBLIC_AXIOM_DATASET`, `NEXT_PUBLIC_POSTHOG_HOST`, `NEXT_PUBLIC_POSTHOG_KEY`, `MINIMAX_GROUP_ID`
 
 After setting API keys, populate Algolia with historical data:
 
