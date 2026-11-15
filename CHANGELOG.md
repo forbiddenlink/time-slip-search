@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.0...v1.1.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **date-range:** stop splitDateRange looping forever on the final chunk ([#141](https://github.com/forbiddenlink/time-slip-search/issues/141)) ([d647286](https://github.com/forbiddenlink/time-slip-search/commit/d647286ae12cb76ca2b2d68f9689406142b5cec9))
+
 ## [1.1.0](https://github.com/forbiddenlink/time-slip-search/compare/v1.0.10...v1.1.0) (2026-11-14)
 
 
