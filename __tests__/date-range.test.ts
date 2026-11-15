@@ -1,3 +1,4 @@
+import { describe, it, expect } from '@jest/globals'
 import fs from 'node:fs'
 import path from 'node:path'
 import vm from 'node:vm'
@@ -26,11 +27,11 @@ describe('splitDateRange termination and bounds', () => {
       { exports: {}, range, size }, { timeout: 1000 }) as { start: number; end: number }[]
     expect(chunks).toHaveLength(count)
     if (!count) return
-    expect(chunks[0].start).toBe(start)
-    expect(chunks[chunks.length - 1].end).toBe(end)
+    expect(chunks[0]?.start).toBe(start)
+    expect(chunks[chunks.length - 1]?.end).toBe(end)
     for (let i = 1; i < chunks.length; i++) {
-      expect(chunks[i].start).toBe(chunks[i - 1].end)
-      expect(chunks[i].end).toBeGreaterThan(chunks[i].start)
+      expect(chunks[i]!.start).toBe(chunks[i - 1]!.end)
+      expect(chunks[i]!.end).toBeGreaterThan(chunks[i]!.start)
     }
   })
 })
