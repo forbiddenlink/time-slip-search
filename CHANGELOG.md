@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.1...v1.1.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* **seo:** list real pages in the sitemap, drop API and manifest ([#143](https://github.com/forbiddenlink/time-slip-search/issues/143)) ([7caf6f1](https://github.com/forbiddenlink/time-slip-search/commit/7caf6f1fe231a807988fbd258461558d1f38ea49))
+
 ## [1.1.1](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.0...v1.1.1) (2026-11-15)
 
 
