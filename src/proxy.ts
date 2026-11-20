@@ -24,13 +24,16 @@ export function proxy(request: NextRequest) {
     scriptSources.push("'unsafe-eval'")
   }
 
+  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN
+  const sentryOrigin = dsn && URL.canParse(dsn) ? new URL(dsn).origin : ''
+
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSources.join(' ')}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://*.algolia.net https://*.algolianet.com https://vercel.live",
+    `connect-src 'self' https://*.algolia.net https://*.algolianet.com https://vercel.live ${sentryOrigin}`.trimEnd(),
     "frame-src 'self' https://vercel.live",
     "base-uri 'self'",
     "object-src 'none'",
