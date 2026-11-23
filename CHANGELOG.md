@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.1.3](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.2...v1.1.3) (2026-11-21)
+
+
+### Bug Fixes
+
+* allow browser errors to reach the configured Sentry project ([#151](https://github.com/forbiddenlink/time-slip-search/issues/151)) ([3204e8c](https://github.com/forbiddenlink/time-slip-search/commit/3204e8cab763e9d1813c0d6a54779a163c9d5506))
+* initialize Sentry in the deployed App Router runtime ([#149](https://github.com/forbiddenlink/time-slip-search/issues/149)) ([4e96ad5](https://github.com/forbiddenlink/time-slip-search/commit/4e96ad5b1aa26349f868c28ef8e948fc0ad64c6b))
+* keep Effect on a patched 3.x release ([#147](https://github.com/forbiddenlink/time-slip-search/issues/147)) ([3dd96de](https://github.com/forbiddenlink/time-slip-search/commit/3dd96deb29ccb192df7d5da305948eaad099d7a0))
+* publish source maps for production error reports ([#150](https://github.com/forbiddenlink/time-slip-search/issues/150)) ([47d77df](https://github.com/forbiddenlink/time-slip-search/commit/47d77df423025c56796ad851a05f62580ebdc1a2))
+* **sentry:** sample 5% of traces instead of every request ([#152](https://github.com/forbiddenlink/time-slip-search/issues/152)) ([3630504](https://github.com/forbiddenlink/time-slip-search/commit/36305040bd50014b03faa7692277d1da2f5ba4b1))
+
 ## [1.1.2](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.1...v1.1.2) (2026-11-15)
 
 
