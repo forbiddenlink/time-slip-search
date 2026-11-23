@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.3...v1.1.4) (2026-11-23)
+
+
+### Bug Fixes
+
+* report global-error exceptions to Sentry ([#153](https://github.com/forbiddenlink/time-slip-search/issues/153)) ([c7de4cf](https://github.com/forbiddenlink/time-slip-search/commit/c7de4cfde9a18e4236f07851d3c45a8d4ed68b8c))
+
 ## [1.1.3](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.2...v1.1.3) (2026-11-21)
 
 
