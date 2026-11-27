@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.4...v1.1.5) (2026-11-27)
+
+
+### Bug Fixes
+
+* **home:** stop hydration error [#418](https://github.com/forbiddenlink/time-slip-search/issues/418) and tidy touch autocomplete ([#155](https://github.com/forbiddenlink/time-slip-search/issues/155)) ([bd344f2](https://github.com/forbiddenlink/time-slip-search/commit/bd344f29280bb7dd160c9e598bf024d68f91fe2c))
+
 ## [1.1.4](https://github.com/forbiddenlink/time-slip-search/compare/v1.1.3...v1.1.4) (2026-11-23)
 
 
