@@ -457,6 +457,8 @@ function HomeContent() {
                   value={query}
                   onChange={(e) => handleQueryChange(e.target.value)}
                   onFocus={() => query.length > 0 && setShowAutocomplete(true)}
+                  // Delay so a tap on a suggestion still lands before the list unmounts.
+                  onBlur={() => setTimeout(() => setShowAutocomplete(false), 150)}
                   placeholder="e.g. March 15, 1987"
                   autoComplete="off"
                   aria-label="Enter a date to search, like your birthday or a year"
