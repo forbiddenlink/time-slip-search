@@ -107,7 +107,7 @@ export function SearchAutocomplete({ query, onSelect, isVisible, onClose }: Read
       </div>
       
       <div className="flex items-center justify-between border-t border-ink bg-ink/5 px-4 py-2">
-        <span className="ed-label text-faded">
+        <span className="autocomplete-key-hint ed-label text-faded">
           Arrows to move, Enter to pick, Esc to close
         </span>
         <span className="ed-label text-faded">

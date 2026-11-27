@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 interface QuickActionChipsProps {
   onSelect: (query: string) => void
@@ -12,33 +12,44 @@ interface ChipConfig {
   getQuery: () => string
 }
 
+const DECADES = ['60s', '70s', '80s', '90s', '2000s'] as const
+const DECADE_START: Record<(typeof DECADES)[number], number> = {
+  '60s': 1960,
+  '70s': 1970,
+  '80s': 1980,
+  '90s': 1990,
+  '2000s': 2000,
+}
+
+function dayOfYear(today: Date): number {
+  return Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000)
+}
+
 export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChipsProps>) {
+  // The decade label depends on the visitor's local date. The server renders in UTC, so
+  // computing it during render made server and client disagree (React error #418) for
+  // anyone whose local day differs from UTC. Render a stable label first and fill in
+  // the decade after mount.
+  const [decade, setDecade] = useState<(typeof DECADES)[number] | null>(null)
+
+  useEffect(() => {
+    setDecade(DECADES[dayOfYear(new Date()) % DECADES.length] ?? '80s')
+  }, [])
+
   const chips = useMemo<ChipConfig[]>(() => {
-    const today = new Date()
-    const currentMonth = today.toLocaleDateString('en-US', { month: 'long' })
-    const currentDay = today.getDate()
-
-    // Use day of year as deterministic seed to avoid hydration mismatch
-    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000)
-    const decades = ['60s', '70s', '80s', '90s', '2000s']
-    const randomDecade = decades[dayOfYear % decades.length]
-
     return [
       {
         label: 'This Day in History',
-        getQuery: () => `${currentMonth} ${currentDay}, ${1960 + (dayOfYear % 50)}`,
+        getQuery: () => {
+          const today = new Date()
+          const month = today.toLocaleDateString('en-US', { month: 'long' })
+          return `${month} ${today.getDate()}, ${1960 + (dayOfYear(today) % 50)}`
+        },
       },
       {
-        label: `Random ${randomDecade}`,
+        label: decade ? `Random ${decade}` : 'Random decade',
         getQuery: () => {
-          const decadeMap: Record<string, number> = {
-            '60s': 1960,
-            '70s': 1970,
-            '80s': 1980,
-            '90s': 1990,
-            '2000s': 2000,
-          }
-          const startYear = decadeMap[randomDecade ?? '80s'] ?? 1980
+          const startYear = DECADE_START[decade ?? '80s']
           // Use Math.random only in click handler (not render)
           const year = startYear + Math.floor(Math.random() * 10)
           const month = Math.floor(Math.random() * 12) + 1
@@ -57,7 +68,7 @@ export function QuickActionChips({ onSelect, visible }: Readonly<QuickActionChip
         },
       },
     ]
-  }, [])
+  }, [decade])
 
   if (!visible) return null
 
